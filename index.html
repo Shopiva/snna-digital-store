@@ -233,31 +233,41 @@ main{
   font-weight:400;
   margin-left:5px;
 }
+
 .add-cart{
-  border:0;
-  background:var(--gold);
+  border:1px solid #EAC34E;
+  background:linear-gradient(135deg,#FFE99A,#F4CE62);
   color:#49380D;
-  border-radius:25px;
+  border-radius:10px;
   width:100%;
-  padding:10px 5px;
+  min-height:42px;
+  padding:11px 7px;
   font-size:12px;
   font-weight:700;
   display:flex;
   align-items:center;
   justify-content:center;
-  gap:6px;
+  gap:7px;
+  box-shadow:0 2px 5px rgba(180,135,20,.10);
+  transition:background .2s, transform .2s, box-shadow .2s;
 }
-.add-cart svg{width:16px;height:16px;stroke-width:1.8}
-.add-cart:hover{background:#F0C64D}
-.empty{
-  grid-column:1/-1;
-  text-align:center;
-  padding:35px 10px;
-  color:var(--muted);
-  font-size:13px;
-  background:#fff;
-  border-radius:14px;
+
+.add-cart svg{
+  width:17px;
+  height:17px;
+  stroke-width:2;
 }
+
+.add-cart:hover{
+  background:#F0C64D;
+  box-shadow:0 3px 8px rgba(180,135,20,.18);
+}
+
+.add-cart:active{
+  transform:scale(.97);
+}
+
+
 .loading{
   grid-column:1/-1;
   text-align:center;
