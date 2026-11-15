@@ -4,429 +4,739 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#FFF0B8">
 <title>SNNA — Digital Store</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
 
 <style>
 :root{
-  --butter:#FFF0B8;
+  --yellow:#FFF0B8;
   --gold:#F4CE62;
+  --gold-dark:#D9A51D;
   --cream:#FFFCF3;
   --white:#FFFFFF;
   --text:#333333;
   --muted:#888888;
   --line:#EEEEEE;
-  --soft:#FFF8DF;
+  --soft:#FFF8E4;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{
   margin:0;
-  font-family:Arial,Helvetica,sans-serif;
   background:var(--cream);
   color:var(--text);
+  font-family:Arial,Helvetica,sans-serif;
 }
 button,input{font:inherit}
-button{cursor:pointer;border:0}
-.topbar{
-  background:var(--white);
-  padding:14px 18px;
+button{cursor:pointer}
+header{
+  background:#fff;
+  border-bottom:1px solid var(--line);
+  position:sticky;
+  top:0;
+  z-index:20;
+}
+.header-inner{
+  max-width:1200px;
+  margin:auto;
+  min-height:76px;
+  padding:10px 18px;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  position:sticky;
-  top:0;
-  z-index:10;
-  border-bottom:1px solid var(--line);
+  gap:15px;
 }
-.logo{
-  font-size:25px;
-  font-weight:900;
-  letter-spacing:3px;
-}
-.logo span{color:#D3A72E}
-.tagline{
-  font-size:10px;
-  color:var(--muted);
-  margin-top:3px;
-  letter-spacing:1px;
-}
-.header-icon{
-  background:var(--soft);
+.icon-btn{
+  border:0;
+  background:transparent;
+  color:var(--text);
+  width:42px;
+  height:42px;
+  display:grid;
+  place-items:center;
   border-radius:50%;
-  width:40px;
-  height:40px;
-  font-size:19px;
 }
-.container{
-  width:100%;
-  max-width:1150px;
+.icon-btn:hover{background:var(--soft)}
+.icon-btn svg{width:23px;height:23px;stroke-width:1.7}
+.logo{
+  text-align:center;
+  line-height:1;
+}
+.logo-name{
+  font-size:34px;
+  font-weight:800;
+  letter-spacing:2px;
+}
+.logo-name span{color:var(--gold-dark)}
+.logo-sub{
+  font-size:9px;
+  letter-spacing:5px;
+  margin-top:6px;
+  font-weight:700;
+}
+.cart-wrap{position:relative}
+.cart-count{
+  position:absolute;
+  top:0;
+  right:-3px;
+  background:var(--gold);
+  color:#333;
+  border-radius:20px;
+  min-width:19px;
+  height:19px;
+  display:grid;
+  place-items:center;
+  font-size:11px;
+  font-weight:bold;
+}
+main{
+  max-width:1200px;
   margin:auto;
-  padding:15px;
+  padding:18px 16px 100px;
 }
 .search-box{
   display:flex;
-  background:white;
-  border:1px solid var(--line);
-  border-radius:13px;
-  padding:0 13px;
   align-items:center;
-  margin-bottom:16px;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:30px;
+  padding:0 16px;
+  height:49px;
+  gap:10px;
+  margin-bottom:22px;
+}
+.search-box svg{
+  width:21px;
+  color:#777;
+  stroke-width:1.8;
 }
 .search-box input{
-  width:100%;
-  padding:13px 9px;
   border:0;
-  outline:none;
+  outline:0;
+  width:100%;
   background:transparent;
   font-size:14px;
+  color:var(--text);
 }
-.hero{
-  background:var(--butter);
-  border-radius:20px;
-  padding:25px 21px;
-  min-height:180px;
-  display:flex;
-  align-items:center;
-  overflow:hidden;
-  position:relative;
-}
-.hero-content{position:relative;z-index:1;max-width:75%}
-.hero small{
-  font-weight:bold;
-  color:#9A7620;
-  letter-spacing:1px;
-}
-.hero h1{
-  font-size:27px;
-  line-height:1.2;
-  margin:10px 0;
-}
-.hero p{
-  font-size:13px;
-  line-height:1.6;
-  color:#655A40;
-}
-.hero button{
-  background:#333;
-  color:white;
-  border-radius:25px;
-  padding:11px 19px;
-  font-size:12px;
-  font-weight:bold;
-}
-.hero-decoration{
-  position:absolute;
-  right:12px;
-  bottom:5px;
-  font-size:85px;
-  opacity:.75;
-}
-.section{margin-top:27px}
-.section-heading{
+.section-title{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  margin-bottom:13px;
+  margin:23px 2px 14px;
 }
-.section-heading h2{
-  font-size:17px;
+.section-title h2{
+  font-size:20px;
   margin:0;
+  font-weight:700;
 }
-.section-heading a{
-  color:#A47B16;
-  font-size:12px;
-  text-decoration:none;
+.view-all{
+  border:0;
+  background:none;
+  color:#B88613;
+  font-size:13px;
+  font-weight:600;
 }
 .categories{
   display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:10px;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:9px;
 }
 .category{
-  background:white;
   border:1px solid var(--line);
-  border-radius:14px;
-  padding:14px 5px;
-  text-align:center;
-}
-.category .emoji{font-size:25px}
-.category p{
+  background:#fff;
+  border-radius:15px;
+  min-height:84px;
+  padding:12px 3px 10px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  color:#555;
   font-size:11px;
-  margin:8px 0 0;
+  transition:.2s;
 }
-.products{
+.category svg{
+  width:23px;
+  height:23px;
+  stroke-width:1.5;
+  color:#B88A20;
+}
+.category.active{
+  border-color:var(--gold);
+  background:#FFF8E4;
+  color:#8B6814;
+}
+.category:active{transform:scale(.97)}
+.products-grid{
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:12px;
+  gap:13px;
 }
-.product{
-  background:white;
+.product-card{
+  background:#fff;
   border:1px solid var(--line);
   border-radius:15px;
   overflow:hidden;
+  min-width:0;
 }
 .product-image{
+  width:100%;
   aspect-ratio:1/1;
-  background:var(--soft);
+  background:#FFF5D5;
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:55px;
+  overflow:hidden;
 }
-.product-info{padding:11px}
-.product-info h3{
-  font-size:13px;
-  line-height:1.4;
-  margin:0 0 7px;
-  min-height:36px;
-}
-.product-info p{
-  font-size:11px;
-  color:var(--muted);
-  margin:0 0 9px;
-}
-.price{
-  color:#B58A22;
-  font-size:15px;
-  font-weight:bold;
-}
-.buy-button{
-  display:block;
+.product-image img{
   width:100%;
-  padding:10px;
-  margin-top:10px;
-  border-radius:9px;
-  background:var(--butter);
-  color:#493A17;
-  font-size:12px;
-  font-weight:bold;
+  height:100%;
+  object-fit:cover;
 }
-.promo{
-  background:#FFF5D6;
-  padding:19px;
-  border-radius:17px;
-  margin-top:26px;
-  text-align:center;
-}
-.promo h2{font-size:17px;margin:0 0 7px}
-.promo p{font-size:12px;color:#776A4C;margin:0}
-.footer{
-  text-align:center;
-  padding:35px 15px 90px;
+.image-placeholder{
+  color:#C6A044;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:7px;
   font-size:11px;
+}
+.image-placeholder svg{width:35px;height:35px;stroke-width:1.3}
+.product-info{padding:11px}
+.product-title{
+  font-size:13px;
+  font-weight:700;
+  line-height:1.4;
+  min-height:36px;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.product-category{
   color:var(--muted);
+  font-size:11px;
+  margin-top:4px;
+}
+.product-price{
+  font-size:17px;
+  font-weight:700;
+  color:#C28D12;
+  margin:10px 0;
+}
+.old-price{
+  font-size:11px;
+  color:#999;
+  text-decoration:line-through;
+  font-weight:400;
+  margin-left:5px;
+}
+.add-cart{
+  border:0;
+  background:var(--gold);
+  color:#49380D;
+  border-radius:25px;
+  width:100%;
+  padding:10px 5px;
+  font-size:12px;
+  font-weight:700;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+}
+.add-cart svg{width:16px;height:16px;stroke-width:1.8}
+.add-cart:hover{background:#F0C64D}
+.empty{
+  grid-column:1/-1;
+  text-align:center;
+  padding:35px 10px;
+  color:var(--muted);
+  font-size:13px;
+  background:#fff;
+  border-radius:14px;
+}
+.loading{
+  grid-column:1/-1;
+  text-align:center;
+  padding:35px 10px;
+  color:var(--muted);
+  font-size:13px;
 }
 .bottom-nav{
   position:fixed;
   bottom:0;
   left:0;
   right:0;
-  z-index:20;
-  background:white;
+  z-index:30;
+  background:rgba(255,255,255,.97);
   border-top:1px solid var(--line);
-  display:flex;
-  justify-content:space-around;
-  padding:10px 5px calc(10px + env(safe-area-inset-bottom));
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  padding:8px 5px calc(8px + env(safe-area-inset-bottom));
 }
 .nav-item{
+  border:0;
   background:transparent;
-  color:#888;
-  font-size:10px;
   display:flex;
   flex-direction:column;
   align-items:center;
   gap:4px;
+  color:#777;
+  font-size:10px;
+  padding:4px;
 }
-.nav-item span{font-size:19px}
-.nav-item.active{color:#B58A22;font-weight:bold}
-.empty{
+.nav-item svg{
+  width:21px;
+  height:21px;
+  stroke-width:1.6;
+}
+.nav-item.active{color:#C28D12;font-weight:700}
+.nav-item.active svg{stroke-width:2}
+.drawer-bg{
   display:none;
-  text-align:center;
-  color:var(--muted);
-  padding:25px;
+  position:fixed;
+  inset:0;
+  background:#0005;
+  z-index:50;
+}
+.drawer-bg.show{display:block}
+.drawer{
+  position:absolute;
+  right:0;
+  top:0;
+  bottom:0;
+  width:min(370px,90%);
+  background:#fff;
+  padding:20px;
+  overflow:auto;
+}
+.drawer-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:1px solid var(--line);
+  padding-bottom:13px;
+}
+.drawer-head h3{margin:0;font-size:18px}
+.close-btn{
+  border:0;
+  background:none;
+  font-size:25px;
+  color:#777;
+}
+.cart-line{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  padding:13px 0;
+  border-bottom:1px solid var(--line);
   font-size:13px;
 }
-@media(min-width:768px){
-  .container{padding:24px}
-  .hero{min-height:230px;padding:35px}
-  .hero h1{font-size:36px}
-  .hero-decoration{font-size:120px}
-  .categories{grid-template-columns:repeat(8,1fr)}
-  .products{grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+.cart-line small{color:#888}
+.qty-controls{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  margin-top:7px;
+}
+.qty-controls button{
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:6px;
+  width:25px;
+  height:25px;
+}
+.cart-total{
+  display:flex;
+  justify-content:space-between;
+  font-weight:bold;
+  margin:20px 0;
+}
+.notice{
+  background:#FFF8E4;
+  border:1px solid #F4E3AC;
+  border-radius:10px;
+  padding:12px;
+  font-size:12px;
+  line-height:1.5;
+  color:#725A20;
+}
+footer{
+  text-align:center;
+  color:#999;
+  font-size:11px;
+  padding:20px 10px 25px;
+}
+@media(min-width:650px){
+  main{padding-left:25px;padding-right:25px}
+  .products-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .categories{gap:14px}
+  .category{min-height:100px;font-size:13px}
+}
+@media(min-width:950px){
+  .products-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .logo-name{font-size:38px}
 }
 </style>
 </head>
 
 <body>
 
-<header class="topbar">
-  <div>
-    <div class="logo">SN<span>NA</span></div>
-    <div class="tagline">YOUR DIGITAL CREATIVE STORE</div>
+<header>
+  <div class="header-inner">
+    <button class="icon-btn" onclick="toggleMenu()" aria-label="Menu">
+      <i data-lucide="menu"></i>
+    </button>
+
+    <div class="logo">
+      <div class="logo-name">SN<span>NA</span></div>
+      <div class="logo-sub">DIGITAL STORE</div>
+    </div>
+
+    <button class="icon-btn cart-wrap" onclick="openCart()" aria-label="Troli">
+      <i data-lucide="shopping-bag"></i>
+      <span class="cart-count" id="cartCount">0</span>
+    </button>
   </div>
-  <button class="header-icon" aria-label="Troli">🛍️</button>
 </header>
 
-<main class="container">
-
+<main>
   <div class="search-box">
-    🔍
+    <i data-lucide="search"></i>
     <input id="searchInput" type="search"
-      placeholder="Cari ebook, planner, template...">
+      placeholder="Cari produk di SNNA..."
+      oninput="renderProducts()">
   </div>
 
-  <section class="hero">
-    <div class="hero-content">
-      <small>WELCOME TO SNNA</small>
-      <h1>Ideas That Inspire.<br>Digital Made Simple.</h1>
-      <p>Temui koleksi produk digital untuk inspirasi dan kreativiti anda.</p>
-      <button onclick="document.getElementById('featured').scrollIntoView()">
-        TEROKA SEKARANG
-      </button>
-    </div>
-    <div class="hero-decoration">💛</div>
-  </section>
+  <div class="section-title">
+    <h2>Kategori</h2>
+  </div>
 
-  <section class="section" id="categories">
-    <div class="section-heading">
-      <h2>Kategori Pilihan</h2>
-      <a href="#featured">Lihat semua</a>
-    </div>
+  <div class="categories">
+    <button class="category active" onclick="setCategory('Semua',this)">
+      <i data-lucide="layout-grid"></i>
+      <span>Semua</span>
+    </button>
+    <button class="category" onclick="setCategory('Ebook',this)">
+      <i data-lucide="book-open"></i>
+      <span>Ebook</span>
+    </button>
+    <button class="category" onclick="setCategory('Planner',this)">
+      <i data-lucide="calendar-days"></i>
+      <span>Planner</span>
+    </button>
+    <button class="category" onclick="setCategory('Template',this)">
+      <i data-lucide="files"></i>
+      <span>Template</span>
+    </button>
+    <button class="category" onclick="setCategory('Artwork',this)">
+      <i data-lucide="image"></i>
+      <span>Artwork</span>
+    </button>
+  </div>
 
-    <div class="categories">
-      <div class="category"><div class="emoji">📚</div><p>Ebook</p></div>
-      <div class="category"><div class="emoji">📝</div><p>Planner</p></div>
-      <div class="category"><div class="emoji">🎨</div><p>Template</p></div>
-      <div class="category"><div class="emoji">🖼️</div><p>Artwork</p></div>
-      <div class="category"><div class="emoji">📄</div><p>Printable</p></div>
-      <div class="category"><div class="emoji">💼</div><p>Business</p></div>
-      <div class="category"><div class="emoji">🎁</div><p>Bundle</p></div>
-      <div class="category"><div class="emoji">✨</div><p>Lain-lain</p></div>
-    </div>
-  </section>
+  <div class="section-title">
+    <h2 id="productHeading">Produk Pilihan</h2>
+    <button class="view-all" onclick="setCategory('Semua')">
+      Lihat Semua →
+    </button>
+  </div>
 
-  <section class="section" id="featured">
-    <div class="section-heading">
-      <h2>Produk Pilihan SNNA</h2>
-      <a href="#featured">Terokai →</a>
-    </div>
+  <div class="products-grid" id="productsGrid">
+    <div class="loading">Sedang memuatkan produk SNNA...</div>
+  </div>
 
-    <div class="products" id="productGrid">
-
-      <article class="product" data-name="ebook digital">
-        <div class="product-image">📚</div>
-        <div class="product-info">
-          <h3>Ebook Digital</h3>
-          <p>Digital Download · PDF</p>
-          <div class="price">RM 0.00</div>
-          <button class="buy-button" onclick="comingSoon()">
-            Lihat Produk
-          </button>
-        </div>
-      </article>
-
-      <article class="product" data-name="planner harian">
-        <div class="product-image">📝</div>
-        <div class="product-info">
-          <h3>Daily Planner</h3>
-          <p>Digital Planner · PDF</p>
-          <div class="price">RM 0.00</div>
-          <button class="buy-button" onclick="comingSoon()">
-            Lihat Produk
-          </button>
-        </div>
-      </article>
-
-      <article class="product" data-name="template kreatif">
-        <div class="product-image">🎨</div>
-        <div class="product-info">
-          <h3>Creative Templates</h3>
-          <p>Editable Digital Template</p>
-          <div class="price">RM 0.00</div>
-          <button class="buy-button" onclick="comingSoon()">
-            Lihat Produk
-          </button>
-        </div>
-      </article>
-
-      <article class="product" data-name="wallpaper digital">
-        <div class="product-image">🖼️</div>
-        <div class="product-info">
-          <h3>Digital Wallpaper</h3>
-          <p>Digital Artwork</p>
-          <div class="price">RM 0.00</div>
-          <button class="buy-button" onclick="comingSoon()">
-            Lihat Produk
-          </button>
-        </div>
-      </article>
-
-    </div>
-
-    <div class="empty" id="emptyMessage">
-      Tiada produk dijumpai.
-    </div>
-  </section>
-
-  <section class="promo">
-    <h2>Digital Inspiration Starts Here ✨</h2>
-    <p>Terokai koleksi digital SNNA yang direka untuk anda.</p>
-  </section>
-
+  <footer>
+    © 2026 SNNA Digital Store. All rights reserved.
+  </footer>
 </main>
 
-<footer class="footer">
-  <div class="logo">SN<span>NA</span></div>
-  <p>Your Digital Creative Store</p>
-  <p>© 2026 SNNA. All rights reserved.</p>
-</footer>
-
 <nav class="bottom-nav">
-  <button class="nav-item active" onclick="goTo('top')">
-    <span>⌂</span>Home
+  <button class="nav-item active" onclick="goHome(this)">
+    <i data-lucide="house"></i>
+    <span>Home</span>
   </button>
-  <button class="nav-item" onclick="goTo('categories')">
-    <span>▦</span>Kategori
+  <button class="nav-item" onclick="goCategories(this)">
+    <i data-lucide="grid-2x2"></i>
+    <span>Kategori</span>
   </button>
-  <button class="nav-item" onclick="comingSoon()">
-    <span>♡</span>Disukai
+  <button class="nav-item" onclick="showFavorites(this)">
+    <i data-lucide="heart"></i>
+    <span>Disukai</span>
   </button>
-  <button class="nav-item" onclick="comingSoon()">
-    <span>☺</span>Me
+  <button class="nav-item" onclick="showMe(this)">
+    <i data-lucide="user-round"></i>
+    <span>Me</span>
   </button>
 </nav>
 
+<div class="drawer-bg" id="cartDrawer" onclick="closeCart(event)">
+  <div class="drawer" onclick="event.stopPropagation()">
+    <div class="drawer-head">
+      <h3>Troli Saya</h3>
+      <button class="close-btn" onclick="closeCart()">×</button>
+    </div>
+    <div id="cartItems"></div>
+    <div class="cart-total">
+      <span>Jumlah</span>
+      <span id="cartTotal">RM 0.00</span>
+    </div>
+    <div class="notice">
+      Troli ini masih dalam mod pratonton. Sistem checkout dan pembayaran
+      akan diaktifkan selepas integrasi pembayaran selamat disediakan.
+    </div>
+  </div>
+</div>
+
 <script>
-function comingSoon(){
-  alert("Terima kasih! Fungsi ini akan diaktifkan tidak lama lagi.");
+/* SNNA SUPABASE CONNECTION */
+const SUPABASE_URL = "https://xbnvgcsvicealimwlsmv.supabase.co";
+const SUPABASE_KEY = "sb_publishable_nQAJM6sx1KmuNMBXTO40Zw_wFvPpCzD";
+
+const db = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+let products = [];
+let selectedCategory = "Semua";
+let cart = [];
+let favorites = [];
+
+const money = value =>
+  "RM " + Number(value || 0).toFixed(2);
+
+function escapeHTML(value){
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  }[char]));
 }
 
-function goTo(id){
-  if(id==="top"){
-    window.scrollTo({top:0,behavior:"smooth"});
-  }else{
-    document.getElementById(id).scrollIntoView({behavior:"smooth"});
+function imageURL(path){
+  if(!path) return "";
+  if(/^https?:\/\//i.test(path)) return path;
+
+  const cleanPath = String(path).replace(/^\/+/,"");
+  return SUPABASE_URL +
+    "/storage/v1/object/public/product-images/" +
+    cleanPath.split("/").map(encodeURIComponent).join("/");
+}
+
+async function loadProducts(){
+  const grid = document.getElementById("productsGrid");
+  grid.innerHTML = '<div class="loading">Sedang memuatkan produk...</div>';
+
+  const {data,error} = await db
+    .from("products")
+    .select("id,title,slug,description,price,compare_at_price,category,image_path,is_active,is_featured,sort_order,created_at")
+    .eq("is_active",true)
+    .order("sort_order",{ascending:true})
+    .order("created_at",{ascending:false});
+
+  if(error){
+    console.error("SNNA product error:",error);
+    grid.innerHTML =
+      '<div class="empty">Produk tidak dapat dimuatkan. Sila cuba semula sebentar lagi.</div>';
+    return;
   }
+
+  products = data || [];
+  renderProducts();
 }
 
-document.getElementById("searchInput").addEventListener("input",function(){
-  const term=this.value.toLowerCase().trim();
-  const cards=document.querySelectorAll(".product");
-  let visible=0;
+function renderProducts(){
+  const grid = document.getElementById("productsGrid");
+  const search = document.getElementById("searchInput").value
+    .trim().toLowerCase();
 
-  cards.forEach(card=>{
-    const name=card.dataset.name.toLowerCase();
-    const title=card.innerText.toLowerCase();
-    const match=name.includes(term)||title.includes(term);
-    card.style.display=match?"block":"none";
-    if(match)visible++;
+  let list = products.filter(product=>{
+    const matchSearch =
+      (product.title || "").toLowerCase().includes(search) ||
+      (product.category || "").toLowerCase().includes(search);
+
+    const matchCategory =
+      selectedCategory === "Semua" ||
+      (product.category || "").toLowerCase() === selectedCategory.toLowerCase();
+
+    return matchSearch && matchCategory;
   });
 
-  document.getElementById("emptyMessage").style.display=
-    visible===0?"block":"none";
-});
-</script>
+  if(selectedCategory === "Disukai"){
+    list = list.filter(p=>favorites.includes(p.id));
+  }
 
+  if(!list.length){
+    grid.innerHTML =
+      '<div class="empty">Belum ada produk untuk dipaparkan.</div>';
+    return;
+  }
+
+  grid.innerHTML = list.map(product=>{
+    const title = escapeHTML(product.title);
+    const category = escapeHTML(product.category);
+    const image = imageURL(product.image_path);
+    const price = money(product.price);
+    const oldPrice = product.compare_at_price
+      ? `<span class="old-price">${money(product.compare_at_price)}</span>`
+      : "";
+
+    const imageHTML = image
+      ? `<img src="${escapeHTML(image)}" alt="${title}" loading="lazy"
+           onerror="this.parentElement.innerHTML='<div class=&quot;image-placeholder&quot;><i data-lucide=&quot;image&quot;></i><span>Imej produk</span></div>';lucide.createIcons()">`
+      : `<div class="image-placeholder"><i data-lucide="image"></i><span>Imej produk</span></div>`;
+
+    return `
+      <article class="product-card">
+        <div class="product-image">${imageHTML}</div>
+        <div class="product-info">
+          <div class="product-title">${title}</div>
+          <div class="product-category">${category}</div>
+          <div class="product-price">${price}${oldPrice}</div>
+          <button class="add-cart" onclick="addToCart('${product.id}')">
+            <i data-lucide="shopping-bag"></i>
+            Tambah ke Troli
+          </button>
+        </div>
+      </article>
+    `;
+  }).join("");
+
+  lucide.createIcons();
+}
+
+function setCategory(category,button){
+  selectedCategory = category;
+
+  document.querySelectorAll(".category").forEach(el=>{
+    el.classList.remove("active");
+  });
+
+  if(button) button.classList.add("active");
+
+  document.getElementById("productHeading").textContent =
+    category === "Semua" ? "Produk Pilihan" : category;
+
+  renderProducts();
+}
+
+function addToCart(id){
+  const product = products.find(p=>p.id === id);
+  if(!product) return;
+
+  const existing = cart.find(item=>item.id === id);
+
+  if(existing) existing.qty++;
+  else cart.push({
+    id:product.id,
+    title:product.title,
+    price:Number(product.price),
+    qty:1
+  });
+
+  updateCart();
+}
+
+function updateCart(){
+  const count = cart.reduce((sum,item)=>sum+item.qty,0);
+  const total = cart.reduce((sum,item)=>sum+(item.price*item.qty),0);
+
+  document.getElementById("cartCount").textContent = count;
+  document.getElementById("cartTotal").textContent = money(total);
+
+  const area = document.getElementById("cartItems");
+
+  if(!cart.length){
+    area.innerHTML =
+      '<div class="empty">Troli masih kosong.</div>';
+    return;
+  }
+
+  area.innerHTML = cart.map(item=>`
+    <div class="cart-line">
+      <div>
+        <strong>${escapeHTML(item.title)}</strong><br>
+        <small>${money(item.price)} setiap satu</small>
+        <div class="qty-controls">
+          <button onclick="changeQty('${item.id}',-1)">−</button>
+          <span>${item.qty}</span>
+          <button onclick="changeQty('${item.id}',1)">+</button>
+        </div>
+      </div>
+      <strong>${money(item.price*item.qty)}</strong>
+    </div>
+  `).join("");
+}
+
+function changeQty(id,change){
+  const item = cart.find(p=>p.id===id);
+  if(!item) return;
+
+  item.qty += change;
+  if(item.qty <= 0){
+    cart = cart.filter(p=>p.id!==id);
+  }
+  updateCart();
+}
+
+function openCart(){
+  document.getElementById("cartDrawer").classList.add("show");
+  updateCart();
+}
+
+function closeCart(event){
+  if(event && event.target !== document.getElementById("cartDrawer")) return;
+  document.getElementById("cartDrawer").classList.remove("show");
+}
+
+function toggleMenu(){
+  alert("Menu SNNA akan dilengkapkan dalam fasa seterusnya.");
+}
+
+function setNavActive(button){
+  document.querySelectorAll(".nav-item").forEach(el=>{
+    el.classList.remove("active");
+  });
+  if(button) button.classList.add("active");
+}
+
+function goHome(button){
+  selectedCategory = "Semua";
+  document.getElementById("searchInput").value = "";
+  document.getElementById("productHeading").textContent = "Produk Pilihan";
+  document.querySelectorAll(".category").forEach(el=>el.classList.remove("active"));
+  document.querySelector(".category").classList.add("active");
+  setNavActive(button);
+  renderProducts();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function goCategories(button){
+  setNavActive(button);
+  document.querySelector(".categories").scrollIntoView({behavior:"smooth"});
+}
+
+function showFavorites(button){
+  selectedCategory = "Disukai";
+  document.getElementById("productHeading").textContent = "Produk Disukai";
+  setNavActive(button);
+  renderProducts();
+  document.querySelector(".section-title").scrollIntoView({behavior:"smooth"});
+}
+
+function showMe(button){
+  setNavActive(button);
+  alert("Bahagian akaun pelanggan akan dibina dalam fasa seterusnya.");
+}
+
+lucide.createIcons();
+loadProducts();
+</script>
 </body>
 </html>
