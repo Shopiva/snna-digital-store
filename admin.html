@@ -1,0 +1,585 @@
+
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SNNA Admin Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+:root{
+ --yellow:#FFF0B8;--gold:#F4CE62;--cream:#FFFCF3;
+ --white:#fff;--text:#333;--muted:#888;--line:#eee;
+ --red:#d9534f;--green:#32865a;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);color:var(--text);
+ font-family:Arial,sans-serif}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+header{background:#fff;border-bottom:1px solid var(--line);
+ padding:15px 18px;display:flex;justify-content:space-between;
+ align-items:center;position:sticky;top:0;z-index:5}
+.brand{font-size:25px;font-weight:800;letter-spacing:2px}
+.brand span{color:#C99B25}
+.brand small{display:block;font-size:9px;letter-spacing:4px;
+ font-weight:600;margin-top:4px}
+.header-right{display:flex;align-items:center;gap:10px}
+.btn{border:0;border-radius:9px;padding:11px 15px;
+ font-weight:700;font-size:13px}
+.btn-gold{background:var(--gold);color:#49380D}
+.btn-light{background:#f4f4f4;color:#555}
+.btn-red{background:#fff0ef;color:var(--red)}
+main{max-width:1100px;margin:auto;padding:20px 15px 50px}
+.welcome{margin-bottom:20px}
+.welcome h2{margin:0 0 6px;font-size:23px}
+.welcome p{margin:0;color:var(--muted);font-size:13px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;
+ margin-bottom:22px}
+.stat{background:#fff;border:1px solid var(--line);
+ border-radius:13px;padding:15px}
+.stat svg{width:21px;color:#B68A20}
+.stat strong{display:block;font-size:23px;margin-top:9px}
+.stat span{font-size:12px;color:var(--muted)}
+.panel{background:#fff;border:1px solid var(--line);
+ border-radius:14px;padding:17px;margin-bottom:18px}
+.panel h3{font-size:17px;margin:0 0 15px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field.full{grid-column:1/-1}
+label{font-size:12px;font-weight:700;color:#555}
+input,textarea,select{
+ width:100%;border:1px solid #e5e5e5;border-radius:9px;
+ padding:12px;background:#fff;outline:none;color:var(--text);
+ font-size:13px;
+}
+input:focus,textarea:focus,select:focus{border-color:var(--gold)}
+textarea{min-height:95px;resize:vertical}
+.help{font-size:11px;color:var(--muted);line-height:1.5}
+.check-row{display:flex;align-items:center;gap:9px;font-size:13px}
+.check-row input{width:auto}
+.file-box{background:#FFFCF3;border:1px dashed #E7CE83;
+ border-radius:10px;padding:12px}
+.file-box input{border:0;padding:8px 0;background:transparent}
+.preview{width:100px;height:100px;object-fit:cover;
+ border-radius:10px;display:none;margin-top:10px}
+.form-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}
+.status{font-size:12px;margin-top:10px;line-height:1.5}
+.status.error{color:var(--red)}
+.status.success{color:var(--green)}
+.product-list{display:grid;gap:10px}
+.product-row{border:1px solid var(--line);border-radius:11px;
+ padding:11px;display:flex;gap:12px;align-items:center}
+.product-row img,.product-placeholder{
+ width:65px;height:65px;object-fit:cover;border-radius:8px;
+ background:#FFF5D5;flex-shrink:0;
+}
+.product-placeholder{display:grid;place-items:center;color:#B68A20}
+.product-detail{flex:1;min-width:0}
+.product-detail strong{font-size:13px;display:block;
+ overflow-wrap:anywhere}
+.product-detail small{display:block;color:var(--muted);
+ font-size:11px;margin-top:5px}
+.product-actions{display:flex;gap:5px;flex-wrap:wrap}
+.product-actions button{border:0;border-radius:7px;
+ padding:8px;font-size:11px;font-weight:700}
+.login-wrap{max-width:420px;margin:65px auto;padding:15px}
+.login-card{background:#fff;border:1px solid var(--line);
+ border-radius:17px;padding:25px}
+.login-card h2{margin:0 0 8px}
+.login-card p{font-size:13px;color:var(--muted);line-height:1.5}
+.login-card .field{margin-top:14px}
+.login-card .btn{width:100%;margin-top:18px}
+#dashboard{display:none}
+#loginView{display:block}
+.hidden{display:none!important}
+footer{text-align:center;color:#aaa;font-size:11px;padding:20px}
+@media(max-width:600px){
+ .stats{gap:7px}
+ .stat{padding:11px}
+ .stat strong{font-size:19px}
+ .stat span{font-size:10px}
+ .form-grid{grid-template-columns:1fr}
+ .field.full{grid-column:auto}
+ .product-row{align-items:flex-start}
+ .product-actions{flex-direction:column}
+ .product-actions button{padding:7px}
+ header{padding:12px}
+}
+</style>
+</head>
+<body>
+
+<header>
+ <div class="brand">SN<span>NA</span><small>ADMIN PANEL</small></div>
+ <div class="header-right">
+  <span id="adminLabel" class="help"></span>
+  <button class="btn btn-light hidden" id="logoutBtn" onclick="logout()">Keluar</button>
+ </div>
+</header>
+
+<section id="loginView" class="login-wrap">
+ <div class="login-card">
+  <div class="brand">SN<span>NA</span></div>
+  <h2>Admin Login</h2>
+  <p>Log masuk untuk menguruskan produk digital SNNA.</p>
+  <div class="field">
+   <label>Email</label>
+   <input type="email" id="email" placeholder="Email admin" autocomplete="username">
+  </div>
+  <div class="field">
+   <label>Kata laluan</label>
+   <input type="password" id="password" placeholder="Kata laluan" autocomplete="current-password">
+  </div>
+  <button class="btn btn-gold" id="loginBtn" onclick="login()">Log Masuk</button>
+  <div id="loginStatus" class="status"></div>
+ </div>
+</section>
+
+<div id="dashboard">
+<main>
+ <div class="welcome">
+  <h2>Dashboard Admin 👋</h2>
+  <p>Selamat datang ke pengurusan SNNA Digital Store.</p>
+ </div>
+
+ <div class="stats">
+  <div class="stat"><i data-lucide="package"></i>
+   <strong id="totalProducts">0</strong><span>Jumlah produk</span>
+  </div>
+  <div class="stat"><i data-lucide="check-circle"></i>
+   <strong id="activeProducts">0</strong><span>Produk aktif</span>
+  </div>
+  <div class="stat"><i data-lucide="star"></i>
+   <strong id="featuredProducts">0</strong><span>Produk pilihan</span>
+  </div>
+ </div>
+
+ <section class="panel" id="productFormPanel">
+  <h3 id="formHeading">Tambah Produk Baharu</h3>
+  <form id="productForm">
+   <div class="form-grid">
+    <div class="field full">
+     <label>Nama produk *</label>
+     <input id="title" required maxlength="180" placeholder="Contoh: Ebook Panduan Bisnes">
+    </div>
+    <div class="field">
+     <label>Kategori *</label>
+     <select id="category" required>
+      <option value="">Pilih kategori</option>
+      <option>Ebook</option>
+      <option>Planner</option>
+      <option>Template</option>
+      <option>Artwork</option>
+      <option>Printable</option>
+      <option>Business</option>
+      <option>Bundle</option>
+      <option>Lain-lain</option>
+     </select>
+    </div>
+    <div class="field">
+     <label>Harga jualan (RM) *</label>
+     <input id="price" type="number" min="0" step="0.01" required placeholder="19.90">
+    </div>
+    <div class="field">
+     <label>Harga asal (RM)</label>
+     <input id="comparePrice" type="number" min="0" step="0.01" placeholder="29.90">
+    </div>
+    <div class="field">
+     <label>Susunan produk</label>
+     <input id="sortOrder" type="number" step="1" value="0">
+    </div>
+    <div class="field full">
+     <label>Penerangan produk</label>
+     <textarea id="description" placeholder="Terangkan kandungan dan manfaat produk..."></textarea>
+    </div>
+    <div class="field">
+     <label>Gambar produk</label>
+     <div class="file-box">
+      <input id="imageFile" type="file" accept="image/jpeg,image/png,image/webp">
+      <div class="help">JPG, PNG atau WebP. Maksimum 5MB.</div>
+      <img id="imagePreview" class="preview" alt="Preview gambar">
+     </div>
+     <div class="help" id="imageCurrent"></div>
+    </div>
+    <div class="field">
+     <label>Fail digital *</label>
+     <div class="file-box">
+      <input id="digitalFile" type="file">
+      <div class="help">PDF, ZIP atau fail digital lain. Maksimum 50MB.</div>
+     </div>
+     <div class="help" id="fileCurrent"></div>
+    </div>
+    <div class="field full">
+     <label class="check-row">
+      <input type="checkbox" id="isActive" checked>
+      Paparkan produk di homepage
+     </label>
+     <label class="check-row">
+      <input type="checkbox" id="isFeatured">
+      Jadikan produk pilihan
+     </label>
+    </div>
+   </div>
+   <div class="form-actions">
+    <button type="submit" class="btn btn-gold" id="saveBtn">Simpan Produk</button>
+    <button type="button" class="btn btn-light hidden" id="cancelBtn" onclick="resetForm()">Batal Edit</button>
+   </div>
+   <div id="formStatus" class="status"></div>
+  </form>
+ </section>
+
+ <section class="panel">
+  <h3>Senarai Produk</h3>
+  <div id="productList" class="product-list">
+   <div class="help">Memuatkan produk...</div>
+  </div>
+ </section>
+</main>
+</div>
+
+<footer>© 2026 SNNA Digital Store</footer>
+
+<script>
+const SUPABASE_URL="https://xbnvgcsvicealimwlsmv.supabase.co";
+const SUPABASE_KEY="sb_publishable_nQAJM6sx1KmuNMBXTO40Zw_wFvPpCzD";
+
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+let currentUser=null;
+let editingId=null;
+let products=[];
+let currentImagePath=null;
+let currentFilePath=null;
+
+const $=id=>document.getElementById(id);
+
+function showStatus(id,message,type=""){
+ const el=$(id);
+ el.textContent=message;
+ el.className="status "+type;
+}
+
+function safeText(value){
+ return String(value??"").replace(/[&<>"']/g,c=>({
+  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ }[c]));
+}
+
+function makeSlug(value){
+ return value.toLowerCase()
+  .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+  .replace(/[^a-z0-9]+/g,"-")
+  .replace(/^-|-$/g,"") || "produk";
+}
+
+function uniqueSlug(value){
+ return makeSlug(value)+"-"+crypto.randomUUID().slice(0,8);
+}
+
+function publicImage(path){
+ if(!path)return "";
+ return SUPABASE_URL+
+  "/storage/v1/object/public/product-images/"+
+  path.split("/").map(encodeURIComponent).join("/");
+}
+
+async function checkAdmin(){
+ const {data:{session},error}=await db.auth.getSession();
+ if(error||!session){
+  showLogin();
+  return;
+ }
+ currentUser=session.user;
+ const {data:profile,error:profileError}=await db
+  .from("profiles")
+  .select("role,full_name")
+  .eq("id",currentUser.id)
+  .maybeSingle();
+
+ if(profileError||!profile||profile.role!=="admin"){
+  await db.auth.signOut();
+  currentUser=null;
+  showLogin();
+  showStatus("loginStatus",
+   "Akaun ini tidak mempunyai akses admin SNNA.","error");
+  return;
+ }
+ showDashboard(profile.full_name||currentUser.email);
+}
+
+function showLogin(){
+ $("loginView").style.display="block";
+ $("dashboard").style.display="none";
+ $("logoutBtn").classList.add("hidden");
+ $("adminLabel").textContent="";
+}
+
+function showDashboard(name){
+ $("loginView").style.display="none";
+ $("dashboard").style.display="block";
+ $("logoutBtn").classList.remove("hidden");
+ $("adminLabel").textContent=name;
+ loadProducts();
+}
+
+async function login(){
+ const email=$("email").value.trim();
+ const password=$("password").value;
+ if(!email||!password){
+  showStatus("loginStatus","Masukkan email dan kata laluan.","error");
+  return;
+ }
+ $("loginBtn").disabled=true;
+ $("loginBtn").textContent="Sedang log masuk...";
+ const {error}=await db.auth.signInWithPassword({email,password});
+ $("loginBtn").disabled=false;
+ $("loginBtn").textContent="Log Masuk";
+ if(error){
+  showStatus("loginStatus","Login gagal: "+error.message,"error");
+  return;
+ }
+ await checkAdmin();
+}
+
+async function logout(){
+ await db.auth.signOut();
+ currentUser=null;
+ showLogin();
+}
+
+async function loadProducts(){
+ const {data,error}=await db.from("products")
+  .select("*")
+  .order("sort_order",{ascending:true})
+  .order("created_at",{ascending:false});
+
+ if(error){
+  $("productList").textContent="Gagal memuatkan produk: "+error.message;
+  return;
+ }
+ products=data||[];
+ updateStats();
+ renderList();
+}
+
+function updateStats(){
+ $("totalProducts").textContent=products.length;
+ $("activeProducts").textContent=products.filter(p=>p.is_active).length;
+ $("featuredProducts").textContent=products.filter(p=>p.is_featured).length;
+}
+
+function renderList(){
+ const area=$("productList");
+ if(!products.length){
+  area.innerHTML='<div class="help">Belum ada produk. Tambah produk pertama SNNA.</div>';
+  return;
+ }
+ area.innerHTML=products.map(p=>{
+  const img=p.image_path
+   ?`<img src="${safeText(publicImage(p.image_path))}" alt="">`
+   :'<div class="product-placeholder"><i data-lucide="image"></i></div>';
+  return `
+   <div class="product-row">
+    ${img}
+    <div class="product-detail">
+     <strong>${safeText(p.title)}</strong>
+     <small>${safeText(p.category)} · RM ${Number(p.price).toFixed(2)}</small>
+     <small>${p.is_active?"Aktif":"Tidak aktif"} · ${p.is_featured?"Produk pilihan":"Biasa"}</small>
+    </div>
+    <div class="product-actions">
+     <button class="btn-light" onclick="editProduct('${p.id}')">Edit</button>
+     <button class="btn-red" onclick="deleteProduct('${p.id}')">Padam</button>
+    </div>
+   </div>`;
+ }).join("");
+ lucide.createIcons();
+}
+
+$("imageFile").addEventListener("change",()=>{
+ const file=$("imageFile").files[0];
+ const preview=$("imagePreview");
+ if(!file){preview.style.display="none";return;}
+ if(file.size>5*1024*1024){
+  alert("Gambar melebihi 5MB.");
+  $("imageFile").value="";
+  preview.style.display="none";
+  return;
+ }
+ if(!["image/jpeg","image/png","image/webp"].includes(file.type)){
+  alert("Format gambar mesti JPG, PNG atau WebP.");
+  $("imageFile").value="";
+  preview.style.display="none";
+  return;
+ }
+ preview.src=URL.createObjectURL(file);
+ preview.style.display="block";
+});
+
+async function uploadFile(bucket,file,maxBytes){
+ if(!file)return null;
+ if(file.size>maxBytes)throw new Error("Saiz fail melebihi had yang dibenarkan.");
+ const ext=(file.name.split(".").pop()||"bin").toLowerCase().replace(/[^a-z0-9]/g,"");
+ const path="products/"+crypto.randomUUID()+"."+ext;
+ const {error}=await db.storage.from(bucket).upload(path,file,{
+  cacheControl:"3600",
+  upsert:false,
+  contentType:file.type||"application/octet-stream"
+ });
+ if(error)throw error;
+ return path;
+}
+
+$("productForm").addEventListener("submit",async event=>{
+ event.preventDefault();
+ if(!currentUser)return;
+
+ const title=$("title").value.trim();
+ const price=Number($("price").value);
+ const compareRaw=$("comparePrice").value;
+ const comparePrice=compareRaw===""?null:Number(compareRaw);
+ const imageFile=$("imageFile").files[0];
+ const digitalFile=$("digitalFile").files[0];
+
+ if(!title||!$("category").value||!Number.isFinite(price)||price<0){
+  showStatus("formStatus","Sila semak nama, kategori dan harga.","error");
+  return;
+ }
+ if(comparePrice!==null&&(!Number.isFinite(comparePrice)||comparePrice<0)){
+  showStatus("formStatus","Harga asal tidak sah.","error");
+  return;
+ }
+ if(!editingId&&!digitalFile){
+  showStatus("formStatus","Sila pilih fail digital untuk produk baharu.","error");
+  return;
+ }
+ if(digitalFile&&digitalFile.size>50*1024*1024){
+  showStatus("formStatus","Fail digital melebihi 50MB.","error");
+  return;
+ }
+
+ $("saveBtn").disabled=true;
+ $("saveBtn").textContent="Sedang menyimpan...";
+ showStatus("formStatus","Sedang memproses fail dan menyimpan produk...");
+
+ let uploadedImage=null;
+ let uploadedDigital=null;
+
+ try{
+  if(imageFile){
+   uploadedImage=await uploadFile("product-images",imageFile,5*1024*1024);
+  }
+  if(digitalFile){
+   uploadedDigital=await uploadFile("digital-files",digitalFile,50*1024*1024);
+  }
+
+  const old=editingId?products.find(p=>p.id===editingId):null;
+  const payload={
+   title,
+   slug:old?old.slug:uniqueSlug(title),
+   description:$("description").value.trim()||null,
+   price,
+   compare_at_price:comparePrice,
+   category:$("category").value,
+   image_path:uploadedImage||currentImagePath||null,
+   file_path:uploadedDigital||currentFilePath||null,
+   file_name:digitalFile?digitalFile.name:(old?.file_name||null),
+   file_size_bytes:digitalFile?digitalFile.size:(old?.file_size_bytes||null),
+   is_active:$("isActive").checked,
+   is_featured:$("isFeatured").checked,
+   sort_order:parseInt($("sortOrder").value,10)||0,
+   updated_at:new Date().toISOString()
+  };
+
+  let result;
+  if(editingId){
+   result=await db.from("products").update(payload).eq("id",editingId);
+  }else{
+   result=await db.from("products").insert(payload);
+  }
+
+  if(result.error)throw result.error;
+
+  showStatus("formStatus","Produk berjaya disimpan!","success");
+  resetForm();
+  await loadProducts();
+
+ }catch(error){
+  console.error(error);
+  showStatus("formStatus","Ralat: "+error.message,"error");
+ }finally{
+  $("saveBtn").disabled=false;
+  $("saveBtn").textContent=editingId?"Kemaskini Produk":"Simpan Produk";
+ }
+});
+
+function editProduct(id){
+ const p=products.find(item=>item.id===id);
+ if(!p)return;
+ editingId=id;
+ currentImagePath=p.image_path;
+ currentFilePath=p.file_path;
+
+ $("title").value=p.title||"";
+ $("category").value=p.category||"";
+ $("price").value=p.price;
+ $("comparePrice").value=p.compare_at_price??"";
+ $("sortOrder").value=p.sort_order??0;
+ $("description").value=p.description||"";
+ $("isActive").checked=p.is_active;
+ $("isFeatured").checked=p.is_featured;
+ $("imageFile").value="";
+ $("digitalFile").value="";
+ $("imagePreview").style.display="none";
+ $("imageCurrent").textContent=p.image_path?"Gambar sedia ada dikekalkan jika tidak diganti.":"Tiada gambar.";
+ $("fileCurrent").textContent=p.file_name?"Fail sedia ada: "+p.file_name+". Pilih fail baharu jika mahu menggantikannya.":"Tiada fail.";
+ $("formHeading").textContent="Edit Produk";
+ $("saveBtn").textContent="Kemaskini Produk";
+ $("cancelBtn").classList.remove("hidden");
+ $("formStatus").textContent="";
+ $("productFormPanel").scrollIntoView({behavior:"smooth"});
+}
+
+function resetForm(){
+ editingId=null;
+ currentImagePath=null;
+ currentFilePath=null;
+ $("productForm").reset();
+ $("isActive").checked=true;
+ $("sortOrder").value=0;
+ $("imagePreview").style.display="none";
+ $("imageCurrent").textContent="";
+ $("fileCurrent").textContent="";
+ $("formHeading").textContent="Tambah Produk Baharu";
+ $("saveBtn").textContent="Simpan Produk";
+ $("cancelBtn").classList.add("hidden");
+}
+
+async function deleteProduct(id){
+ const p=products.find(item=>item.id===id);
+ if(!p)return;
+ if(!confirm("Padam produk '"+p.title+"' daripada katalog?"))return;
+
+ const {error}=await db.from("products").delete().eq("id",id);
+ if(error){
+  alert("Gagal memadam produk: "+error.message);
+  return;
+ }
+ if(editingId===id)resetForm();
+ await loadProducts();
+ alert("Produk berjaya dipadam daripada katalog.");
+}
+
+db.auth.onAuthStateChange((event,session)=>{
+ if(event==="SIGNED_OUT"){
+  currentUser=null;
+  showLogin();
+ }
+});
+
+checkAdmin();
+lucide.createIcons();
+</script>
+</body>
+</html>
