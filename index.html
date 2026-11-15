@@ -729,11 +729,10 @@ function showFavorites(button){
   renderProducts();
   document.querySelector(".section-title").scrollIntoView({behavior:"smooth"});
 }
-
 function showMe(button){
-  setNavActive(button);
-  alert("Bahagian akaun pelanggan akan dibina dalam fasa seterusnya.");
+  window.location.href = "account.html";
 }
+
 
 lucide.createIcons();
 loadProducts();
