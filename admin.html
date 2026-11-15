@@ -285,29 +285,62 @@ function publicImage(path){
   path.split("/").map(encodeURIComponent).join("/");
 }
 
+
 async function checkAdmin(){
  const {data:{session},error}=await db.auth.getSession();
- if(error||!session){
+
+ if(error){
+  showLogin();
+  showStatus("loginStatus","Ralat sesi: "+error.message,"error");
+  return;
+ }
+
+ if(!session){
   showLogin();
   return;
  }
+
  currentUser=session.user;
+
  const {data:profile,error:profileError}=await db
   .from("profiles")
   .select("role,full_name")
   .eq("id",currentUser.id)
   .maybeSingle();
 
- if(profileError||!profile||profile.role!=="admin"){
-  await db.auth.signOut();
-  currentUser=null;
+ if(profileError){
   showLogin();
-  showStatus("loginStatus",
-   "Akaun ini tidak mempunyai akses admin SNNA.","error");
+  showStatus(
+   "loginStatus",
+   "Ralat membaca profil: "+profileError.message,
+   "error"
+  );
   return;
  }
+
+ if(!profile){
+  showLogin();
+  showStatus(
+   "loginStatus",
+   "Profil admin tidak dijumpai untuk UID ini.",
+   "error"
+  );
+  return;
+ }
+
+ if(profile.role!=="admin"){
+  showLogin();
+  showStatus(
+   "loginStatus",
+   "Role akaun ialah: "+profile.role+" (bukan admin).",
+   "error"
+  );
+  return;
+ }
+
  showDashboard(profile.full_name||currentUser.email);
 }
+
 
 function showLogin(){
  $("loginView").style.display="block";
