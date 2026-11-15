@@ -1,0 +1,467 @@
+
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Akaun Saya — SNNA</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root{
+  --yellow:#FFF0B8;
+  --gold:#F4CE62;
+  --cream:#FFFCF3;
+  --white:#FFFFFF;
+  --text:#333333;
+  --muted:#888888;
+  --line:#EEEEEE;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:var(--cream);
+  color:var(--text);
+}
+
+header{
+  background:var(--white);
+  padding:17px 20px;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.logo{
+  font-size:23px;
+  font-weight:800;
+  letter-spacing:2px;
+}
+
+.logo span{color:#D5A928}
+
+.back{
+  text-decoration:none;
+  color:#555;
+  font-size:14px;
+}
+
+.container{
+  max-width:480px;
+  margin:35px auto;
+  padding:0 18px;
+}
+
+.card{
+  background:white;
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:25px 22px;
+  box-shadow:0 5px 20px rgba(0,0,0,.035);
+}
+
+h2{
+  margin:0 0 8px;
+  font-size:22px;
+}
+
+.subtitle{
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.6;
+  margin-bottom:23px;
+}
+
+label{
+  display:block;
+  font-size:13px;
+  font-weight:600;
+  margin:15px 0 7px;
+}
+
+input{
+  width:100%;
+  padding:13px;
+  border:1px solid #E5E5E5;
+  border-radius:10px;
+  font-size:14px;
+  outline:none;
+}
+
+input:focus{
+  border-color:var(--gold);
+}
+
+button{
+  width:100%;
+  border:0;
+  padding:14px;
+  margin-top:18px;
+  border-radius:10px;
+  background:var(--gold);
+  color:#333;
+  font-weight:700;
+  font-size:14px;
+  cursor:pointer;
+}
+
+button:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+}
+
+.switch{
+  text-align:center;
+  font-size:13px;
+  margin-top:20px;
+  color:var(--muted);
+}
+
+.switch a{
+  color:#9A7414;
+  font-weight:700;
+  text-decoration:none;
+  cursor:pointer;
+}
+
+.message{
+  display:none;
+  margin-top:15px;
+  padding:12px;
+  border-radius:9px;
+  font-size:13px;
+  line-height:1.5;
+  background:#FFF5D6;
+  color:#6B5415;
+}
+
+.message.error{
+  background:#FFF0F0;
+  color:#B42318;
+}
+
+.account-info{
+  display:none;
+}
+
+.profile{
+  background:var(--cream);
+  border:1px solid #F2E8C9;
+  padding:17px;
+  border-radius:13px;
+  margin:20px 0;
+}
+
+.avatar{
+  width:52px;
+  height:52px;
+  background:var(--yellow);
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:23px;
+  margin-bottom:12px;
+}
+
+.profile-name{
+  font-weight:700;
+  font-size:17px;
+}
+
+.profile-email{
+  color:var(--muted);
+  font-size:13px;
+  margin-top:5px;
+  word-break:break-word;
+}
+
+.section{
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:16px;
+  margin-top:13px;
+}
+
+.section h3{
+  font-size:15px;
+  margin:0 0 8px;
+}
+
+.section p{
+  font-size:13px;
+  line-height:1.6;
+  color:var(--muted);
+  margin:0;
+}
+
+.secondary{
+  background:#F4F4F4;
+  color:#444;
+}
+
+footer{
+  text-align:center;
+  color:#999;
+  font-size:12px;
+  padding:25px 10px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">SN<span>NA</span></div>
+  <a class="back" href="index.html">← Kembali ke kedai</a>
+</header>
+
+<div class="container">
+
+  <div class="card" id="authCard">
+
+    <h2 id="formTitle">Log Masuk</h2>
+    <div class="subtitle" id="formSubtitle">
+      Selamat kembali ke akaun SNNA anda.
+    </div>
+
+    <div id="nameField" style="display:none">
+      <label>Nama penuh</label>
+      <input id="fullName" type="text" placeholder="Masukkan nama anda">
+    </div>
+
+    <label>Alamat e-mel</label>
+    <input id="email" type="email" placeholder="nama@email.com" autocomplete="email">
+
+    <label>Kata laluan</label>
+    <input id="password" type="password" placeholder="Masukkan kata laluan" autocomplete="current-password">
+
+    <button id="submitBtn" onclick="submitAuth()">Log Masuk</button>
+
+    <div class="message" id="message"></div>
+
+    <div class="switch">
+      <span id="switchText">Belum mempunyai akaun?</span>
+      <a onclick="toggleMode()" id="switchLink">Daftar sekarang</a>
+    </div>
+
+  </div>
+
+  <div class="card account-info" id="accountCard">
+
+    <h2>Akaun Saya</h2>
+    <div class="subtitle">Selamat datang ke SNNA Digital Store.</div>
+
+    <div class="profile">
+      <div class="avatar">👤</div>
+      <div class="profile-name" id="profileName">Pelanggan SNNA</div>
+      <div class="profile-email" id="profileEmail"></div>
+    </div>
+
+    <div class="section">
+      <h3>📦 Sejarah Pembelian</h3>
+      <p>Rekod pesanan anda akan dipaparkan di sini selepas sistem checkout dan pembayaran diaktifkan.</p>
+    </div>
+
+    <div class="section">
+      <h3>⬇️ Muat Turun Produk</h3>
+      <p>Produk digital yang telah dibayar boleh dimuat turun melalui bahagian ini selepas sistem pembayaran dan akses muat turun selamat disediakan.</p>
+    </div>
+
+    <div class="message" id="profileMessage"></div>
+
+    <button class="secondary" onclick="logout()">Log Keluar</button>
+
+  </div>
+
+</div>
+
+<footer>© 2026 SNNA Digital Store</footer>
+
+<script>
+const SUPABASE_URL = "https://xbnvgcsvicealimwlsmv.supabase.co";
+
+const SUPABASE_KEY = "sb_publishable_nQAJM6sx1KmuNMBXTO40Zw_wFvPpCzD";
+
+const db = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+let isRegister = false;
+
+function showMessage(text,isError=false){
+  const box=document.getElementById("message");
+  box.textContent=text;
+  box.className="message"+(isError?" error":"");
+  box.style.display="block";
+}
+
+function toggleMode(){
+  isRegister=!isRegister;
+
+  document.getElementById("formTitle").textContent=
+    isRegister?"Daftar Akaun":"Log Masuk";
+
+  document.getElementById("formSubtitle").textContent=
+    isRegister
+    ?"Cipta akaun SNNA anda untuk menggunakan kedai kami."
+    :"Selamat kembali ke akaun SNNA anda.";
+
+  document.getElementById("nameField").style.display=
+    isRegister?"block":"none";
+
+  document.getElementById("submitBtn").textContent=
+    isRegister?"Daftar Sekarang":"Log Masuk";
+
+  document.getElementById("switchText").textContent=
+    isRegister?"Sudah mempunyai akaun?":"Belum mempunyai akaun?";
+
+  document.getElementById("switchLink").textContent=
+    isRegister?"Log masuk":"Daftar sekarang";
+
+  document.getElementById("password").autocomplete=
+    isRegister?"new-password":"current-password";
+
+  document.getElementById("message").style.display="none";
+}
+
+async function submitAuth(){
+
+  const email=document.getElementById("email").value.trim();
+  const password=document.getElementById("password").value;
+  const fullName=document.getElementById("fullName").value.trim();
+  const button=document.getElementById("submitBtn");
+
+  if(!email || !password){
+    showMessage("Sila isi alamat e-mel dan kata laluan.",true);
+    return;
+  }
+
+  if(password.length<6){
+    showMessage("Kata laluan mestilah sekurang-kurangnya 6 aksara.",true);
+    return;
+  }
+
+  if(isRegister && !fullName){
+    showMessage("Sila masukkan nama penuh anda.",true);
+    return;
+  }
+
+  button.disabled=true;
+  button.textContent="Sila tunggu...";
+
+  try{
+
+    if(isRegister){
+
+      const {data,error}=await db.auth.signUp({
+        email:email,
+        password:password,
+        options:{
+          data:{
+            full_name:fullName
+          }
+        }
+      });
+
+      if(error) throw error;
+
+      if(data.session){
+        await loadAccount();
+      }else{
+        showMessage(
+          "Pendaftaran berjaya. Sila semak e-mel anda untuk mengesahkan akaun sebelum log masuk."
+        );
+      }
+
+    }else{
+
+      const {data,error}=await db.auth.signInWithPassword({
+        email:email,
+        password:password
+      });
+
+      if(error) throw error;
+
+      await loadAccount();
+    }
+
+  }catch(error){
+
+    showMessage(error.message || "Berlaku ralat. Sila cuba lagi.",true);
+
+  }finally{
+
+    button.disabled=false;
+    button.textContent=isRegister?"Daftar Sekarang":"Log Masuk";
+
+  }
+}
+
+async function loadAccount(){
+
+  const {data,error}=await db.auth.getSession();
+
+  if(error || !data.session){
+    document.getElementById("authCard").style.display="block";
+    document.getElementById("accountCard").style.display="none";
+    return;
+  }
+
+  const user=data.session.user;
+
+  document.getElementById("authCard").style.display="none";
+  document.getElementById("accountCard").style.display="block";
+
+  document.getElementById("profileEmail").textContent=user.email || "";
+
+  const profileMessage=document.getElementById("profileMessage");
+  profileMessage.style.display="none";
+
+  const {data:profile,error:profileError}=await db
+    .from("profiles")
+    .select("full_name,role")
+    .eq("id",user.id)
+    .maybeSingle();
+
+  if(profileError){
+    document.getElementById("profileName").textContent=
+      user.user_metadata?.full_name || "Pelanggan SNNA";
+
+    profileMessage.textContent=
+      "Maklumat profil belum dapat dipaparkan. Akaun anda masih berjaya log masuk.";
+
+    profileMessage.style.display="block";
+
+  }else{
+
+    document.getElementById("profileName").textContent=
+      profile?.full_name ||
+      user.user_metadata?.full_name ||
+      "Pelanggan SNNA";
+  }
+}
+
+async function logout(){
+
+  const {error}=await db.auth.signOut();
+
+  if(error){
+    alert("Tidak berjaya log keluar: "+error.message);
+    return;
+  }
+
+  window.location.href="index.html";
+}
+
+loadAccount();
+</script>
+
+</body>
+</html>
