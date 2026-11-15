@@ -679,30 +679,255 @@ function updateCart(){
     return;
   }
 
+
+<script>
+/* SNNA SUPABASE CONNECTION */
+const SUPABASE_URL = "https://xbnvgcsvicealimwlsmv.supabase.co";
+const SUPABASE_KEY = "sb_publishable_nQAJM6sx1KmuNMBXTO40Zw_wFvPpCzD";
+
+const db = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+let products = [];
+let selectedCategory = "Semua";
+let cart = [];
+let favorites = [];
+
+const CART_STORAGE_KEY = "snna_cart_v1";
+
+const money = value =>
+  "RM " + Number(value || 0).toFixed(2);
+
+function escapeHTML(value){
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  }[char]));
+}
+
+/* SIMPAN TROLI DALAM BROWSER */
+function saveCart(){
+  try{
+    localStorage.setItem(
+      CART_STORAGE_KEY,
+      JSON.stringify(cart)
+    );
+  }catch(error){
+    console.error("SNNA cart save error:",error);
+  }
+}
+
+/* AMBIL SEMULA TROLI */
+function loadCart(){
+  try{
+    const saved = localStorage.getItem(CART_STORAGE_KEY);
+    if(!saved) return;
+
+    const parsed = JSON.parse(saved);
+
+    if(!Array.isArray(parsed)) return;
+
+    cart = parsed.filter(item =>
+      item &&
+      typeof item.id === "string" &&
+      typeof item.title === "string" &&
+      Number.isFinite(Number(item.price)) &&
+      Number(item.price) >= 0 &&
+      Number.isInteger(Number(item.qty)) &&
+      Number(item.qty) > 0
+    ).map(item => ({
+      id:item.id,
+      title:item.title,
+      price:Number(item.price),
+      qty:Number(item.qty)
+    }));
+
+  }catch(error){
+    console.error("SNNA cart load error:",error);
+    cart = [];
+  }
+}
+
+function imageURL(path){
+  if(!path) return "";
+  if(/^https?:\/\//i.test(path)) return path;
+
+  const cleanPath = String(path).replace(/^\/+/,"");
+  return SUPABASE_URL +
+    "/storage/v1/object/public/product-images/" +
+    cleanPath.split("/").map(encodeURIComponent).join("/");
+}
+
+async function loadProducts(){
+  const grid = document.getElementById("productsGrid");
+  grid.innerHTML = '<div class="loading">Sedang memuatkan produk...</div>';
+
+  const {data,error} = await db
+    .from("products")
+    .select("id,title,slug,description,price,compare_at_price,category,image_path,is_active,is_featured,sort_order,created_at")
+    .eq("is_active",true)
+    .order("sort_order",{ascending:true})
+    .order("created_at",{ascending:false});
+
+  if(error){
+    console.error("SNNA product error:",error);
+    grid.innerHTML =
+      '<div class="empty">Produk tidak dapat dimuatkan. Sila cuba semula sebentar lagi.</div>';
+    return;
+  }
+
+  products = data || [];
+  renderProducts();
+}
+
+function renderProducts(){
+  const grid = document.getElementById("productsGrid");
+  const search = document.getElementById("searchInput").value
+    .trim().toLowerCase();
+
+  let list = products.filter(product=>{
+    const matchSearch =
+      (product.title || "").toLowerCase().includes(search) ||
+      (product.category || "").toLowerCase().includes(search);
+
+    const matchCategory =
+      selectedCategory === "Semua" ||
+      selectedCategory === "Disukai" ||
+      (product.category || "").toLowerCase() === selectedCategory.toLowerCase();
+
+    return matchSearch && matchCategory;
+  });
+
+  if(selectedCategory === "Disukai"){
+    list = list.filter(p=>favorites.includes(p.id));
+  }
+
+  if(!list.length){
+    grid.innerHTML =
+      '<div class="empty">Belum ada produk untuk dipaparkan.</div>';
+    return;
+  }
+
+  grid.innerHTML = list.map(product=>{
+    const title = escapeHTML(product.title);
+    const category = escapeHTML(product.category);
+    const image = imageURL(product.image_path);
+    const price = money(product.price);
+    const oldPrice = product.compare_at_price
+      ? `<span class="old-price">${money(product.compare_at_price)}</span>`
+      : "";
+
+    const imageHTML = image
+      ? `<img src="${escapeHTML(image)}" alt="${title}" loading="lazy"
+           onerror="this.parentElement.innerHTML='<div class=&quot;image-placeholder&quot;><i data-lucide=&quot;image&quot;></i><span>Imej produk</span></div>';lucide.createIcons()">`
+      : `<div class="image-placeholder"><i data-lucide="image"></i><span>Imej produk</span></div>`;
+
+    return `
+      <article class="product-card">
+        <div class="product-image">${imageHTML}</div>
+        <div class="product-info">
+          <div class="product-title">${title}</div>
+          <div class="product-category">${category}</div>
+          <div class="product-price">${price}${oldPrice}</div>
+          <button class="add-cart" onclick="addToCart('${product.id}')">
+            <i data-lucide="shopping-bag"></i>
+            Tambah ke Troli
+          </button>
+        </div>
+      </article>
+    `;
+  }).join("");
+
+  lucide.createIcons();
+}
+
+function setCategory(category,button){
+  selectedCategory = category;
+
+  document.querySelectorAll(".category").forEach(el=>{
+    el.classList.remove("active");
+  });
+
+  if(button) button.classList.add("active");
+
+  document.getElementById("productHeading").textContent =
+    category === "Semua" ? "Produk Pilihan" : category;
+
+  renderProducts();
+}
+
+/* TAMBAH PRODUK KE TROLI */
+function addToCart(id){
+  const product = products.find(p=>p.id === id);
+  if(!product) return;
+
+  const existing = cart.find(item=>item.id === id);
+
+  if(existing){
+    existing.qty++;
+  }else{
+    cart.push({
+      id:product.id,
+      title:product.title,
+      price:Number(product.price),
+      qty:1
+    });
+  }
+
+  updateCart();
+}
+
+/* KEMAS KINI TROLI DAN JUMLAH */
+function updateCart(){
+  const count = cart.reduce((sum,item)=>sum+item.qty,0);
+  const total = cart.reduce((sum,item)=>sum+(item.price*item.qty),0);
+
+  document.getElementById("cartCount").textContent = count;
+  document.getElementById("cartTotal").textContent = money(total);
+
+  const area = document.getElementById("cartItems");
+
+  if(!cart.length){
+    area.innerHTML =
+      '<div class="empty">Troli masih kosong.</div>';
+    saveCart();
+    return;
+  }
+
   area.innerHTML = cart.map(item=>`
     <div class="cart-line">
       <div>
         <strong>${escapeHTML(item.title)}</strong><br>
         <small>${money(item.price)} setiap satu</small>
         <div class="qty-controls">
-          <button onclick="changeQty('${item.id}',-1)">−</button>
+          <button onclick="changeQty('${escapeHTML(item.id)}',-1)">−</button>
           <span>${item.qty}</span>
-          <button onclick="changeQty('${item.id}',1)">+</button>
+          <button onclick="changeQty('${escapeHTML(item.id)}',1)">+</button>
         </div>
       </div>
       <strong>${money(item.price*item.qty)}</strong>
     </div>
   `).join("");
+
+  saveCart();
 }
 
+/* UBAH KUANTITI */
 function changeQty(id,change){
   const item = cart.find(p=>p.id===id);
   if(!item) return;
 
   item.qty += change;
+
   if(item.qty <= 0){
     cart = cart.filter(p=>p.id!==id);
   }
+
   updateCart();
 }
 
@@ -750,13 +975,17 @@ function showFavorites(button){
   renderProducts();
   document.querySelector(".section-title").scrollIntoView({behavior:"smooth"});
 }
+
 function showMe(button){
   window.location.href = "account.html";
 }
 
-
+/* MULAKAN SNNA */
+loadCart();
+updateCart();
 lucide.createIcons();
 loadProducts();
 </script>
+
 </body>
 </html>
