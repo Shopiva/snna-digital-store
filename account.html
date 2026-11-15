@@ -5,7 +5,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Akaun Saya — SNNA</title>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
@@ -18,199 +17,107 @@
   --muted:#888888;
   --line:#EEEEEE;
 }
-
 *{box-sizing:border-box}
-
 body{
   margin:0;
   font-family:Arial,sans-serif;
   background:var(--cream);
   color:var(--text);
 }
-
 header{
-  background:var(--white);
+  background:white;
   padding:17px 20px;
   border-bottom:1px solid var(--line);
   display:flex;
   align-items:center;
   justify-content:space-between;
 }
-
-.logo{
-  font-size:23px;
-  font-weight:800;
-  letter-spacing:2px;
-}
-
+.logo{font-size:23px;font-weight:800;letter-spacing:2px}
 .logo span{color:#D5A928}
-
-.back{
-  text-decoration:none;
-  color:#555;
-  font-size:14px;
-}
-
-.container{
-  max-width:480px;
-  margin:35px auto;
-  padding:0 18px;
-}
-
+.back{text-decoration:none;color:#555;font-size:14px}
+.container{max-width:520px;margin:30px auto;padding:0 16px}
 .card{
   background:white;
   border:1px solid var(--line);
   border-radius:18px;
-  padding:25px 22px;
+  padding:23px 20px;
   box-shadow:0 5px 20px rgba(0,0,0,.035);
 }
-
-h2{
-  margin:0 0 8px;
-  font-size:22px;
-}
-
-.subtitle{
-  color:var(--muted);
-  font-size:14px;
-  line-height:1.6;
-  margin-bottom:23px;
-}
-
-label{
-  display:block;
-  font-size:13px;
-  font-weight:600;
-  margin:15px 0 7px;
-}
-
+h2{margin:0 0 8px;font-size:22px}
+.subtitle{color:var(--muted);font-size:14px;line-height:1.6;margin-bottom:22px}
+label{display:block;font-size:13px;font-weight:600;margin:15px 0 7px}
 input{
-  width:100%;
-  padding:13px;
-  border:1px solid #E5E5E5;
-  border-radius:10px;
-  font-size:14px;
-  outline:none;
+  width:100%;padding:13px;border:1px solid #E5E5E5;
+  border-radius:10px;font-size:14px;outline:none;
 }
-
-input:focus{
-  border-color:var(--gold);
-}
-
+input:focus{border-color:var(--gold)}
 button{
-  width:100%;
-  border:0;
-  padding:14px;
-  margin-top:18px;
-  border-radius:10px;
-  background:var(--gold);
-  color:#333;
-  font-weight:700;
-  font-size:14px;
-  cursor:pointer;
+  width:100%;border:0;padding:14px;margin-top:17px;
+  border-radius:10px;background:var(--gold);
+  color:#333;font-weight:700;font-size:14px;cursor:pointer;
 }
-
-button:disabled{
-  opacity:.6;
-  cursor:not-allowed;
-}
-
-.switch{
-  text-align:center;
-  font-size:13px;
-  margin-top:20px;
-  color:var(--muted);
-}
-
-.switch a{
-  color:#9A7414;
-  font-weight:700;
-  text-decoration:none;
-  cursor:pointer;
-}
-
+button:disabled{opacity:.6;cursor:not-allowed}
+.switch{text-align:center;font-size:13px;margin-top:20px;color:var(--muted)}
+.switch a{color:#9A7414;font-weight:700;text-decoration:none;cursor:pointer}
 .message{
-  display:none;
-  margin-top:15px;
-  padding:12px;
-  border-radius:9px;
-  font-size:13px;
-  line-height:1.5;
-  background:#FFF5D6;
-  color:#6B5415;
+  display:none;margin-top:14px;padding:12px;border-radius:9px;
+  font-size:13px;line-height:1.5;background:#FFF5D6;color:#6B5415;
 }
-
-.message.error{
-  background:#FFF0F0;
-  color:#B42318;
-}
-
-.account-info{
-  display:none;
-}
-
+.message.error{background:#FFF0F0;color:#B42318}
+.account-info{display:none}
 .profile{
-  background:var(--cream);
-  border:1px solid #F2E8C9;
-  padding:17px;
-  border-radius:13px;
-  margin:20px 0;
+  background:var(--cream);border:1px solid #F2E8C9;
+  padding:17px;border-radius:13px;margin:20px 0;
 }
-
 .avatar{
-  width:52px;
-  height:52px;
-  background:var(--yellow);
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:23px;
-  margin-bottom:12px;
+  width:52px;height:52px;background:var(--yellow);
+  border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:23px;margin-bottom:12px;
 }
-
-.profile-name{
-  font-weight:700;
-  font-size:17px;
-}
-
-.profile-email{
-  color:var(--muted);
-  font-size:13px;
-  margin-top:5px;
-  word-break:break-word;
-}
-
+.profile-name{font-weight:700;font-size:17px}
+.profile-email{color:var(--muted);font-size:13px;margin-top:5px;word-break:break-word}
 .section{
-  border:1px solid var(--line);
-  border-radius:12px;
-  padding:16px;
-  margin-top:13px;
+  border:1px solid var(--line);border-radius:12px;
+  padding:16px;margin-top:14px;
 }
-
-.section h3{
-  font-size:15px;
-  margin:0 0 8px;
+.section h3{font-size:15px;margin:0 0 12px}
+.section-intro{font-size:13px;color:var(--muted);line-height:1.6}
+.order{
+  border:1px solid #F0E9D8;border-radius:11px;
+  padding:13px;margin-top:12px;background:#FFFEFA;
 }
-
-.section p{
-  font-size:13px;
-  line-height:1.6;
-  color:var(--muted);
-  margin:0;
+.order-top{
+  display:flex;justify-content:space-between;
+  gap:10px;align-items:flex-start;flex-wrap:wrap;
 }
-
-.secondary{
-  background:#F4F4F4;
-  color:#444;
+.order-number{font-size:13px;font-weight:700}
+.order-date{font-size:12px;color:var(--muted);margin-top:5px}
+.status{
+  font-size:11px;padding:6px 9px;border-radius:20px;
+  background:#FFF0B8;color:#705711;font-weight:700;
 }
-
-footer{
-  text-align:center;
-  color:#999;
-  font-size:12px;
-  padding:25px 10px;
+.order-products{
+  border-top:1px solid var(--line);
+  margin-top:12px;padding-top:10px;
 }
+.order-product{
+  display:flex;justify-content:space-between;
+  gap:12px;font-size:13px;padding:5px 0;
+}
+.order-product span:last-child{white-space:nowrap}
+.order-total{
+  border-top:1px solid var(--line);margin-top:9px;
+  padding-top:11px;display:flex;justify-content:space-between;
+  font-size:14px;font-weight:700;
+}
+.empty{
+  text-align:center;background:var(--cream);
+  padding:22px 14px;border-radius:11px;
+  font-size:13px;color:var(--muted);line-height:1.7;
+}
+.empty-icon{font-size:27px;margin-bottom:8px}
+.secondary{background:#F4F4F4;color:#444}
+footer{text-align:center;color:#999;font-size:12px;padding:25px 10px}
 </style>
 </head>
 
@@ -224,7 +131,6 @@ footer{
 <div class="container">
 
   <div class="card" id="authCard">
-
     <h2 id="formTitle">Log Masuk</h2>
     <div class="subtitle" id="formSubtitle">
       Selamat kembali ke akaun SNNA anda.
@@ -236,10 +142,10 @@ footer{
     </div>
 
     <label>Alamat e-mel</label>
-    <input id="email" type="email" placeholder="nama@email.com" autocomplete="email">
+    <input id="email" type="email" placeholder="nama@email.com">
 
     <label>Kata laluan</label>
-    <input id="password" type="password" placeholder="Masukkan kata laluan" autocomplete="current-password">
+    <input id="password" type="password" placeholder="Masukkan kata laluan">
 
     <button id="submitBtn" onclick="submitAuth()">Log Masuk</button>
 
@@ -249,11 +155,9 @@ footer{
       <span id="switchText">Belum mempunyai akaun?</span>
       <a onclick="toggleMode()" id="switchLink">Daftar sekarang</a>
     </div>
-
   </div>
 
   <div class="card account-info" id="accountCard">
-
     <h2>Akaun Saya</h2>
     <div class="subtitle">Selamat datang ke SNNA Digital Store.</div>
 
@@ -265,18 +169,21 @@ footer{
 
     <div class="section">
       <h3>📦 Sejarah Pembelian</h3>
-      <p>Rekod pesanan anda akan dipaparkan di sini selepas sistem checkout dan pembayaran diaktifkan.</p>
+      <div id="ordersList" class="section-intro">
+        Sedang memuatkan pesanan...
+      </div>
     </div>
 
     <div class="section">
       <h3>⬇️ Muat Turun Produk</h3>
-      <p>Produk digital yang telah dibayar boleh dimuat turun melalui bahagian ini selepas sistem pembayaran dan akses muat turun selamat disediakan.</p>
+      <p class="section-intro">
+        Produk digital yang telah dibayar akan tersedia di sini
+        selepas sistem pembayaran dan muat turun selamat diaktifkan.
+      </p>
     </div>
 
     <div class="message" id="profileMessage"></div>
-
     <button class="secondary" onclick="logout()">Log Keluar</button>
-
   </div>
 
 </div>
@@ -285,7 +192,6 @@ footer{
 
 <script>
 const SUPABASE_URL = "https://xbnvgcsvicealimwlsmv.supabase.co";
-
 const SUPABASE_KEY = "sb_publishable_nQAJM6sx1KmuNMBXTO40Zw_wFvPpCzD";
 
 const db = window.supabase.createClient(
@@ -325,14 +231,10 @@ function toggleMode(){
   document.getElementById("switchLink").textContent=
     isRegister?"Log masuk":"Daftar sekarang";
 
-  document.getElementById("password").autocomplete=
-    isRegister?"new-password":"current-password";
-
   document.getElementById("message").style.display="none";
 }
 
 async function submitAuth(){
-
   const email=document.getElementById("email").value.trim();
   const password=document.getElementById("password").value;
   const fullName=document.getElementById("fullName").value.trim();
@@ -357,17 +259,11 @@ async function submitAuth(){
   button.textContent="Sila tunggu...";
 
   try{
-
     if(isRegister){
-
       const {data,error}=await db.auth.signUp({
-        email:email,
-        password:password,
-        options:{
-          data:{
-            full_name:fullName
-          }
-        }
+        email,
+        password,
+        options:{data:{full_name:fullName}}
       });
 
       if(error) throw error;
@@ -375,16 +271,13 @@ async function submitAuth(){
       if(data.session){
         await loadAccount();
       }else{
-        showMessage(
-          "Pendaftaran berjaya. Sila semak e-mel anda untuk mengesahkan akaun sebelum log masuk."
-        );
+        showMessage("Pendaftaran berjaya. Sila semak e-mel untuk mengesahkan akaun sebelum log masuk.");
       }
 
     }else{
-
-      const {data,error}=await db.auth.signInWithPassword({
-        email:email,
-        password:password
+      const {error}=await db.auth.signInWithPassword({
+        email,
+        password
       });
 
       if(error) throw error;
@@ -393,19 +286,151 @@ async function submitAuth(){
     }
 
   }catch(error){
-
     showMessage(error.message || "Berlaku ralat. Sila cuba lagi.",true);
-
   }finally{
-
     button.disabled=false;
     button.textContent=isRegister?"Daftar Sekarang":"Log Masuk";
+  }
+}
 
+function escapeHTML(value){
+  return String(value ?? "").replace(/[&<>"']/g,function(char){
+    return {
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#039;"
+    }[char];
+  });
+}
+
+function formatMoney(value){
+  return "RM "+Number(value || 0).toFixed(2);
+}
+
+function formatDate(value){
+  if(!value) return "-";
+
+  const date=new Date(value);
+
+  if(Number.isNaN(date.getTime())) return "-";
+
+  return date.toLocaleDateString("ms-MY",{
+    day:"2-digit",
+    month:"short",
+    year:"numeric"
+  });
+}
+
+function statusText(value){
+  const status=String(value || "").toLowerCase();
+
+  const labels={
+    pending:"Menunggu",
+    paid:"Dibayar",
+    completed:"Selesai",
+    processing:"Diproses",
+    cancelled:"Dibatalkan",
+    failed:"Gagal",
+    refunded:"Dipulangkan",
+    approved:"Diluluskan",
+    rejected:"Ditolak"
+  };
+
+  return labels[status] || value || "Belum ditetapkan";
+}
+
+async function loadOrders(userId){
+  const list=document.getElementById("ordersList");
+
+  list.textContent="Sedang memuatkan pesanan...";
+
+  try{
+    const {data:orders,error}=await db
+      .from("orders")
+      .select("id,order_number,total,status,payment_status,created_at")
+      .eq("customer_id",userId)
+      .order("created_at",{ascending:false});
+
+    if(error) throw error;
+
+    if(!orders || orders.length===0){
+      list.innerHTML=`
+        <div class="empty">
+          <div class="empty-icon">🛍️</div>
+          <strong>Belum ada pembelian</strong><br>
+          Pesanan anda akan dipaparkan di sini selepas pembelian dibuat.
+        </div>`;
+      return;
+    }
+
+    const orderIds=orders.map(order=>order.id);
+
+    const {data:items,error:itemError}=await db
+      .from("order_items")
+      .select("order_id,product_title,unit_price,quantity")
+      .in("order_id",orderIds);
+
+    if(itemError) throw itemError;
+
+    const grouped={};
+
+    (items || []).forEach(item=>{
+      if(!grouped[item.order_id]) grouped[item.order_id]=[];
+      grouped[item.order_id].push(item);
+    });
+
+    list.innerHTML=orders.map(order=>{
+      const products=grouped[order.id] || [];
+
+      const productHTML=products.length
+        ? products.map(item=>`
+            <div class="order-product">
+              <span>${escapeHTML(item.product_title)} × ${Number(item.quantity || 1)}</span>
+              <span>${formatMoney(Number(item.unit_price || 0)*Number(item.quantity || 1))}</span>
+            </div>
+          `).join("")
+        : `<div class="section-intro">Maklumat produk belum tersedia.</div>`;
+
+      return `
+        <div class="order">
+          <div class="order-top">
+            <div>
+              <div class="order-number">
+                Pesanan #${escapeHTML(order.order_number)}
+              </div>
+              <div class="order-date">${formatDate(order.created_at)}</div>
+            </div>
+            <span class="status">${escapeHTML(statusText(order.status))}</span>
+          </div>
+
+          <div class="order-products">
+            ${productHTML}
+          </div>
+
+          <div class="order-total">
+            <span>Jumlah</span>
+            <span>${formatMoney(order.total)}</span>
+          </div>
+
+          <div class="section-intro" style="margin-top:9px">
+            Status bayaran: <strong>${escapeHTML(statusText(order.payment_status))}</strong>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+  }catch(error){
+    list.innerHTML=`
+      <div class="message error" style="display:block">
+        Tidak berjaya memuatkan sejarah pembelian.
+        ${escapeHTML(error.message)}
+      </div>`;
   }
 }
 
 async function loadAccount(){
-
   const {data,error}=await db.auth.getSession();
 
   if(error || !data.session){
@@ -418,7 +443,6 @@ async function loadAccount(){
 
   document.getElementById("authCard").style.display="none";
   document.getElementById("accountCard").style.display="block";
-
   document.getElementById("profileEmail").textContent=user.email || "";
 
   const profileMessage=document.getElementById("profileMessage");
@@ -430,26 +454,21 @@ async function loadAccount(){
     .eq("id",user.id)
     .maybeSingle();
 
-  if(profileError){
-    document.getElementById("profileName").textContent=
-      user.user_metadata?.full_name || "Pelanggan SNNA";
+  document.getElementById("profileName").textContent=
+    profile?.full_name ||
+    user.user_metadata?.full_name ||
+    "Pelanggan SNNA";
 
+  if(profileError){
     profileMessage.textContent=
       "Maklumat profil belum dapat dipaparkan. Akaun anda masih berjaya log masuk.";
-
     profileMessage.style.display="block";
-
-  }else{
-
-    document.getElementById("profileName").textContent=
-      profile?.full_name ||
-      user.user_metadata?.full_name ||
-      "Pelanggan SNNA";
   }
+
+  await loadOrders(user.id);
 }
 
 async function logout(){
-
   const {error}=await db.auth.signOut();
 
   if(error){
