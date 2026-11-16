@@ -883,28 +883,36 @@ async function logout(){
  showLogin();
 }
 
+
 async function loadProducts(){
+
+  console.log("SNNA: loadProducts dipanggil");
 
   const {data,error}=await db
     .from("products")
-    .select("*")
-    .order("created_at",{ascending:false});
-
-  alert(
-    "Jumlah produk: "+(data?.length ?? "TIADA")+
-    (error ? "\nRalat: "+error.message : "")
-  );
+    .select("*");
 
   if(error){
-    console.error("PRODUCT ERROR:",error);
+    alert("Ralat produk: "+error.message);
+    console.error(error);
     return;
   }
 
   products=data||[];
 
+  console.log("Jumlah produk:",products.length);
+  console.log("Data produk:",products);
+
   updateStats();
   renderList();
+
+  alert(
+    "Produk diterima: "+products.length+
+    "\nJumlah statistik: "+$("totalProducts").textContent+
+    "\nJumlah dalam senarai: "+products.length
+  );
 }
+
 
 function updateStats(){
  $("totalProducts").textContent=products.length;
