@@ -954,6 +954,37 @@ updateCart();
 lucide.createIcons();
 loadProducts();
 checkOpenCartRequest();
+
+async function shareSNNA(button) {
+  const shareData = {
+    title: "SNNA Digital Store",
+    text: "Jom terokai produk digital di SNNA!",
+    url: window.location.origin +
+         window.location.pathname
+  };
+
+  if (navigator.share) {
+    try {
+      await navigator.share(shareData);
+    } catch (error) {
+      if (error.name !== "AbortError") {
+        await copySNNA(shareData.url);
+      }
+    }
+  } else {
+    await copySNNA(shareData.url);
+  }
+}
+
+async function copySNNA(url) {
+  try {
+    await navigator.clipboard.writeText(url);
+    alert("Pautan SNNA berjaya disalin!");
+  } catch (error) {
+    prompt("Salin pautan SNNA:", url);
+  }
+}
+
 </script>
 
 </body>
