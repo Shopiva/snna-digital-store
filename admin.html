@@ -93,6 +93,124 @@ textarea{min-height:95px;resize:vertical}
 .login-card .btn{width:100%;margin-top:18px}
 #dashboard{display:none}
 #loginView{display:block}
+ 
+/* SNNA ADMIN NAVIGATION */
+.dashboard-layout{
+ display:flex;
+ align-items:flex-start;
+ min-height:calc(100vh - 70px);
+}
+
+.admin-sidebar{
+ width:225px;
+ flex-shrink:0;
+ background:#fff;
+ border-right:1px solid var(--line);
+ padding:20px 12px;
+ position:sticky;
+ top:70px;
+ height:calc(100vh - 70px);
+ overflow-y:auto;
+}
+
+.sidebar-title{
+ font-size:10px;
+ font-weight:800;
+ letter-spacing:2px;
+ color:#aaa;
+ padding:8px 12px 15px;
+}
+
+.admin-menu-btn{
+ width:100%;
+ display:flex;
+ align-items:center;
+ gap:12px;
+ padding:13px 12px;
+ margin-bottom:5px;
+ border:0;
+ border-radius:10px;
+ background:transparent;
+ color:#666;
+ text-align:left;
+ font-size:13px;
+ font-weight:700;
+}
+
+.admin-menu-btn svg{
+ width:18px;
+ height:18px;
+}
+
+.admin-menu-btn.active{
+ background:#FFF5D5;
+ color:#9B7417;
+}
+
+.admin-menu-btn:hover{
+ background:#FFF8E8;
+}
+
+.dashboard-layout main{
+ flex:1;
+ min-width:0;
+ max-width:1100px;
+ width:100%;
+ margin:0 auto;
+}
+
+#menuToggle{
+ display:none;
+}
+
+#menuBackdrop{
+ display:none;
+}
+
+@media(max-width:700px){
+ .dashboard-layout{
+  display:block;
+ }
+
+ .admin-sidebar{
+  position:fixed;
+  z-index:20;
+  top:0;
+  left:0;
+  width:260px;
+  height:100vh;
+  transform:translateX(-105%);
+  transition:transform .25s ease;
+  box-shadow:5px 0 25px rgba(0,0,0,.08);
+ }
+
+ .admin-sidebar.open{
+  transform:translateX(0);
+ }
+
+ #menuBackdrop.open{
+  display:block;
+  position:fixed;
+  inset:0;
+  z-index:19;
+  background:rgba(0,0,0,.35);
+ }
+
+ #menuToggle{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+ }
+
+ .dashboard-layout main{
+  padding:17px 12px 45px;
+ }
+
+ header{
+  z-index:10;
+ }
+}
+
 .hidden{display:none!important}
 footer{text-align:center;color:#aaa;font-size:11px;padding:20px}
 @media(max-width:600px){
