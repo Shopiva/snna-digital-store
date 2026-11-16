@@ -265,8 +265,51 @@ footer{text-align:center;color:#aaa;font-size:11px;padding:20px}
  </div>
 </section>
 
+
 <div id="dashboard">
+
+<div id="menuBackdrop" onclick="closeAdminMenu()"></div>
+
+<div class="dashboard-layout">
+
+<aside class="admin-sidebar" id="adminSidebar">
+
+ <div class="sidebar-title">SNNA MANAGEMENT</div>
+
+ <button class="admin-menu-btn active"
+  onclick="adminNavigate('dashboardHome',this)">
+  <i data-lucide="layout-dashboard"></i>
+  Dashboard
+ </button>
+
+ <button class="admin-menu-btn"
+  onclick="adminNavigate('productFormPanel',this)">
+  <i data-lucide="package"></i>
+  Produk
+ </button>
+
+ <button class="admin-menu-btn"
+  onclick="adminNavigate('ordersPanel',this)">
+  <i data-lucide="shopping-bag"></i>
+  Pesanan
+ </button>
+
+ <button class="admin-menu-btn"
+  onclick="adminNavigate('salesStatsPanel',this)">
+  <i data-lucide="chart-no-axes-column-increasing"></i>
+  Analisis Jualan
+ </button>
+
+ <button class="admin-menu-btn"
+  onclick="adminNavigate('reviewsPanel',this)">
+  <i data-lucide="star"></i>
+  Pengurusan Ulasan
+ </button>
+
+</aside>
+
 <main>
+
  <div class="welcome">
   <h2>Dashboard Admin 👋</h2>
   <p>Selamat datang ke pengurusan SNNA Digital Store.</p>
