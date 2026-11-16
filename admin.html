@@ -873,7 +873,8 @@ async function setReviewStatus(id,publish){
 }
 $("orderSearch").addEventListener("input",renderOrders);
 $("orderFilter").addEventListener("change",renderOrders);
-$("imageFile").addEventListener("change",()=>{
+$("reviewFilter").addEventListener("change",renderReviews);
+ $("imageFile").addEventListener("change",()=>{
  const file=$("imageFile").files[0];
  const preview=$("imagePreview");
  if(!file){preview.style.display="none";return;}
