@@ -236,6 +236,38 @@ footer{text-align:center;color:#aaa;font-size:11px;padding:20px}
    <div class="help">Memuatkan produk...</div>
   </div>
  </section>
+  <section class="panel" id="ordersPanel">
+  <h3>📦 Pengurusan Pesanan</h3>
+
+  <div class="form-grid">
+   <div class="field">
+    <label>Carian pesanan</label>
+    <input id="orderSearch"
+     placeholder="Nama, email atau nombor pesanan">
+   </div>
+
+   <div class="field">
+    <label>Penapis status</label>
+    <select id="orderFilter">
+     <option value="">Semua pesanan</option>
+     <option value="pending">Pending</option>
+     <option value="processing">Processing</option>
+     <option value="completed">Completed</option>
+     <option value="cancelled">Cancelled</option>
+    </select>
+   </div>
+  </div>
+
+  <div class="form-actions">
+   <button class="btn btn-gold"
+    onclick="loadOrders()">Muat Semula</button>
+  </div>
+
+  <div id="orderList" class="product-list"
+   style="margin-top:15px">
+   <div class="help">Memuatkan pesanan...</div>
+  </div>
+  </section>
 </main>
 </div>
 
