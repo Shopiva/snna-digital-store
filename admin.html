@@ -711,12 +711,7 @@ async function checkAdmin(){
  }
 
  currentUser=session.user;
- const {data:adminStatus,error:adminError}=await db.rpc("is_snna_admin");
-
-alert(
-  "Admin status: "+adminStatus+
-  (adminError ? "\nRalat: "+adminError.message : "")
-);
+ 
  alert("LOGIN UID: " + currentUser.id);
 console.log("SNNA LOGIN UID:", currentUser.id);
 console.log("SNNA LOGIN EMAIL:", currentUser.email);
