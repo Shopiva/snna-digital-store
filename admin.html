@@ -876,18 +876,26 @@ async function logout(){
 }
 
 async function loadProducts(){
- const {data,error}=await db.from("products")
-  .select("*")
-  .order("sort_order",{ascending:true})
-  .order("created_at",{ascending:false});
 
- if(error){
-  $("productList").textContent="Gagal memuatkan produk: "+error.message;
-  return;
- }
- products=data||[];
- updateStats();
- renderList();
+  const {data,error}=await db
+    .from("products")
+    .select("*")
+    .order("created_at",{ascending:false});
+
+  alert(
+    "Jumlah produk: "+(data?.length ?? "TIADA")+
+    (error ? "\nRalat: "+error.message : "")
+  );
+
+  if(error){
+    console.error("PRODUCT ERROR:",error);
+    return;
+  }
+
+  products=data||[];
+
+  updateStats();
+  renderList();
 }
 
 function updateStats(){
