@@ -615,6 +615,37 @@ async function checkAdmin(){
 }
 
 
+function toggleAdminMenu(){
+ const sidebar=$("adminSidebar");
+ const backdrop=$("menuBackdrop");
+
+ sidebar.classList.toggle("open");
+ backdrop.classList.toggle("open");
+}
+
+function closeAdminMenu(){
+ $("adminSidebar").classList.remove("open");
+ $("menuBackdrop").classList.remove("open");
+}
+
+function adminNavigate(target,button){
+ const section=$(target);
+
+ if(!section)return;
+
+ document.querySelectorAll(".admin-menu-btn")
+  .forEach(btn=>btn.classList.remove("active"));
+
+ if(button)button.classList.add("active");
+
+ closeAdminMenu();
+
+ section.scrollIntoView({
+  behavior:"smooth",
+  block:"start"
+ });
+}
+
 function showLogin(){
  $("loginView").style.display="block";
  $("dashboard").style.display="none";
