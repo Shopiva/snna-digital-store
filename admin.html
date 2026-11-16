@@ -155,7 +155,48 @@ footer{text-align:center;color:#aaa;font-size:11px;padding:20px}
    <strong id="featuredProducts">0</strong><span>Produk pilihan</span>
   </div>
  </div>
+ <!-- SNNA SALES STATISTICS -->
+ <section class="panel" id="salesStatsPanel">
+  <h3>📊 Statistik Jualan Produk</h3>
 
+  <div class="field" style="margin-bottom:15px">
+   <label>Tempoh statistik</label>
+   <select id="salesPeriod">
+    <option value="all">Semua rekod</option>
+    <option value="today">Hari ini</option>
+    <option value="month">Bulan ini</option>
+    <option value="year">Tahun ini</option>
+   </select>
+  </div>
+
+  <div class="stats">
+   <div class="stat">
+    <i data-lucide="shopping-bag"></i>
+    <strong id="salesUnits">0</strong>
+    <span>Unit terjual</span>
+   </div>
+
+   <div class="stat">
+    <i data-lucide="wallet"></i>
+    <strong id="salesRevenue">RM 0.00</strong>
+    <span>Jumlah hasil pesanan dibayar</span>
+   </div>
+
+   <div class="stat">
+    <i data-lucide="receipt"></i>
+    <strong id="salesOrders">0</strong>
+    <span>Pesanan dibayar</span>
+   </div>
+  </div>
+
+  <h3 style="margin-top:20px">🏆 Produk Paling Laris</h3>
+
+  <div id="bestSellingProducts" class="product-list">
+   <div class="help">Memuatkan statistik jualan...</div>
+  </div>
+
+  <div id="salesStatsStatus" class="status"></div>
+ </section>
  <section class="panel" id="productFormPanel">
   <h3 id="formHeading">Tambah Produk Baharu</h3>
   <form id="productForm">
