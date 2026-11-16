@@ -461,7 +461,207 @@ function renderList(){
  }).join("");
  lucide.createIcons();
 }
+// =================================
+// SNNA ORDER MANAGEMENT
+// =================================
 
+let allOrders=[];
+
+function orderStatusLabel(status){
+ const labels={
+  pending:"Pending",
+  processing:"Processing",
+  completed:"Completed",
+  cancelled:"Cancelled"
+ };
+ return labels[status]||status||"Tidak diketahui";
+}
+
+function paymentStatusLabel(status){
+ return status||"Belum diketahui";
+}
+
+async function loadOrders(){
+ const area=$("orderList");
+ if(!area)return;
+
+ area.innerHTML='<div class="help">Memuatkan pesanan...</div>';
+
+ const {data,error}=await db
+  .from("orders")
+  .select(`
+   id,
+   order_number,
+   customer_name,
+   customer_email,
+   customer_phone,
+   subtotal,
+   discount,
+   total,
+   status,
+   payment_status,
+   currency,
+   created_at
+  `)
+  .order("created_at",{ascending:false});
+
+ if(error){
+  area.textContent="Gagal memuatkan pesanan: "+error.message;
+  return;
+ }
+
+ allOrders=data||[];
+ await renderOrders();
+}
+
+async function renderOrders(){
+ const area=$("orderList");
+
+ const search=($("orderSearch")?.value||"")
+  .toLowerCase().trim();
+
+ const filter=$("orderFilter")?.value||"";
+
+ let filtered=allOrders.filter(order=>{
+  const text=[
+   order.order_number,
+   order.customer_name,
+   order.customer_email,
+   order.customer_phone
+  ].join(" ").toLowerCase();
+
+  return (!search||text.includes(search))&&
+   (!filter||order.status===filter);
+ });
+
+ if(!filtered.length){
+  area.innerHTML=
+   '<div class="help">Tiada pesanan ditemui.</div>';
+  return;
+ }
+
+ const ids=filtered.map(o=>o.id);
+
+ const {data:items,error}=await db
+  .from("order_items")
+  .select("order_id,product_title,unit_price,quantity")
+  .in("order_id",ids);
+
+ if(error){
+  area.textContent="Gagal membaca item pesanan: "+error.message;
+  return;
+ }
+
+ area.innerHTML=filtered.map(order=>{
+  const orderItems=(items||[]).filter(
+   item=>item.order_id===order.id
+  );
+
+  const itemHTML=orderItems.map(item=>`
+   <div style="font-size:12px;padding:5px 0;
+    border-bottom:1px solid #eee">
+    ${safeText(item.product_title)}
+    × ${Number(item.quantity)}
+    — RM ${Number(item.unit_price).toFixed(2)}
+   </div>
+  `).join("");
+
+  const date=order.created_at
+   ?new Date(order.created_at).toLocaleString("ms-MY")
+   :"—";
+
+  return `
+   <div class="panel" style="margin:0">
+    <div style="display:flex;justify-content:space-between;
+     gap:10px;flex-wrap:wrap">
+     <strong>${safeText(order.order_number||order.id)}</strong>
+     <span class="help">${safeText(date)}</span>
+    </div>
+
+    <hr style="border:0;border-top:1px solid #eee;
+     margin:12px 0">
+
+    <strong style="font-size:13px">
+     ${safeText(order.customer_name)}
+    </strong>
+
+    <div class="help" style="margin-top:5px">
+     ${safeText(order.customer_email)}
+    </div>
+
+    <div class="help">
+     ${safeText(order.customer_phone||"Tiada nombor telefon")}
+    </div>
+
+    <div style="margin-top:13px">
+     <strong style="font-size:12px">Produk dipesan</strong>
+     <div style="margin-top:7px">${itemHTML||"Tiada item"}</div>
+    </div>
+
+    <div style="margin-top:12px;font-size:14px">
+     Jumlah:
+     <strong>RM ${Number(order.total||0).toFixed(2)}</strong>
+    </div>
+
+    <div class="help" style="margin-top:8px">
+     Status pembayaran:
+     <strong>${safeText(paymentStatusLabel(order.payment_status))}</strong>
+    </div>
+
+    <div class="field" style="margin-top:12px">
+     <label>Status pesanan</label>
+     <select id="status-${order.id}"
+      onchange="updateOrderStatus('${order.id}',this.value)">
+      <option value="pending"
+       ${order.status==="pending"?"selected":""}>Pending</option>
+      <option value="processing"
+       ${order.status==="processing"?"selected":""}>Processing</option>
+      <option value="completed"
+       ${order.status==="completed"?"selected":""}>Completed</option>
+      <option value="cancelled"
+       ${order.status==="cancelled"?"selected":""}>Cancelled</option>
+     </select>
+    </div>
+   </div>
+  `;
+ }).join("");
+}
+
+async function updateOrderStatus(id,newStatus){
+ const allowed=["pending","processing","completed","cancelled"];
+
+ if(!allowed.includes(newStatus)){
+  alert("Status tidak sah.");
+  return;
+ }
+
+ const confirmed=confirm(
+  "Anda pasti mahu mengubah status pesanan ini kepada "+
+  orderStatusLabel(newStatus)+"?"
+ );
+
+ if(!confirmed){
+  await loadOrders();
+  return;
+ }
+
+ const {error}=await db
+  .from("orders")
+  .update({status:newStatus})
+  .eq("id",id);
+
+ if(error){
+  alert("Gagal mengemas kini status: "+error.message);
+  await loadOrders();
+  return;
+ }
+
+ alert("Status pesanan berjaya dikemas kini.");
+ await loadOrders();
+}
+
+$("orderSearch").addEventListener("input",renderOrders);
+$("orderFilter").addEventListener("change",renderOrders);
 $("imageFile").addEventListener("change",()=>{
  const file=$("imageFile").files[0];
  const preview=$("imagePreview");
