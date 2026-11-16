@@ -647,6 +647,7 @@ function adminNavigate(target,button){
 }
 
 function showLogin(){
+$("menuToggle").style.display="none";
  $("loginView").style.display="block";
  $("dashboard").style.display="none";
  $("logoutBtn").classList.add("hidden");
@@ -658,6 +659,7 @@ function showDashboard(name){
  $("dashboard").style.display="block";
  $("logoutBtn").classList.remove("hidden");
  $("adminLabel").textContent=name;
+ $("menuToggle").style.display="";
 
  loadProducts();
  loadOrders();
