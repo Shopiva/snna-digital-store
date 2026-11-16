@@ -783,26 +783,47 @@ function adminNavigate(target,button){
  });
 }
 
+
 function showLogin(){
-$("menuToggle").style.display="none";
+
+ $("menuToggle").style.display="none";
+
  $("loginView").style.display="block";
  $("dashboard").style.display="none";
+
  $("logoutBtn").classList.add("hidden");
+
+ $("adminEmailLabel").textContent="";
  $("adminLabel").textContent="";
+
+ closeAdminMenu();
 }
 
 function showDashboard(name){
+
  $("loginView").style.display="none";
  $("dashboard").style.display="block";
+
  $("logoutBtn").classList.remove("hidden");
+
+ $("adminEmailLabel").textContent=
+  currentUser.email||"-";
+
  $("adminLabel").textContent=name;
+
  $("menuToggle").style.display="";
+
+ closeAdminMenu();
 
  loadProducts();
  loadOrders();
  loadReviews();
  loadSalesStats();
+
+ lucide.createIcons();
 }
+
+
 
 async function login(){
  const email=$("email").value.trim();
