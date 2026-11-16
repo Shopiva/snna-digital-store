@@ -1,0 +1,667 @@
+
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Detail Produk — SNNA</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+:root{
+  --yellow:#FFF0B8;
+  --gold:#F4CE62;
+  --gold-dark:#D9A51D;
+  --cream:#FFFCF3;
+  --white:#FFFFFF;
+  --text:#333333;
+  --muted:#888888;
+  --line:#EEEEEE;
+  --soft:#FFF8E4;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--cream);
+  color:var(--text);
+  font-family:Arial,sans-serif;
+}
+button,a{font:inherit}
+button{cursor:pointer}
+.topbar{
+  background:var(--yellow);
+  padding:15px 5%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  position:sticky;
+  top:0;
+  z-index:10;
+  box-shadow:0 2px 8px #00000008;
+}
+.brand{
+  font-size:25px;
+  font-weight:900;
+  letter-spacing:1px;
+  color:#333;
+  text-decoration:none;
+}
+.top-actions{display:flex;gap:10px;align-items:center}
+.top-btn{
+  border:0;
+  background:#fff;
+  border-radius:50px;
+  padding:10px 14px;
+  color:#333;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-size:13px;
+}
+.page{
+  max-width:1100px;
+  margin:25px auto 60px;
+  padding:0 18px;
+}
+.back-link{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  color:#666;
+  text-decoration:none;
+  font-size:14px;
+  margin-bottom:20px;
+}
+.product-layout{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:35px;
+  align-items:start;
+}
+.image-panel{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:14px;
+}
+.product-image{
+  width:100%;
+  aspect-ratio:1/1;
+  object-fit:contain;
+  display:block;
+  border-radius:12px;
+  background:#fff;
+}
+.info-panel{padding:5px 0}
+.category{
+  display:inline-block;
+  background:var(--soft);
+  color:#98751D;
+  padding:6px 11px;
+  border-radius:30px;
+  font-size:12px;
+  margin-bottom:12px;
+}
+.product-title{
+  font-size:27px;
+  line-height:1.3;
+  margin:0 0 12px;
+  font-weight:800;
+}
+.rating-line{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:13px;
+  color:#777;
+  margin:10px 0 18px;
+}
+.stars{color:#E4AE26;letter-spacing:2px;font-size:17px}
+.price-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  margin:18px 0;
+}
+.price{
+  color:#B48612;
+  font-size:29px;
+  font-weight:800;
+}
+.old-price{
+  color:#999;
+  text-decoration:line-through;
+  font-size:15px;
+}
+.description{
+  color:#666;
+  font-size:14px;
+  line-height:1.8;
+  white-space:pre-line;
+  margin:18px 0;
+}
+.digital-label{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  background:#F4F8EE;
+  color:#54743B;
+  border-radius:8px;
+  padding:9px 12px;
+  font-size:13px;
+  font-weight:700;
+  margin:5px 0 18px;
+}
+.instant-box{
+  border:1px solid #F0D98D;
+  background:#FFFCF1;
+  border-radius:13px;
+  padding:16px;
+  margin:15px 0 20px;
+}
+.instant-heading{
+  font-size:16px;
+  font-weight:800;
+  margin:0 0 9px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.instant-box p{
+  color:#666;
+  font-size:13px;
+  line-height:1.65;
+  margin:7px 0;
+}
+.quantity-row{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin:18px 0;
+}
+.quantity-row span{font-size:14px;color:#666}
+.qty-control{
+  display:flex;
+  align-items:center;
+  border:1px solid var(--line);
+  border-radius:8px;
+  overflow:hidden;
+  background:#fff;
+}
+.qty-control button{
+  width:35px;
+  height:35px;
+  border:0;
+  background:#fff8e4;
+  font-size:19px;
+}
+.qty-control strong{
+  min-width:38px;
+  text-align:center;
+  font-size:14px;
+}
+.actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:15px;
+}
+.action-btn{
+  border:0;
+  border-radius:10px;
+  padding:14px 10px;
+  font-weight:800;
+  font-size:14px;
+}
+.add-btn{
+  background:var(--yellow);
+  color:#5D4812;
+  border:1px solid #EBD47F;
+}
+.buy-btn{
+  background:var(--gold);
+  color:#3B2D0B;
+}
+.action-btn:disabled{opacity:.5;cursor:not-allowed}
+.message{
+  font-size:13px;
+  color:#54743B;
+  margin-top:12px;
+  min-height:18px;
+}
+.section{
+  margin-top:35px;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:20px;
+}
+.section h2{
+  font-size:19px;
+  margin:0 0 18px;
+}
+.review-summary{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  background:var(--soft);
+  padding:15px;
+  border-radius:12px;
+  margin-bottom:18px;
+}
+.average{
+  font-size:30px;
+  font-weight:800;
+}
+.review-list{display:grid;gap:13px}
+.review-item{
+  border-bottom:1px solid var(--line);
+  padding:12px 0;
+}
+.review-item:last-child{border-bottom:0}
+.review-item h3{font-size:14px;margin:5px 0}
+.review-item p{
+  font-size:13px;
+  color:#666;
+  line-height:1.6;
+  margin:6px 0;
+  white-space:pre-line;
+}
+.review-date{font-size:11px;color:#999}
+.empty-reviews{
+  color:#888;
+  font-size:13px;
+  padding:10px 0;
+}
+.loading,.error{
+  text-align:center;
+  padding:60px 15px;
+  color:#777;
+}
+.error{color:#B44444}
+footer{
+  text-align:center;
+  padding:25px;
+  color:#999;
+  font-size:12px;
+}
+@media(max-width:700px){
+  .topbar{padding:12px 15px}
+  .brand{font-size:22px}
+  .page{margin-top:18px;padding:0 13px}
+  .product-layout{grid-template-columns:1fr;gap:18px}
+  .image-panel{padding:9px}
+  .product-title{font-size:22px}
+  .price{font-size:26px}
+  .section{padding:16px}
+}
+@media(max-width:360px){
+  .actions{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+  <a class="brand" href="index.html">SNNA</a>
+  <div class="top-actions">
+    <a class="top-btn" href="index.html">
+      <i data-lucide="store" width="16"></i>
+      Kedai
+    </a>
+    <button class="top-btn" onclick="goToCart()">
+      <i data-lucide="shopping-bag" width="16"></i>
+      Troli
+    </button>
+  </div>
+</header>
+
+<main class="page">
+  <a class="back-link" href="index.html">
+    <i data-lucide="arrow-left" width="16"></i>
+    Kembali ke kedai
+  </a>
+
+  <div id="productArea" class="loading">Memuatkan produk...</div>
+
+  <section class="section" id="reviewsSection" style="display:none">
+    <h2>Rating & Ulasan Pelanggan</h2>
+    <div id="reviewSummary"></div>
+    <div id="reviewList" class="review-list"></div>
+  </section>
+</main>
+
+<footer>© SNNA Digital Store</footer>
+
+<script>
+/* SNNA SUPABASE CONNECTION */
+const SUPABASE_URL = "https://xbnvgcsvicealimwlsmv.supabase.co";
+const SUPABASE_KEY = "sb_publishable_nQAJM6sx1KmuNMBXTO40Zw_wFvPpCzD";
+
+const db = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+const CART_STORAGE_KEY = "snna_cart_v1";
+
+let currentProduct = null;
+let quantity = 1;
+
+const productArea = document.getElementById("productArea");
+
+function money(value){
+  return "RM " + Number(value || 0).toFixed(2);
+}
+
+function escapeHTML(value){
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#039;"
+  })[char]);
+}
+
+function imageURL(path){
+  if(!path) return "";
+  if(path.startsWith("http://") || path.startsWith("https://")){
+    return path;
+  }
+  const cleanPath = path.split("/").map(encodeURIComponent).join("/");
+  return SUPABASE_URL +
+    "/storage/v1/object/public/product-images/" + cleanPath;
+}
+
+function getCart(){
+  try{
+    const saved = JSON.parse(
+      localStorage.getItem(CART_STORAGE_KEY) || "[]"
+    );
+    return Array.isArray(saved) ? saved : [];
+  }catch(error){
+    return [];
+  }
+}
+
+function saveCart(cart){
+  localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+}
+
+function addProductToCart(){
+  if(!currentProduct) return;
+
+  const cart = getCart();
+  const existing = cart.find(item =>
+    String(item.id) === String(currentProduct.id)
+  );
+
+  if(existing){
+    existing.qty = Number(existing.qty || 0) + quantity;
+  }else{
+    cart.push({
+      id: currentProduct.id,
+      title: currentProduct.title,
+      price: Number(currentProduct.price),
+      qty: quantity
+    });
+  }
+
+  saveCart(cart);
+}
+
+function addToCart(){
+  if(!currentProduct) return;
+
+  addProductToCart();
+
+  document.getElementById("productMessage").textContent =
+    "Produk berjaya ditambah ke troli.";
+
+  quantity = 1;
+  document.getElementById("qtyValue").textContent = quantity;
+}
+
+function buyNow(){
+  if(!currentProduct) return;
+
+  addProductToCart();
+
+  /* Buka homepage dengan arahan untuk membuka troli.
+     Homepage akan disambungkan kepada arahan ini
+     dalam langkah kemas kini seterusnya. */
+  window.location.href = "index.html?openCart=1";
+}
+
+function goToCart(){
+  window.location.href = "index.html?openCart=1";
+}
+
+function changeQuantity(amount){
+  quantity = Math.max(1, Math.min(99, quantity + amount));
+  document.getElementById("qtyValue").textContent = quantity;
+}
+
+function renderProduct(product){
+  currentProduct = product;
+
+  const photo = imageURL(product.image_path);
+  const comparePrice = Number(product.compare_at_price || 0);
+  const hasComparePrice =
+    comparePrice > Number(product.price || 0);
+
+  productArea.className = "";
+  productArea.innerHTML = `
+    <div class="product-layout">
+      <div class="image-panel">
+        <img
+          class="product-image"
+          src="${escapeHTML(photo)}"
+          alt="${escapeHTML(product.title)}"
+          onerror="this.style.display='none'"
+        >
+      </div>
+
+      <div class="info-panel">
+        <span class="category">
+          ${escapeHTML(product.category || "Digital Product")}
+        </span>
+
+        <h1 class="product-title">
+          ${escapeHTML(product.title)}
+        </h1>
+
+        <div class="rating-line" id="ratingLine">
+          <span class="stars">☆☆☆☆☆</span>
+          <span>Belum ada ulasan</span>
+        </div>
+
+        <div class="price-row">
+          <span class="price">${money(product.price)}</span>
+          ${hasComparePrice
+            ? `<span class="old-price">${money(comparePrice)}</span>`
+            : ""}
+        </div>
+
+        <div class="digital-label">
+          <i data-lucide="download" width="16"></i>
+          Digital Download
+        </div>
+
+        <div class="description">
+          ${escapeHTML(product.description || "Tiada penerangan produk.")}
+        </div>
+
+        <div class="instant-box">
+          <h3 class="instant-heading">
+            <i data-lucide="zap" width="18"></i>
+            Instant Download
+          </h3>
+          <p>Your files will be available to download once payment is confirmed.</p>
+          <p>Instant download items don’t accept returns, exchanges or cancellations. Please contact the seller about any problems with your order.</p>
+        </div>
+
+        <div class="quantity-row">
+          <span>Kuantiti</span>
+          <div class="qty-control">
+            <button onclick="changeQuantity(-1)" aria-label="Kurangkan">−</button>
+            <strong id="qtyValue">1</strong>
+            <button onclick="changeQuantity(1)" aria-label="Tambah">+</button>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="action-btn add-btn" onclick="addToCart()">
+            Tambah ke Troli
+          </button>
+          <button class="action-btn buy-btn" onclick="buyNow()">
+            Beli Sekarang
+          </button>
+        </div>
+
+        <div class="message" id="productMessage"></div>
+      </div>
+    </div>
+  `;
+
+  if(window.lucide) lucide.createIcons();
+  loadReviews(product.id);
+}
+
+async function loadProduct(){
+  const params = new URLSearchParams(window.location.search);
+  const productId = params.get("id");
+
+  if(!productId){
+    productArea.className = "error";
+    productArea.textContent = "Produk tidak dijumpai. Sila kembali ke kedai.";
+    return;
+  }
+
+  const {data, error} = await db
+    .from("products")
+    .select("id,title,slug,description,price,compare_at_price,category,image_path,is_active")
+    .eq("id", productId)
+    .eq("is_active", true)
+    .maybeSingle();
+
+  if(error || !data){
+    productArea.className = "error";
+    productArea.textContent =
+      "Produk tidak dapat dimuatkan atau produk tidak lagi tersedia.";
+    return;
+  }
+
+  document.title = data.title + " — SNNA";
+  renderProduct(data);
+}
+
+async function loadReviews(productId){
+  const section = document.getElementById("reviewsSection");
+  const summary = document.getElementById("reviewSummary");
+  const list = document.getElementById("reviewList");
+
+  section.style.display = "block";
+  summary.innerHTML = "";
+  list.innerHTML = '<div class="empty-reviews">Memuatkan ulasan...</div>';
+
+  const {data, error} = await db
+    .from("product_reviews")
+    .select("rating,review_title,review_text,created_at")
+    .eq("product_id", productId)
+    .eq("is_published", true)
+    .order("created_at", {ascending:false});
+
+  if(error){
+    summary.innerHTML = "";
+    list.innerHTML =
+      '<div class="empty-reviews">Ulasan belum dapat dipaparkan.</div>';
+    return;
+  }
+
+  const reviews = data || [];
+
+  if(reviews.length === 0){
+    summary.innerHTML = `
+      <div class="review-summary">
+        <div class="average">0.0</div>
+        <div>
+          <div class="stars">☆☆☆☆☆</div>
+          <div class="empty-reviews">Belum ada ulasan untuk produk ini.</div>
+        </div>
+      </div>
+    `;
+    list.innerHTML =
+      '<div class="empty-reviews">Jadilah pelanggan pertama yang memberikan ulasan selepas pembelian disahkan.</div>';
+    updateRatingLine(0, 0);
+    return;
+  }
+
+  const total = reviews.reduce(
+    (sum, review) => sum + Number(review.rating || 0), 0
+  );
+  const average = total / reviews.length;
+
+  summary.innerHTML = `
+    <div class="review-summary">
+      <div class="average">${average.toFixed(1)}</div>
+      <div>
+        <div class="stars">${starText(average)}</div>
+        <div class="empty-reviews">${reviews.length} ulasan pelanggan</div>
+      </div>
+    </div>
+  `;
+
+  list.innerHTML = reviews.map(review => {
+    const date = review.created_at
+      ? new Date(review.created_at).toLocaleDateString("ms-MY", {
+          day:"numeric", month:"short", year:"numeric"
+        })
+      : "";
+
+    return `
+      <article class="review-item">
+        <div class="stars">${starText(Number(review.rating || 0))}</div>
+        ${review.review_title
+          ? `<h3>${escapeHTML(review.review_title)}</h3>`
+          : ""}
+        ${review.review_text
+          ? `<p>${escapeHTML(review.review_text)}</p>`
+          : ""}
+        <div class="review-date">${date}</div>
+      </article>
+    `;
+  }).join("");
+
+  updateRatingLine(average, reviews.length);
+}
+
+function starText(rating){
+  const rounded = Math.max(0, Math.min(5, Math.round(rating)));
+  return "★".repeat(rounded) + "☆".repeat(5 - rounded);
+}
+
+function updateRatingLine(average, count){
+  const line = document.getElementById("ratingLine");
+  if(!line) return;
+
+  line.innerHTML = `
+    <span class="stars">${starText(average)}</span>
+    <span>${count ? average.toFixed(1) + " · " + count + " ulasan" : "Belum ada ulasan"}</span>
+  `;
+}
+
+loadProduct();
+
+if(window.lucide) lucide.createIcons();
+</script>
+
+</body>
+</html>
