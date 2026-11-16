@@ -800,30 +800,51 @@ function showLogin(){
 }
 
 
+
 function showDashboard(name){
 
  $("loginView").style.display="none";
  $("dashboard").style.display="block";
 
- $("logoutBtn").classList.remove("hidden");
+ // Paparkan Menu dahulu
+ const menu=$("menuToggle");
 
- $("adminEmailLabel").textContent=
-  currentUser.email||"-";
+ if(menu){
+  menu.style.display="inline-flex";
+  menu.style.visibility="visible";
+ }
 
- $("adminLabel").textContent=name;
+ // Email admin
+ const emailBox=$("adminEmailLabel");
 
- // PAKSA PAPAR BUTANG MENU
- $("menuToggle").style.display="inline-flex";
+ if(emailBox){
+  emailBox.textContent=currentUser?.email||"-";
+ }
+
+ // Butang keluar
+ const logoutButton=$("logoutBtn");
+
+ if(logoutButton){
+  logoutButton.classList.remove("hidden");
+ }
+
+ $("adminLabel").textContent=name||"Admin";
 
  closeAdminMenu();
 
+ // Muatkan semua data
  loadProducts();
  loadOrders();
  loadReviews();
  loadSalesStats();
 
- lucide.createIcons();
+ if(window.lucide){
+  lucide.createIcons();
+ }
+
+ console.log("SNNA Dashboard berjaya dibuka");
 }
+
 
 
 async function login(){
