@@ -268,6 +268,35 @@ footer{text-align:center;color:#aaa;font-size:11px;padding:20px}
    <div class="help">Memuatkan pesanan...</div>
   </div>
   </section>
+   </section>
+
+  <!-- SNNA REVIEW MANAGEMENT -->
+  <section class="panel" id="reviewsPanel">
+   <h3>⭐ Pengurusan Ulasan Pelanggan</h3>
+
+   <div class="form-grid">
+    <div class="field">
+     <label>Penapis ulasan</label>
+     <select id="reviewFilter">
+      <option value="all">Semua ulasan</option>
+      <option value="pending">Menunggu kelulusan</option>
+      <option value="published">Sudah diterbitkan</option>
+     </select>
+    </div>
+   </div>
+
+   <div class="form-actions">
+    <button class="btn btn-gold" onclick="loadReviews()">
+     Muat Semula Ulasan
+    </button>
+   </div>
+
+   <div id="reviewList" class="product-list" style="margin-top:15px">
+    <div class="help">Memuatkan ulasan...</div>
+   </div>
+  </section>
+
+</main>
 </main>
 </div>
 
