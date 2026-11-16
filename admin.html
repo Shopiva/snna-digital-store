@@ -539,7 +539,206 @@ function renderList(){
 // =================================
 
 let allOrders=[];
+// =================================
+// SNNA PRODUCT SALES STATISTICS
+// =================================
 
+let salesOrders=[];
+let salesItems=[];
+
+function moneyRM(value){
+ return "RM "+Number(value||0).toLocaleString("en-MY",{
+  minimumFractionDigits:2,
+  maximumFractionDigits:2
+ });
+}
+
+function getSalesPeriodStart(period){
+ const now=new Date();
+
+ if(period==="today"){
+  return new Date(
+   now.getFullYear(),
+   now.getMonth(),
+   now.getDate()
+  );
+ }
+
+ if(period==="month"){
+  return new Date(
+   now.getFullYear(),
+   now.getMonth(),
+   1
+  );
+ }
+
+ if(period==="year"){
+  return new Date(
+   now.getFullYear(),
+   0,
+   1
+  );
+ }
+
+ return null;
+}
+
+async function loadSalesStats(){
+ const area=$("bestSellingProducts");
+
+ if(!area)return;
+
+ area.innerHTML=
+  '<div class="help">Memuatkan statistik jualan...</div>';
+
+ showStatus("salesStatsStatus","Mengambil rekod pembayaran yang disahkan...");
+
+ const {data:orders,error:orderError}=await db
+  .from("orders")
+  .select("id,total,currency,created_at,payment_status")
+  .eq("payment_status","paid")
+  .order("created_at",{ascending:false});
+
+ if(orderError){
+  area.innerHTML=
+   '<div class="help">Gagal membaca pesanan.</div>';
+
+  showStatus(
+   "salesStatsStatus",
+   "Ralat pesanan: "+orderError.message,
+   "error"
+  );
+  return;
+ }
+
+ salesOrders=orders||[];
+
+ if(!salesOrders.length){
+  salesItems=[];
+  renderSalesStats();
+  showStatus(
+   "salesStatsStatus",
+   "Belum ada pesanan dengan pembayaran disahkan."
+  );
+  return;
+ }
+
+ const orderIds=salesOrders.map(o=>o.id);
+
+ const {data:items,error:itemError}=await db
+  .from("order_items")
+  .select("order_id,product_id,product_title,unit_price,quantity")
+  .in("order_id",orderIds);
+
+ if(itemError){
+  area.innerHTML=
+   '<div class="help">Gagal membaca item jualan.</div>';
+
+  showStatus(
+   "salesStatsStatus",
+   "Ralat item: "+itemError.message,
+   "error"
+  );
+  return;
+ }
+
+ salesItems=items||[];
+
+ renderSalesStats();
+ showStatus(
+  "salesStatsStatus",
+  "Statistik berjaya dikemas kini.",
+  "success"
+ );
+}
+
+function renderSalesStats(){
+ const period=$("salesPeriod").value;
+ const start=getSalesPeriodStart(period);
+
+ const filteredOrders=salesOrders.filter(order=>{
+  if(!start)return true;
+
+  return new Date(order.created_at)>=start;
+ });
+
+ const filteredOrderIds=new Set(
+  filteredOrders.map(order=>order.id)
+ );
+
+ const filteredItems=salesItems.filter(item=>
+  filteredOrderIds.has(item.order_id)
+ );
+
+ const totalUnits=filteredItems.reduce((sum,item)=>
+  sum+Math.max(0,Number(item.quantity)||0),0
+ );
+
+ const totalRevenue=filteredOrders.reduce((sum,order)=>
+  sum+Math.max(0,Number(order.total)||0),0
+ );
+
+ $("salesUnits").textContent=
+  totalUnits.toLocaleString("en-MY");
+
+ $("salesRevenue").textContent=
+  moneyRM(totalRevenue);
+
+ $("salesOrders").textContent=
+  filteredOrders.length.toLocaleString("en-MY");
+
+ const grouped={};
+
+ filteredItems.forEach(item=>{
+  const key=item.product_id||item.product_title||"unknown";
+
+  if(!grouped[key]){
+   grouped[key]={
+    title:item.product_title||"Produk tanpa nama",
+    quantity:0,
+    revenue:0
+   };
+  }
+
+  grouped[key].quantity+=
+   Math.max(0,Number(item.quantity)||0);
+
+  grouped[key].revenue+=
+   Math.max(0,Number(item.unit_price)||0)*
+   Math.max(0,Number(item.quantity)||0);
+ });
+
+ const bestSelling=Object.values(grouped)
+  .sort((a,b)=>b.quantity-a.quantity)
+  .slice(0,10);
+
+ const area=$("bestSellingProducts");
+
+ if(!bestSelling.length){
+  area.innerHTML=
+   '<div class="help">Belum ada produk terjual dalam tempoh ini.</div>';
+  return;
+ }
+
+ area.innerHTML=bestSelling.map((item,index)=>`
+  <div class="product-row">
+   <div class="product-placeholder"
+    style="font-weight:800;font-size:18px">
+    ${index+1}
+   </div>
+
+   <div class="product-detail">
+    <strong>${safeText(item.title)}</strong>
+    <small>
+     ${item.quantity.toLocaleString("en-MY")} unit terjual
+    </small>
+    <small>
+     Nilai jualan produk: ${moneyRM(item.revenue)}
+    </small>
+   </div>
+  </div>
+ `).join("");
+}
 function orderStatusLabel(status){
  const labels={
   pending:"Pending",
