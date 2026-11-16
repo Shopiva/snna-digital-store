@@ -799,6 +799,7 @@ function showLogin(){
  closeAdminMenu();
 }
 
+
 function showDashboard(name){
 
  $("loginView").style.display="none";
@@ -811,7 +812,8 @@ function showDashboard(name){
 
  $("adminLabel").textContent=name;
 
- $("menuToggle").style.display="";
+ // PAKSA PAPAR BUTANG MENU
+ $("menuToggle").style.display="inline-flex";
 
  closeAdminMenu();
 
@@ -822,7 +824,6 @@ function showDashboard(name){
 
  lucide.createIcons();
 }
-
 
 
 async function login(){
