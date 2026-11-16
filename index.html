@@ -80,6 +80,7 @@ main{max-width:1200px;margin:auto;padding:18px 16px 100px}
 .category svg{width:23px;height:23px;stroke-width:1.5;color:#B88A20}
 .category.active{border-color:var(--gold);background:#FFF8E4;color:#8B6814}
 .category:active{transform:scale(.97)}
+
 .products-grid{
   display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;
 }
@@ -87,12 +88,13 @@ main{max-width:1200px;margin:auto;padding:18px 16px 100px}
   background:#fff;border:1px solid var(--line);border-radius:15px;
   overflow:hidden;min-width:0;
 }
+.product-detail-link{
+  display:block;color:inherit;text-decoration:none;
+}
 .product-image{
   width:100%;aspect-ratio:1/1;background:#FFF5D5;
   display:flex;align-items:center;justify-content:center;overflow:hidden;
-}
-.product-detail-link{
-  display:block;color:inherit;text-decoration:none;
+  position:relative;
 }
 .product-image img{width:100%;height:100%;object-fit:cover}
 .image-placeholder{
@@ -100,15 +102,46 @@ main{max-width:1200px;margin:auto;padding:18px 16px 100px}
   align-items:center;gap:7px;font-size:11px;
 }
 .image-placeholder svg{width:35px;height:35px;stroke-width:1.3}
+
+/* BUTANG WISHLIST */
+.favorite-btn{
+  position:absolute;
+  top:9px;
+  right:9px;
+  z-index:5;
+  width:35px;
+  height:35px;
+  border:0;
+  border-radius:50%;
+  background:rgba(255,255,255,.95);
+  color:#777;
+  display:grid;
+  place-items:center;
+  box-shadow:0 2px 8px rgba(0,0,0,.12);
+  transition:.2s;
+}
+.favorite-btn svg{
+  width:19px;
+  height:19px;
+  stroke-width:2;
+}
+.favorite-btn.liked{
+  color:#E34D62;
+  background:#FFF0F1;
+}
+.favorite-btn.liked svg{
+  fill:#E34D62;
+  stroke:#E34D62;
+}
+.favorite-btn:active{transform:scale(.88)}
+
 .product-info{padding:7px 8px 9px}
 .product-title{
   font-size:13px;font-weight:700;line-height:1.3;min-height:34px;
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
   overflow:hidden;margin:0;
 }
-.product-title a{
-  color:inherit;text-decoration:none;
-}
+.product-title a{color:inherit;text-decoration:none}
 .product-title a:hover{color:#A77B12}
 .product-category{color:var(--muted);font-size:10px;margin-top:2px;line-height:1.2}
 .product-price{
@@ -285,7 +318,9 @@ footer{text-align:center;color:#999;font-size:11px;padding:20px 10px 25px}
 
   <div class="section-title">
     <h2 id="productHeading">Produk Pilihan</h2>
-    <button class="view-all" onclick="setCategory('Semua')">Lihat Semua →</button>
+    <button class="view-all" id="viewAllButton" onclick="goHome()">
+      Lihat Semua →
+    </button>
   </div>
 
   <div class="products-grid" id="productsGrid">
@@ -419,6 +454,7 @@ let cart = [];
 let favorites = [];
 
 const CART_STORAGE_KEY = "snna_cart_v1";
+const FAVORITES_STORAGE_KEY = "snna_favorites_v1";
 
 const money = value => "RM " + Number(value || 0).toFixed(2);
 
@@ -463,6 +499,53 @@ function loadCart(){
   }
 }
 
+/* WISHLIST: SIMPAN */
+function saveFavorites(){
+  try{
+    localStorage.setItem(
+      FAVORITES_STORAGE_KEY,
+      JSON.stringify(favorites)
+    );
+  }catch(error){
+    console.error("SNNA wishlist save error:",error);
+  }
+}
+
+/* WISHLIST: AMBIL DATA */
+function loadFavorites(){
+  try{
+    const saved = localStorage.getItem(FAVORITES_STORAGE_KEY);
+    if(!saved) return;
+
+    const parsed = JSON.parse(saved);
+    if(!Array.isArray(parsed)) return;
+
+    favorites = [...new Set(
+      parsed.filter(id=>typeof id === "string")
+    )];
+  }catch(error){
+    console.error("SNNA wishlist load error:",error);
+    favorites = [];
+  }
+}
+
+/* WISHLIST: TAMBAH / BUANG */
+function toggleFavorite(id){
+  if(favorites.includes(id)){
+    favorites = favorites.filter(itemId=>itemId !== id);
+  }else{
+    favorites.push(id);
+  }
+
+  saveFavorites();
+  renderProducts();
+}
+
+/* SEMAK STATUS WISHLIST */
+function isFavorite(id){
+  return favorites.includes(id);
+}
+
 function imageURL(path){
   if(!path) return "";
   if(/^https?:\/\//i.test(path)) return path;
@@ -492,6 +575,12 @@ async function loadProducts(){
   }
 
   products = data || [];
+
+  /* BUANG ID WISHLIST YANG SUDAH TIADA DALAM PRODUK AKTIF */
+  const activeIds = new Set(products.map(p=>p.id));
+  favorites = favorites.filter(id=>activeIds.has(id));
+  saveFavorites();
+
   renderProducts();
 }
 
@@ -517,7 +606,9 @@ function renderProducts(){
   }
 
   if(!list.length){
-    grid.innerHTML = '<div class="empty">Belum ada produk untuk dipaparkan.</div>';
+    grid.innerHTML = selectedCategory === "Disukai"
+      ? '<div class="empty">Belum ada produk disukai. Tekan ikon hati pada produk untuk menyimpannya ❤️</div>'
+      : '<div class="empty">Belum ada produk untuk dipaparkan.</div>';
     return;
   }
 
@@ -527,6 +618,7 @@ function renderProducts(){
     const image = imageURL(product.image_path);
     const price = money(product.price);
     const detailURL = "product.html?id=" + encodeURIComponent(product.id);
+    const liked = isFavorite(product.id);
 
     const oldPrice = product.compare_at_price
       ? `<span class="old-price">${money(product.compare_at_price)}</span>`
@@ -534,14 +626,33 @@ function renderProducts(){
 
     const imageHTML = image
       ? `<img src="${escapeHTML(image)}" alt="${title}" loading="lazy"
-           onerror="this.parentElement.innerHTML='<div class=&quot;image-placeholder&quot;><i data-lucide=&quot;image&quot;></i><span>Imej produk</span></div>';lucide.createIcons()">`
-      : `<div class="image-placeholder"><i data-lucide="image"></i><span>Imej produk</span></div>`;
+           onerror="this.parentElement.querySelector('.image-placeholder').style.display='flex';this.style.display='none'">`
+      : "";
+
+    const placeholderHTML = `
+      <div class="image-placeholder" ${image ? 'style="display:none"' : ''}>
+        <i data-lucide="image"></i>
+        <span>Imej produk</span>
+      </div>
+    `;
 
     return `
       <article class="product-card">
-        <a class="product-detail-link" href="${detailURL}" aria-label="Lihat ${title}">
-          <div class="product-image">${imageHTML}</div>
-        </a>
+        <div class="product-image">
+          <a class="product-detail-link" href="${detailURL}" aria-label="Lihat ${title}">
+            ${imageHTML}
+            ${placeholderHTML}
+          </a>
+
+          <button
+            class="favorite-btn ${liked ? "liked" : ""}"
+            onclick="toggleFavorite('${product.id}')"
+            aria-label="${liked ? "Buang daripada Disukai" : "Tambah ke Disukai"}"
+            title="${liked ? "Buang daripada Disukai" : "Tambah ke Disukai"}">
+            <i data-lucide="heart"></i>
+          </button>
+        </div>
+
         <div class="product-info">
           <div class="product-title">
             <a href="${detailURL}">${title}</a>
@@ -579,7 +690,7 @@ function setCategory(category,button){
   renderProducts();
 }
 
-/* TAMBAH PRODUK */
+/* TAMBAH PRODUK KE TROLI */
 function addToCart(id){
   const product = products.find(p=>p.id === id);
   if(!product) return;
@@ -760,8 +871,11 @@ function goHome(button){
   selectedCategory = "Semua";
   document.getElementById("searchInput").value = "";
   document.getElementById("productHeading").textContent = "Produk Pilihan";
+  document.getElementById("viewAllButton").style.display = "block";
+
   document.querySelectorAll(".category").forEach(el=>el.classList.remove("active"));
   document.querySelector(".category").classList.add("active");
+
   setNavActive(button);
   renderProducts();
   window.scrollTo({top:0,behavior:"smooth"});
@@ -772,11 +886,19 @@ function goCategories(button){
   document.querySelector(".categories").scrollIntoView({behavior:"smooth"});
 }
 
+/* PAPAR PRODUK DISUKAI */
 function showFavorites(button){
   selectedCategory = "Disukai";
   document.getElementById("productHeading").textContent = "Produk Disukai";
+  document.getElementById("viewAllButton").style.display = "none";
+
+  document.querySelectorAll(".category").forEach(el=>{
+    el.classList.remove("active");
+  });
+
   setNavActive(button);
   renderProducts();
+
   document.querySelector(".section-title").scrollIntoView({behavior:"smooth"});
 }
 
@@ -791,8 +913,6 @@ function checkOpenCartRequest(){
   if(params.get("openCart") === "1"){
     openCart();
 
-    /* Bersihkan parameter supaya tidak membuka semula
-       apabila halaman dimuat semula */
     window.history.replaceState(
       {},
       document.title,
@@ -803,6 +923,7 @@ function checkOpenCartRequest(){
 
 /* MULAKAN SNNA */
 loadCart();
+loadFavorites();
 updateCart();
 lucide.createIcons();
 loadProducts();
