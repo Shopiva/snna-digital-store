@@ -415,8 +415,10 @@ function showDashboard(name){
  $("dashboard").style.display="block";
  $("logoutBtn").classList.remove("hidden");
  $("adminLabel").textContent=name;
+
  loadProducts();
-loadOrders();
+ loadOrders();
+ loadReviews();
 }
 
 async function login(){
