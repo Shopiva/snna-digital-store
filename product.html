@@ -234,6 +234,8 @@ button{cursor:pointer}
   margin-top:12px;
   min-height:18px;
 }
+
+/* REVIEW SECTION */
 .section{
   margin-top:35px;
   background:#fff;
@@ -277,6 +279,89 @@ button{cursor:pointer}
   color:#888;
   font-size:13px;
   padding:10px 0;
+}
+
+/* REVIEW FORM */
+.review-write{
+  margin-top:25px;
+  padding-top:22px;
+  border-top:1px solid var(--line);
+}
+.review-write h3{
+  font-size:16px;
+  margin:0 0 8px;
+}
+.review-help{
+  font-size:12px;
+  line-height:1.6;
+  color:#888;
+  margin:0 0 15px;
+}
+.review-card{
+  background:#FFFCF3;
+  border:1px solid #F0E5C5;
+  border-radius:12px;
+  padding:15px;
+  margin:12px 0;
+}
+.review-card label{
+  display:block;
+  font-size:13px;
+  font-weight:700;
+  margin:12px 0 7px;
+}
+.review-card input,
+.review-card textarea,
+.review-card select{
+  width:100%;
+  padding:11px 12px;
+  border:1px solid #E5E1D7;
+  border-radius:8px;
+  background:#fff;
+  font:inherit;
+  font-size:13px;
+  outline:none;
+}
+.review-card textarea{
+  min-height:90px;
+  resize:vertical;
+}
+.review-card input:focus,
+.review-card textarea:focus,
+.review-card select:focus{
+  border-color:var(--gold-dark);
+}
+.review-submit{
+  width:100%;
+  border:0;
+  border-radius:9px;
+  padding:12px;
+  margin-top:15px;
+  background:var(--gold);
+  color:#49380D;
+  font-size:13px;
+  font-weight:800;
+}
+.review-submit:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+.review-status{
+  font-size:12px;
+  line-height:1.6;
+  margin-top:10px;
+  color:#54743B;
+}
+.review-login{
+  background:var(--soft);
+  border-radius:10px;
+  padding:15px;
+  font-size:13px;
+  line-height:1.7;
+}
+.review-login a{
+  color:#98751D;
+  font-weight:700;
 }
 .loading,.error{
   text-align:center;
@@ -334,6 +419,17 @@ footer{
     <h2>Rating & Ulasan Pelanggan</h2>
     <div id="reviewSummary"></div>
     <div id="reviewList" class="review-list"></div>
+
+    <div class="review-write">
+      <h3>Tulis Ulasan Anda</h3>
+      <p class="review-help">
+        Ulasan hanya boleh dihantar oleh pelanggan yang telah membeli
+        produk ini dan pembayarannya telah disahkan.
+      </p>
+      <div id="reviewFormArea">
+        <div class="empty-reviews">Menyemak kelayakan ulasan...</div>
+      </div>
+    </div>
   </section>
 </main>
 
@@ -433,10 +529,6 @@ function buyNow(){
   if(!currentProduct) return;
 
   addProductToCart();
-
-  /* Buka homepage dengan arahan untuk membuka troli.
-     Homepage akan disambungkan kepada arahan ini
-     dalam langkah kemas kini seterusnya. */
   window.location.href = "index.html?openCart=1";
 }
 
@@ -532,7 +624,9 @@ function renderProduct(product){
   `;
 
   if(window.lucide) lucide.createIcons();
+
   loadReviews(product.id);
+  loadReviewForm(product.id);
 }
 
 async function loadProduct(){
@@ -563,6 +657,7 @@ async function loadProduct(){
   renderProduct(data);
 }
 
+/* LOAD PUBLIC REVIEWS */
 async function loadReviews(productId){
   const section = document.getElementById("reviewsSection");
   const summary = document.getElementById("reviewSummary");
@@ -655,6 +750,185 @@ function updateRatingLine(average, count){
   line.innerHTML = `
     <span class="stars">${starText(average)}</span>
     <span>${count ? average.toFixed(1) + " · " + count + " ulasan" : "Belum ada ulasan"}</span>
+  `;
+}
+
+/* CHECK CUSTOMER PURCHASE ELIGIBILITY */
+async function loadReviewForm(productId){
+  const area = document.getElementById("reviewFormArea");
+
+  const {data: userData, error: userError} = await db.auth.getUser();
+
+  if(userError || !userData.user){
+    area.innerHTML = `
+      <div class="review-login">
+        Untuk menulis ulasan, sila
+        <a href="account.html">login ke akaun SNNA</a>
+        terlebih dahulu. Ulasan hanya dibuka kepada pelanggan yang telah
+        membuat pembelian dan pembayaran disahkan.
+      </div>
+    `;
+    return;
+  }
+
+  const user = userData.user;
+
+  /*
+    Cari item pesanan milik pelanggan ini untuk produk berkenaan.
+    Hanya pesanan dengan payment_status = paid diterima.
+  */
+  const {data: orderItems, error} = await db
+    .from("order_items")
+    .select("id,product_id,orders!inner(customer_id,payment_status)")
+    .eq("product_id", productId)
+    .eq("orders.customer_id", user.id)
+    .eq("orders.payment_status", "paid");
+
+  if(error){
+    console.error("Review eligibility error:", error);
+    area.innerHTML = `
+      <div class="empty-reviews">
+        Kelayakan ulasan belum dapat disemak. Sila cuba lagi kemudian.
+      </div>
+    `;
+    return;
+  }
+
+  if(!orderItems || orderItems.length === 0){
+    area.innerHTML = `
+      <div class="review-login">
+        <strong>Ulasan pelanggan yang telah membeli sahaja.</strong><br>
+        Anda belum mempunyai pembelian produk ini dengan pembayaran
+        yang disahkan. Selepas pembelian selesai, anda boleh kembali ke
+        halaman ini untuk menulis ulasan.
+      </div>
+    `;
+    return;
+  }
+
+  area.innerHTML = orderItems.map((item, index) => `
+    <form
+      class="review-card"
+      id="reviewForm${index}"
+      onsubmit="submitReview(event,'${escapeHTML(item.id)}')"
+    >
+      <div style="font-size:13px;font-weight:700">
+        Pembelian yang layak untuk ulasan
+      </div>
+
+      <label for="rating${index}">Rating bintang</label>
+      <select id="rating${index}" name="rating" required>
+        <option value="">Pilih rating</option>
+        <option value="5">★★★★★ — Sangat baik</option>
+        <option value="4">★★★★☆ — Baik</option>
+        <option value="3">★★★☆☆ — Sederhana</option>
+        <option value="2">★★☆☆☆ — Kurang baik</option>
+        <option value="1">★☆☆☆☆ — Tidak memuaskan</option>
+      </select>
+
+      <label for="title${index}">Tajuk ulasan (pilihan)</label>
+      <input
+        id="title${index}"
+        name="review_title"
+        type="text"
+        maxlength="100"
+        placeholder="Contoh: Sangat berbaloi"
+      >
+
+      <label for="text${index}">Ulasan anda</label>
+      <textarea
+        id="text${index}"
+        name="review_text"
+        maxlength="2000"
+        required
+        placeholder="Kongsikan pengalaman anda membeli produk ini..."
+      ></textarea>
+
+      <button class="review-submit" type="submit">
+        Hantar Ulasan
+      </button>
+
+      <div class="review-status" id="reviewStatus${index}"></div>
+    </form>
+  `).join("");
+}
+
+/* SUBMIT REVIEW */
+async function submitReview(event, orderItemId){
+  event.preventDefault();
+
+  const form = event.currentTarget;
+  const button = form.querySelector(".review-submit");
+  const status = form.querySelector(".review-status");
+
+  const rating = Number(form.elements.rating.value);
+  const title = form.elements.review_title.value.trim();
+  const reviewText = form.elements.review_text.value.trim();
+
+  if(!rating || rating < 1 || rating > 5){
+    status.textContent = "Sila pilih rating antara 1 hingga 5 bintang.";
+    return;
+  }
+
+  if(!reviewText){
+    status.textContent = "Sila tulis ulasan sebelum menghantar.";
+    return;
+  }
+
+  const {data: userData, error: userError} = await db.auth.getUser();
+
+  if(userError || !userData.user){
+    status.textContent = "Sesi login tamat. Sila login semula.";
+    return;
+  }
+
+  if(!currentProduct){
+    status.textContent = "Maklumat produk tidak tersedia.";
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = "Menghantar...";
+  status.textContent = "";
+
+  const {error} = await db
+    .from("product_reviews")
+    .insert({
+      product_id: currentProduct.id,
+      order_item_id: orderItemId,
+      customer_id: userData.user.id,
+      rating: rating,
+      review_title: title || null,
+      review_text: reviewText
+    });
+
+  if(error){
+    console.error("Review submit error:", error);
+
+    if(error.code === "23505"){
+      status.textContent =
+        "Ulasan untuk pembelian ini telah dihantar sebelum ini.";
+    }else if(error.code === "42501"){
+      status.textContent =
+        "Ulasan tidak dibenarkan. Pastikan pembelian telah dibayar dan akaun anda betul.";
+    }else{
+      status.textContent =
+        "Ulasan gagal dihantar. Sila cuba lagi.";
+    }
+
+    button.disabled = false;
+    button.textContent = "Hantar Ulasan";
+    return;
+  }
+
+  form.innerHTML = `
+    <div style="font-size:14px;font-weight:800;color:#54743B">
+      ✓ Ulasan berjaya dihantar!
+    </div>
+    <p style="font-size:13px;line-height:1.7;color:#666">
+      Terima kasih kerana berkongsi pengalaman anda.
+      Ulasan akan dipaparkan selepas disemak dan diluluskan oleh admin SNNA.
+    </p>
   `;
 }
 
