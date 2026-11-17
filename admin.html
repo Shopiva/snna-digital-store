@@ -903,8 +903,17 @@ async function loadProducts(){
   console.log("Jumlah produk:",products.length);
   console.log("Data produk:",products);
 
+  try {
   updateStats();
+  alert("Statistik dikemas kini: "+$("totalProducts").textContent);
+
   renderList();
+  alert("Senarai produk dikemas kini: "+
+    $("productList").innerText);
+} catch(e) {
+  alert("RALAT PAPARAN: "+e.message);
+  console.error(e);
+  }
 
   alert(
     "Produk diterima: "+products.length+
