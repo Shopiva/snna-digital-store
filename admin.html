@@ -873,43 +873,29 @@ async function logout(){
 }
 
 
-async function loadProducts(){
 
-  console.log("SNNA: loadProducts dipanggil");
+async function loadProducts(){
 
   const {data,error}=await db
     .from("products")
-    .select("*");
+    .select("*")
+    .order("sort_order",{ascending:true})
+    .order("created_at",{ascending:false});
 
   if(error){
-    alert("Ralat produk: "+error.message);
-    console.error(error);
+    console.error("PRODUCT ERROR:",error);
+    $("productList").textContent=
+      "Gagal memuatkan produk: "+error.message;
     return;
   }
 
   products=data||[];
 
-  console.log("Jumlah produk:",products.length);
-  console.log("Data produk:",products);
-
-  try {
   updateStats();
-  alert("Statistik dikemas kini: "+$("totalProducts").textContent);
-
   renderList();
-  alert("Senarai produk dikemas kini: "+
-    $("productList").innerText);
-} catch(e) {
-  alert("RALAT PAPARAN: "+e.message);
-  console.error(e);
-  }
-
-  alert(
-    "Produk diterima: "+products.length+
-    "\nJumlah statistik: "+$("totalProducts").textContent+
-    "\nJumlah dalam senarai: "+products.length
-  );
 }
+
+
 
 
 function updateStats(){
