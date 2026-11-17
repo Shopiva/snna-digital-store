@@ -103,36 +103,17 @@ main{max-width:1200px;margin:auto;padding:18px 16px 100px}
 }
 .image-placeholder svg{width:35px;height:35px;stroke-width:1.3}
 
-/* BUTANG WISHLIST */
+/* WISHLIST */
 .favorite-btn{
-  position:absolute;
-  top:9px;
-  right:9px;
-  z-index:5;
-  width:35px;
-  height:35px;
-  border:0;
-  border-radius:50%;
-  background:rgba(255,255,255,.95);
-  color:#777;
-  display:grid;
-  place-items:center;
-  box-shadow:0 2px 8px rgba(0,0,0,.12);
-  transition:.2s;
+  position:absolute;top:9px;right:9px;z-index:5;
+  width:35px;height:35px;border:0;border-radius:50%;
+  background:rgba(255,255,255,.95);color:#777;
+  display:grid;place-items:center;
+  box-shadow:0 2px 8px rgba(0,0,0,.12);transition:.2s;
 }
-.favorite-btn svg{
-  width:19px;
-  height:19px;
-  stroke-width:2;
-}
-.favorite-btn.liked{
-  color:#E34D62;
-  background:#FFF0F1;
-}
-.favorite-btn.liked svg{
-  fill:#E34D62;
-  stroke:#E34D62;
-}
+.favorite-btn svg{width:19px;height:19px;stroke-width:2}
+.favorite-btn.liked{color:#E34D62;background:#FFF0F1}
+.favorite-btn.liked svg{fill:#E34D62;stroke:#E34D62}
 .favorite-btn:active{transform:scale(.88)}
 
 .product-info{padding:7px 8px 9px}
@@ -172,6 +153,8 @@ main{max-width:1200px;margin:auto;padding:18px 16px 100px}
   grid-column:1/-1;text-align:center;padding:35px 10px;
   color:var(--muted);font-size:13px;
 }
+
+/* NAVIGASI BAWAH - SHARE DIKEKALKAN */
 .bottom-nav{
   position:fixed;bottom:0;left:0;right:0;z-index:30;
   background:rgba(255,255,255,.97);border-top:1px solid var(--line);
@@ -185,6 +168,51 @@ main{max-width:1200px;margin:auto;padding:18px 16px 100px}
 .nav-item svg{width:21px;height:21px;stroke-width:1.6}
 .nav-item.active{color:#C28D12;font-weight:700}
 .nav-item.active svg{stroke-width:2}
+
+/* MENU HAMBURGER */
+.menu-drawer-bg{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.45);z-index:60;
+}
+.menu-drawer-bg.show{display:block}
+.menu-drawer{
+  position:absolute;top:0;left:0;bottom:0;
+  width:min(320px,85%);background:#fff;
+  padding:22px 17px;overflow-y:auto;
+  box-shadow:4px 0 18px rgba(0,0,0,.12);
+  animation:menuSlide .22s ease;
+}
+@keyframes menuSlide{
+  from{transform:translateX(-100%)}
+  to{transform:translateX(0)}
+}
+.menu-drawer-head{
+  display:flex;justify-content:space-between;align-items:center;
+  padding-bottom:18px;border-bottom:1px solid var(--line);
+  margin-bottom:15px;
+}
+.menu-drawer-logo{font-size:25px;font-weight:800;letter-spacing:2px}
+.menu-drawer-logo span{color:var(--gold-dark)}
+.menu-drawer-sub{
+  font-size:9px;letter-spacing:3px;margin-top:4px;color:#888;
+}
+.menu-close{
+  border:0;background:var(--soft);border-radius:50%;
+  width:37px;height:37px;font-size:23px;color:#777;
+}
+.menu-link{
+  width:100%;display:flex;align-items:center;gap:13px;
+  border:0;background:#fff;padding:14px 12px;
+  border-radius:10px;text-align:left;color:#444;
+  font-size:14px;margin:3px 0;
+}
+.menu-link svg{width:20px;height:20px;color:#B88A20;stroke-width:1.7}
+.menu-link:hover{background:var(--soft)}
+.menu-divider{height:1px;background:var(--line);margin:12px 0}
+.menu-caption{
+  font-size:10px;color:#999;letter-spacing:1px;
+  font-weight:700;padding:8px 12px;
+}
 
 /* DRAWER TROLI DAN CHECKOUT */
 .drawer-bg{
@@ -272,21 +300,77 @@ footer{text-align:center;color:#999;font-size:11px;padding:20px 10px 25px}
 </head>
 
 <body>
+
 <header>
   <div class="header-inner">
-    <button class="icon-btn" onclick="toggleMenu()" aria-label="Menu">
+    <button class="icon-btn" onclick="toggleMenu()" aria-label="Buka menu">
       <i data-lucide="menu"></i>
     </button>
+
     <div class="logo">
       <div class="logo-name">SN<span>NA</span></div>
       <div class="logo-sub">DIGITAL STORE</div>
     </div>
+
     <button class="icon-btn cart-wrap" onclick="openCart()" aria-label="Troli">
       <i data-lucide="shopping-bag"></i>
       <span class="cart-count" id="cartCount">0</span>
     </button>
   </div>
 </header>
+
+<!-- MENU HAMBURGER SNNA -->
+<div class="menu-drawer-bg" id="menuDrawer" onclick="closeMenu(event)">
+  <div class="menu-drawer" onclick="event.stopPropagation()">
+
+    <div class="menu-drawer-head">
+      <div>
+        <div class="menu-drawer-logo">SN<span>NA</span></div>
+        <div class="menu-drawer-sub">DIGITAL STORE</div>
+      </div>
+      <button class="menu-close" onclick="closeMenu()">×</button>
+    </div>
+
+    <button class="menu-link" onclick="menuHome()">
+      <i data-lucide="house"></i>
+      Laman Utama
+    </button>
+
+    <button class="menu-link" onclick="menuCategories()">
+      <i data-lucide="layout-grid"></i>
+      Kategori Produk
+    </button>
+
+    <button class="menu-link" onclick="menuAllProducts()">
+      <i data-lucide="package"></i>
+      Semua Produk
+    </button>
+
+    <button class="menu-link" onclick="menuFeatured()">
+      <i data-lucide="star"></i>
+      Produk Pilihan
+    </button>
+
+    <button class="menu-link" onclick="menuFavorites()">
+      <i data-lucide="heart"></i>
+      Produk Disukai
+    </button>
+
+    <div class="menu-divider"></div>
+    <div class="menu-caption">AKAUN & PEMBELIAN</div>
+
+    <button class="menu-link" onclick="menuCart()">
+      <i data-lucide="shopping-bag"></i>
+      Troli Saya
+    </button>
+
+    <button class="menu-link" onclick="menuAccount()">
+      <i data-lucide="user-round"></i>
+      Akaun Saya
+    </button>
+
+  </div>
+</div>
 
 <main>
   <div class="search-box">
@@ -296,7 +380,9 @@ footer{text-align:center;color:#999;font-size:11px;padding:20px 10px 25px}
       oninput="renderProducts()">
   </div>
 
-  <div class="section-title"><h2>Kategori</h2></div>
+  <div class="section-title" id="categoriesSection">
+    <h2>Kategori</h2>
+  </div>
 
   <div class="categories">
     <button class="category active" onclick="setCategory('Semua',this)">
@@ -316,7 +402,7 @@ footer{text-align:center;color:#999;font-size:11px;padding:20px 10px 25px}
     </button>
   </div>
 
-  <div class="section-title">
+  <div class="section-title" id="productsSection">
     <h2 id="productHeading">Produk Pilihan</h2>
     <button class="view-all" id="viewAllButton" onclick="goHome()">
       Lihat Semua →
@@ -327,27 +413,20 @@ footer{text-align:center;color:#999;font-size:11px;padding:20px 10px 25px}
     <div class="loading">Sedang memuatkan produk SNNA...</div>
   </div>
 
-  <footer>© 2026 SNNA Digital Store. All rights reserved.
-  
-<a href="admin.html" style="
-  display:inline-block;
-  margin-top:12px;
-  padding:9px 18px;
-  background:#FFF0B8;
-  color:#333;
-  border:1px solid #F4CE62;
-  border-radius:20px;
-  font-size:13px;
-  font-weight:600;
-  text-decoration:none;
-">
-  Admin Login
-</a>
-
+  <footer>
+    © 2026 SNNA Digital Store. All rights reserved.
+    <br>
+    <a href="admin.html" style="
+      display:inline-block;margin-top:12px;padding:9px 18px;
+      background:#FFF0B8;color:#333;border:1px solid #F4CE62;
+      border-radius:20px;font-size:13px;font-weight:600;
+      text-decoration:none;">
+      Admin Login
+    </a>
   </footer>
 </main>
 
-
+<!-- NAVIGASI BAWAH: HOME / SHARE / DISUKAI / ME -->
 <nav class="bottom-nav">
   <button class="nav-item active" onclick="goHome(this)">
     <i data-lucide="house"></i>
@@ -370,7 +449,7 @@ footer{text-align:center;color:#999;font-size:11px;padding:20px 10px 25px}
   </button>
 </nav>
 
-
+<!-- DRAWER TROLI DAN CHECKOUT -->
 <div class="drawer-bg" id="cartDrawer" onclick="closeCart(event)">
   <div class="drawer" onclick="event.stopPropagation()">
 
@@ -385,9 +464,11 @@ footer{text-align:center;color:#999;font-size:11px;padding:20px 10px 25px}
         <span>Jumlah</span>
         <span id="cartTotal">RM 0.00</span>
       </div>
+
       <div class="notice" id="emptyCartNotice">
         Troli ini masih dalam mod pratonton. Checkout dan pembayaran sebenar belum diaktifkan.
       </div>
+
       <button class="primary-btn" id="checkoutButton" onclick="showCheckout()">
         Teruskan ke Checkout →
       </button>
@@ -410,11 +491,13 @@ footer{text-align:center;color:#999;font-size:11px;padding:20px 10px 25px}
             <input id="customerName" type="text"
               placeholder="Masukkan nama penuh" maxlength="100" required>
           </div>
+
           <div class="form-group">
             <label for="customerEmail">Alamat e-mel</label>
             <input id="customerEmail" type="email"
               placeholder="nama@email.com" maxlength="150" required>
           </div>
+
           <div class="form-group">
             <label for="customerPhone">Nombor telefon</label>
             <input id="customerPhone" type="tel"
@@ -433,6 +516,7 @@ footer{text-align:center;color:#999;font-size:11px;padding:20px 10px 25px}
           <div class="notice">
             Ini hanya checkout pratonton. Tiada pembayaran atau pesanan sebenar akan dibuat.
           </div>
+
           <button class="primary-btn" type="submit">Lihat Pengesahan Pratonton</button>
           <button class="secondary-btn" type="button" onclick="backToCart()">
             ← Kembali ke Troli
@@ -447,19 +531,24 @@ footer{text-align:center;color:#999;font-size:11px;padding:20px 10px 25px}
           Maklumat pelanggan dan ringkasan pesanan berjaya dipaparkan.
           Ini bukan pembelian sebenar.
         </p>
+
         <div class="summary-box" style="text-align:left">
           <div class="summary-title">Maklumat Pelanggan</div>
           <div id="previewCustomer" style="font-size:13px;line-height:1.8"></div>
+
           <div class="summary-title" style="margin-top:15px">Ringkasan Pesanan</div>
           <div id="previewOrder"></div>
+
           <div class="summary-grand">
             <span>Jumlah</span>
             <span id="previewTotal">RM 0.00</span>
           </div>
         </div>
+
         <div class="notice">
           Tiada rekod pesanan disimpan dan tiada wang ditolak. Integrasi pembayaran akan dibuat dalam fasa seterusnya.
         </div>
+
         <button class="primary-btn" onclick="backToCart()">Kembali ke Troli</button>
         <button class="secondary-btn" onclick="closeCart()">Tutup</button>
       </div>
@@ -476,6 +565,7 @@ const db = window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 let products = [];
 let selectedCategory = "Semua";
+let selectedProductView = "all";
 let cart = [];
 let favorites = [];
 
@@ -504,6 +594,7 @@ function loadCart(){
   try{
     const saved = localStorage.getItem(CART_STORAGE_KEY);
     if(!saved) return;
+
     const parsed = JSON.parse(saved);
     if(!Array.isArray(parsed)) return;
 
@@ -516,8 +607,10 @@ function loadCart(){
       Number.isInteger(Number(item.qty)) &&
       Number(item.qty) > 0
     ).map(item => ({
-      id:item.id,title:item.title,
-      price:Number(item.price),qty:Number(item.qty)
+      id:item.id,
+      title:item.title,
+      price:Number(item.price),
+      qty:Number(item.qty)
     }));
   }catch(error){
     console.error("SNNA cart load error:",error);
@@ -528,10 +621,7 @@ function loadCart(){
 /* WISHLIST: SIMPAN */
 function saveFavorites(){
   try{
-    localStorage.setItem(
-      FAVORITES_STORAGE_KEY,
-      JSON.stringify(favorites)
-    );
+    localStorage.setItem(FAVORITES_STORAGE_KEY,JSON.stringify(favorites));
   }catch(error){
     console.error("SNNA wishlist save error:",error);
   }
@@ -546,9 +636,7 @@ function loadFavorites(){
     const parsed = JSON.parse(saved);
     if(!Array.isArray(parsed)) return;
 
-    favorites = [...new Set(
-      parsed.filter(id=>typeof id === "string")
-    )];
+    favorites = [...new Set(parsed.filter(id=>typeof id === "string"))];
   }catch(error){
     console.error("SNNA wishlist load error:",error);
     favorites = [];
@@ -575,7 +663,9 @@ function isFavorite(id){
 function imageURL(path){
   if(!path) return "";
   if(/^https?:\/\//i.test(path)) return path;
+
   const cleanPath = String(path).replace(/^\/+/,"");
+
   return SUPABASE_URL +
     "/storage/v1/object/public/product-images/" +
     cleanPath.split("/").map(encodeURIComponent).join("/");
@@ -602,7 +692,6 @@ async function loadProducts(){
 
   products = data || [];
 
-  /* BUANG ID WISHLIST YANG SUDAH TIADA DALAM PRODUK AKTIF */
   const activeIds = new Set(products.map(p=>p.id));
   favorites = favorites.filter(id=>activeIds.has(id));
   saveFavorites();
@@ -610,6 +699,7 @@ async function loadProducts(){
   renderProducts();
 }
 
+/* PAPAR PRODUK */
 function renderProducts(){
   const grid = document.getElementById("productsGrid");
   const search = document.getElementById("searchInput").value.trim().toLowerCase();
@@ -624,7 +714,10 @@ function renderProducts(){
       selectedCategory === "Disukai" ||
       (product.category || "").toLowerCase() === selectedCategory.toLowerCase();
 
-    return matchSearch && matchCategory;
+    const matchFeatured =
+      selectedProductView !== "featured" || product.is_featured === true;
+
+    return matchSearch && matchCategory && matchFeatured;
   });
 
   if(selectedCategory === "Disukai"){
@@ -634,7 +727,9 @@ function renderProducts(){
   if(!list.length){
     grid.innerHTML = selectedCategory === "Disukai"
       ? '<div class="empty">Belum ada produk disukai. Tekan ikon hati pada produk untuk menyimpannya ❤️</div>'
-      : '<div class="empty">Belum ada produk untuk dipaparkan.</div>';
+      : selectedProductView === "featured"
+        ? '<div class="empty">Belum ada produk pilihan buat masa ini.</div>'
+        : '<div class="empty">Belum ada produk untuk dipaparkan.</div>';
     return;
   }
 
@@ -701,8 +796,10 @@ function renderProducts(){
   lucide.createIcons();
 }
 
+/* PILIH KATEGORI */
 function setCategory(category,button){
   selectedCategory = category;
+  selectedProductView = "all";
 
   document.querySelectorAll(".category").forEach(el=>{
     el.classList.remove("active");
@@ -712,6 +809,8 @@ function setCategory(category,button){
 
   document.getElementById("productHeading").textContent =
     category === "Semua" ? "Produk Pilihan" : category;
+
+  document.getElementById("viewAllButton").style.display = "block";
 
   renderProducts();
 }
@@ -786,7 +885,11 @@ function changeQty(id,change){
   if(!item) return;
 
   item.qty += change;
-  if(item.qty <= 0) cart = cart.filter(p=>p.id!==id);
+
+  if(item.qty <= 0){
+    cart = cart.filter(p=>p.id!==id);
+  }
+
   updateCart();
 }
 
@@ -882,24 +985,39 @@ function previewCheckout(event){
   lucide.createIcons();
 }
 
+/* MENU HAMBURGER */
 function toggleMenu(){
-  alert("Menu SNNA akan dilengkapkan dalam fasa seterusnya.");
+  document.getElementById("menuDrawer").classList.add("show");
+  lucide.createIcons();
 }
 
+function closeMenu(event){
+  if(event && event.target !== document.getElementById("menuDrawer")) return;
+  document.getElementById("menuDrawer").classList.remove("show");
+}
+
+/* STATUS NAVIGASI BAWAH */
 function setNavActive(button){
   document.querySelectorAll(".nav-item").forEach(el=>{
     el.classList.remove("active");
   });
+
   if(button) button.classList.add("active");
 }
 
+/* HOME */
 function goHome(button){
   selectedCategory = "Semua";
+  selectedProductView = "all";
+
   document.getElementById("searchInput").value = "";
   document.getElementById("productHeading").textContent = "Produk Pilihan";
   document.getElementById("viewAllButton").style.display = "block";
 
-  document.querySelectorAll(".category").forEach(el=>el.classList.remove("active"));
+  document.querySelectorAll(".category").forEach(el=>{
+    el.classList.remove("active");
+  });
+
   document.querySelector(".category").classList.add("active");
 
   setNavActive(button);
@@ -907,14 +1025,17 @@ function goHome(button){
   window.scrollTo({top:0,behavior:"smooth"});
 }
 
+/* KATEGORI */
 function goCategories(button){
   setNavActive(button);
-  document.querySelector(".categories").scrollIntoView({behavior:"smooth"});
+  document.getElementById("categoriesSection").scrollIntoView({behavior:"smooth"});
 }
 
-/* PAPAR PRODUK DISUKAI */
+/* PRODUK DISUKAI */
 function showFavorites(button){
   selectedCategory = "Disukai";
+  selectedProductView = "all";
+
   document.getElementById("productHeading").textContent = "Produk Disukai";
   document.getElementById("viewAllButton").style.display = "none";
 
@@ -925,11 +1046,100 @@ function showFavorites(button){
   setNavActive(button);
   renderProducts();
 
-  document.querySelector(".section-title").scrollIntoView({behavior:"smooth"});
+  document.getElementById("productsSection").scrollIntoView({behavior:"smooth"});
 }
 
+/* AKAUN PELANGGAN */
 function showMe(button){
+  setNavActive(button);
   window.location.href = "account.html";
+}
+
+/* MENU: LAMAN UTAMA */
+function menuHome(){
+  closeMenu();
+  goHome(document.querySelector(".bottom-nav .nav-item"));
+}
+
+/* MENU: KATEGORI */
+function menuCategories(){
+  closeMenu();
+
+  selectedCategory = "Semua";
+  selectedProductView = "all";
+
+  document.getElementById("searchInput").value = "";
+  document.getElementById("productHeading").textContent = "Produk Pilihan";
+  document.getElementById("viewAllButton").style.display = "block";
+
+  document.querySelectorAll(".category").forEach(el=>{
+    el.classList.remove("active");
+  });
+
+  document.querySelector(".category").classList.add("active");
+
+  renderProducts();
+  document.getElementById("categoriesSection").scrollIntoView({behavior:"smooth"});
+}
+
+/* MENU: SEMUA PRODUK */
+function menuAllProducts(){
+  closeMenu();
+
+  selectedCategory = "Semua";
+  selectedProductView = "all";
+
+  document.getElementById("searchInput").value = "";
+  document.getElementById("productHeading").textContent = "Semua Produk";
+  document.getElementById("viewAllButton").style.display = "none";
+
+  document.querySelectorAll(".category").forEach(el=>{
+    el.classList.remove("active");
+  });
+
+  document.querySelector(".category").classList.add("active");
+
+  renderProducts();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+/* MENU: PRODUK PILIHAN */
+function menuFeatured(){
+  closeMenu();
+
+  selectedCategory = "Semua";
+  selectedProductView = "featured";
+
+  document.getElementById("searchInput").value = "";
+  document.getElementById("productHeading").textContent = "Produk Pilihan";
+  document.getElementById("viewAllButton").style.display = "block";
+
+  document.querySelectorAll(".category").forEach(el=>{
+    el.classList.remove("active");
+  });
+
+  document.querySelector(".category").classList.add("active");
+
+  renderProducts();
+  document.getElementById("productsSection").scrollIntoView({behavior:"smooth"});
+}
+
+/* MENU: PRODUK DISUKAI */
+function menuFavorites(){
+  closeMenu();
+  showFavorites(document.querySelectorAll(".bottom-nav .nav-item")[2]);
+}
+
+/* MENU: TROLI */
+function menuCart(){
+  closeMenu();
+  openCart();
+}
+
+/* MENU: AKAUN */
+function menuAccount(){
+  closeMenu();
+  showMe(document.querySelectorAll(".bottom-nav .nav-item")[3]);
 }
 
 /* BUKA TROLI JIKA DATANG DARI HALAMAN DETAIL */
@@ -947,6 +1157,38 @@ function checkOpenCartRequest(){
   }
 }
 
+/* SHARE SNNA */
+async function shareSNNA(button){
+  setNavActive(button);
+
+  const shareData = {
+    title:"SNNA Digital Store",
+    text:"Jom terokai produk digital di SNNA!",
+    url:window.location.origin + window.location.pathname
+  };
+
+  if(navigator.share){
+    try{
+      await navigator.share(shareData);
+    }catch(error){
+      if(error.name !== "AbortError"){
+        await copySNNA(shareData.url);
+      }
+    }
+  }else{
+    await copySNNA(shareData.url);
+  }
+}
+
+async function copySNNA(url){
+  try{
+    await navigator.clipboard.writeText(url);
+    alert("Pautan SNNA berjaya disalin!");
+  }catch(error){
+    prompt("Salin pautan SNNA:",url);
+  }
+}
+
 /* MULAKAN SNNA */
 loadCart();
 loadFavorites();
@@ -955,36 +1197,13 @@ lucide.createIcons();
 loadProducts();
 checkOpenCartRequest();
 
-async function shareSNNA(button) {
-  const shareData = {
-    title: "SNNA Digital Store",
-    text: "Jom terokai produk digital di SNNA!",
-    url: window.location.origin +
-         window.location.pathname
-  };
-
-  if (navigator.share) {
-    try {
-      await navigator.share(shareData);
-    } catch (error) {
-      if (error.name !== "AbortError") {
-        await copySNNA(shareData.url);
-      }
-    }
-  } else {
-    await copySNNA(shareData.url);
+/* TUTUP MENU DENGAN ESCAPE */
+document.addEventListener("keydown",function(event){
+  if(event.key === "Escape"){
+    closeMenu();
+    closeCart();
   }
-}
-
-async function copySNNA(url) {
-  try {
-    await navigator.clipboard.writeText(url);
-    alert("Pautan SNNA berjaya disalin!");
-  } catch (error) {
-    prompt("Salin pautan SNNA:", url);
-  }
-}
-
+});
 </script>
 
 </body>
