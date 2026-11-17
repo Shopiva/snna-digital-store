@@ -16,31 +16,26 @@
   --text:#333333;
   --muted:#888888;
   --line:#EEEEEE;
+  --green:#16834A;
+  --red:#B42318;
 }
 *{box-sizing:border-box}
 body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:var(--cream);
-  color:var(--text);
+  margin:0;font-family:Arial,sans-serif;
+  background:var(--cream);color:var(--text);
 }
 header{
-  background:white;
-  padding:17px 20px;
+  background:white;padding:17px 20px;
   border-bottom:1px solid var(--line);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
+  display:flex;align-items:center;justify-content:space-between;
 }
 .logo{font-size:23px;font-weight:800;letter-spacing:2px}
 .logo span{color:#D5A928}
 .back{text-decoration:none;color:#555;font-size:14px}
-.container{max-width:520px;margin:30px auto;padding:0 16px}
+.container{max-width:560px;margin:28px auto;padding:0 16px}
 .card{
-  background:white;
-  border:1px solid var(--line);
-  border-radius:18px;
-  padding:23px 20px;
+  background:white;border:1px solid var(--line);
+  border-radius:18px;padding:23px 20px;
   box-shadow:0 5px 20px rgba(0,0,0,.035);
 }
 h2{margin:0 0 8px;font-size:22px}
@@ -52,19 +47,30 @@ input{
 }
 input:focus{border-color:var(--gold)}
 button{
-  width:100%;border:0;padding:14px;margin-top:17px;
+  width:100%;border:0;padding:14px;margin-top:15px;
   border-radius:10px;background:var(--gold);
   color:#333;font-weight:700;font-size:14px;cursor:pointer;
 }
 button:disabled{opacity:.6;cursor:not-allowed}
+.secondary{background:#F3F3F3;color:#444}
+.danger{background:#FFF0F0;color:#B42318}
+.text-button{
+  background:none;border:0;padding:0;margin:0;
+  width:auto;color:#9A7414;font-size:13px;
+  font-weight:700;cursor:pointer;
+}
 .switch{text-align:center;font-size:13px;margin-top:20px;color:var(--muted)}
 .switch a{color:#9A7414;font-weight:700;text-decoration:none;cursor:pointer}
+.forgot{text-align:right;margin-top:12px}
 .message{
-  display:none;margin-top:14px;padding:12px;border-radius:9px;
-  font-size:13px;line-height:1.5;background:#FFF5D6;color:#6B5415;
+  display:none;margin-top:14px;padding:12px;
+  border-radius:9px;font-size:13px;line-height:1.5;
+  background:#FFF5D6;color:#6B5415;
+  word-break:break-word;
 }
-.message.error{background:#FFF0F0;color:#B42318}
-.account-info{display:none}
+.message.error{background:#FFF0F0;color:var(--red)}
+.message.success{background:#EAF8EF;color:var(--green)}
+.account-info,.reset-card{display:none}
 .profile{
   background:var(--cream);border:1px solid #F2E8C9;
   padding:17px;border-radius:13px;margin:20px 0;
@@ -96,10 +102,7 @@ button:disabled{opacity:.6;cursor:not-allowed}
   font-size:11px;padding:6px 9px;border-radius:20px;
   background:#FFF0B8;color:#705711;font-weight:700;
 }
-.order-products{
-  border-top:1px solid var(--line);
-  margin-top:12px;padding-top:10px;
-}
+.order-products{border-top:1px solid var(--line);margin-top:12px;padding-top:10px}
 .order-product{
   display:flex;justify-content:space-between;
   gap:12px;font-size:13px;padding:5px 0;
@@ -116,7 +119,9 @@ button:disabled{opacity:.6;cursor:not-allowed}
   font-size:13px;color:var(--muted);line-height:1.7;
 }
 .empty-icon{font-size:27px;margin-bottom:8px}
-.secondary{background:#F4F4F4;color:#444}
+.profile-actions{display:flex;gap:9px;margin-top:13px}
+.profile-actions button{margin-top:0}
+.small-note{font-size:12px;color:var(--muted);line-height:1.6;margin-top:9px}
 footer{text-align:center;color:#999;font-size:12px;padding:25px 10px}
 </style>
 </head>
@@ -130,6 +135,7 @@ footer{text-align:center;color:#999;font-size:12px;padding:25px 10px}
 
 <div class="container">
 
+  <!-- LOGIN / REGISTER -->
   <div class="card" id="authCard">
     <h2 id="formTitle">Log Masuk</h2>
     <div class="subtitle" id="formSubtitle">
@@ -138,14 +144,18 @@ footer{text-align:center;color:#999;font-size:12px;padding:25px 10px}
 
     <div id="nameField" style="display:none">
       <label>Nama penuh</label>
-      <input id="fullName" type="text" placeholder="Masukkan nama anda">
+      <input id="fullName" type="text" placeholder="Masukkan nama anda" autocomplete="name">
     </div>
 
     <label>Alamat e-mel</label>
-    <input id="email" type="email" placeholder="nama@email.com">
+    <input id="email" type="email" placeholder="nama@email.com" autocomplete="email">
 
     <label>Kata laluan</label>
-    <input id="password" type="password" placeholder="Masukkan kata laluan">
+    <input id="password" type="password" placeholder="Masukkan kata laluan" autocomplete="current-password">
+
+    <div class="forgot" id="forgotArea">
+      <button class="text-button" onclick="showForgotPassword()">Lupa kata laluan?</button>
+    </div>
 
     <button id="submitBtn" onclick="submitAuth()">Log Masuk</button>
 
@@ -157,6 +167,44 @@ footer{text-align:center;color:#999;font-size:12px;padding:25px 10px}
     </div>
   </div>
 
+  <!-- FORGOT PASSWORD -->
+  <div class="card" id="forgotCard" style="display:none">
+    <h2>Lupa Kata Laluan?</h2>
+    <div class="subtitle">
+      Masukkan alamat e-mel akaun SNNA anda. Kami akan menghantar pautan untuk menetapkan kata laluan baharu.
+    </div>
+
+    <label>Alamat e-mel</label>
+    <input id="forgotEmail" type="email" placeholder="nama@email.com" autocomplete="email">
+
+    <button id="forgotBtn" onclick="sendResetEmail()">Hantar Pautan Pemulihan</button>
+
+    <div class="message" id="forgotMessage"></div>
+
+    <div class="switch">
+      <a onclick="backToLogin()">← Kembali ke Log Masuk</a>
+    </div>
+  </div>
+
+  <!-- RESET PASSWORD -->
+  <div class="card reset-card" id="resetCard">
+    <h2>Kata Laluan Baharu</h2>
+    <div class="subtitle">
+      Masukkan kata laluan baharu untuk akaun SNNA anda.
+    </div>
+
+    <label>Kata laluan baharu</label>
+    <input id="newPassword" type="password" placeholder="Minimum 6 aksara" autocomplete="new-password">
+
+    <label>Sahkan kata laluan</label>
+    <input id="confirmPassword" type="password" placeholder="Masukkan semula kata laluan" autocomplete="new-password">
+
+    <button id="resetBtn" onclick="saveNewPassword()">Simpan Kata Laluan Baharu</button>
+
+    <div class="message" id="resetMessage"></div>
+  </div>
+
+  <!-- CUSTOMER ACCOUNT -->
   <div class="card account-info" id="accountCard">
     <h2>Akaun Saya</h2>
     <div class="subtitle">Selamat datang ke SNNA Digital Store.</div>
@@ -165,6 +213,14 @@ footer{text-align:center;color:#999;font-size:12px;padding:25px 10px}
       <div class="avatar">👤</div>
       <div class="profile-name" id="profileName">Pelanggan SNNA</div>
       <div class="profile-email" id="profileEmail"></div>
+
+      <button class="secondary" onclick="toggleProfileEdit()">✏️ Kemaskini Profil</button>
+
+      <div id="profileEdit" style="display:none;margin-top:15px">
+        <label>Nama penuh</label>
+        <input id="editFullName" type="text" placeholder="Nama penuh anda">
+        <button id="profileSaveBtn" onclick="saveProfile()">Simpan Profil</button>
+      </div>
     </div>
 
     <div class="section">
@@ -175,15 +231,41 @@ footer{text-align:center;color:#999;font-size:12px;padding:25px 10px}
     </div>
 
     <div class="section">
+      <h3>🎁 Produk Digital Saya</h3>
+      <div class="empty">
+        <div class="empty-icon">📚</div>
+        <strong>Koleksi produk digital anda</strong><br>
+        Produk yang telah dibeli akan dipaparkan di sini selepas sistem pengesahan pembayaran dan pemilikan produk diaktifkan.
+      </div>
+    </div>
+
+    <div class="section">
       <h3>⬇️ Muat Turun Produk</h3>
-      <p class="section-intro">
-        Produk digital yang telah dibayar akan tersedia di sini
-        selepas sistem pembayaran dan muat turun selamat diaktifkan.
-      </p>
+      <div class="empty">
+        <div class="empty-icon">📥</div>
+        <strong>Ruang muat turun</strong><br>
+        Pautan muat turun selamat akan tersedia selepas pembelian disahkan.
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>🔐 Keselamatan Akaun</h3>
+      <div class="section-intro">
+        Tukar kata laluan akaun SNNA anda di sini.
+      </div>
+
+      <label>Kata laluan baharu</label>
+      <input id="changePassword" type="password" placeholder="Minimum 6 aksara" autocomplete="new-password">
+
+      <label>Sahkan kata laluan baharu</label>
+      <input id="confirmChangePassword" type="password" placeholder="Masukkan semula kata laluan" autocomplete="new-password">
+
+      <button id="changePasswordBtn" onclick="changePassword()">Tukar Kata Laluan</button>
+      <div class="message" id="securityMessage"></div>
     </div>
 
     <div class="message" id="profileMessage"></div>
-    <button class="secondary" onclick="logout()">Log Keluar</button>
+    <button class="danger" onclick="logout()">Log Keluar</button>
   </div>
 
 </div>
@@ -200,58 +282,87 @@ const db = window.supabase.createClient(
 );
 
 let isRegister = false;
+let currentUser = null;
+let recoveryMode = false;
 
-function showMessage(text,isError=false){
-  const box=document.getElementById("message");
+function getElement(id){
+  return document.getElementById(id);
+}
+
+function showBox(id,text,type=""){
+  const box=getElement(id);
   box.textContent=text;
-  box.className="message"+(isError?" error":"");
+  box.className="message"+(type?" "+type:"");
   box.style.display="block";
+}
+
+function hideBox(id){
+  getElement(id).style.display="none";
+}
+
+function showOnly(cardId){
+  ["authCard","forgotCard","resetCard","accountCard"].forEach(id=>{
+    getElement(id).style.display=id===cardId?"block":"none";
+  });
 }
 
 function toggleMode(){
   isRegister=!isRegister;
 
-  document.getElementById("formTitle").textContent=
+  getElement("formTitle").textContent=
     isRegister?"Daftar Akaun":"Log Masuk";
 
-  document.getElementById("formSubtitle").textContent=
+  getElement("formSubtitle").textContent=
     isRegister
     ?"Cipta akaun SNNA anda untuk menggunakan kedai kami."
     :"Selamat kembali ke akaun SNNA anda.";
 
-  document.getElementById("nameField").style.display=
-    isRegister?"block":"none";
+  getElement("nameField").style.display=isRegister?"block":"none";
+  getElement("forgotArea").style.display=isRegister?"none":"block";
 
-  document.getElementById("submitBtn").textContent=
+  getElement("submitBtn").textContent=
     isRegister?"Daftar Sekarang":"Log Masuk";
 
-  document.getElementById("switchText").textContent=
+  getElement("switchText").textContent=
     isRegister?"Sudah mempunyai akaun?":"Belum mempunyai akaun?";
 
-  document.getElementById("switchLink").textContent=
+  getElement("switchLink").textContent=
     isRegister?"Log masuk":"Daftar sekarang";
 
-  document.getElementById("message").style.display="none";
+  hideBox("message");
+}
+
+function backToLogin(){
+  isRegister=false;
+  showOnly("authCard");
+  getElement("formTitle").textContent="Log Masuk";
+  getElement("formSubtitle").textContent="Selamat kembali ke akaun SNNA anda.";
+  getElement("nameField").style.display="none";
+  getElement("forgotArea").style.display="block";
+  getElement("submitBtn").textContent="Log Masuk";
+  getElement("switchText").textContent="Belum mempunyai akaun?";
+  getElement("switchLink").textContent="Daftar sekarang";
+  hideBox("message");
 }
 
 async function submitAuth(){
-  const email=document.getElementById("email").value.trim();
-  const password=document.getElementById("password").value;
-  const fullName=document.getElementById("fullName").value.trim();
-  const button=document.getElementById("submitBtn");
+  const email=getElement("email").value.trim();
+  const password=getElement("password").value;
+  const fullName=getElement("fullName").value.trim();
+  const button=getElement("submitBtn");
 
   if(!email || !password){
-    showMessage("Sila isi alamat e-mel dan kata laluan.",true);
+    showBox("message","Sila isi alamat e-mel dan kata laluan.","error");
     return;
   }
 
   if(password.length<6){
-    showMessage("Kata laluan mestilah sekurang-kurangnya 6 aksara.",true);
+    showBox("message","Kata laluan mestilah sekurang-kurangnya 6 aksara.","error");
     return;
   }
 
   if(isRegister && !fullName){
-    showMessage("Sila masukkan nama penuh anda.",true);
+    showBox("message","Sila masukkan nama penuh anda.","error");
     return;
   }
 
@@ -271,9 +382,12 @@ async function submitAuth(){
       if(data.session){
         await loadAccount();
       }else{
-        showMessage("Pendaftaran berjaya. Sila semak e-mel untuk mengesahkan akaun sebelum log masuk.");
+        showBox(
+          "message",
+          "Pendaftaran berjaya. Sila semak e-mel untuk mengesahkan akaun sebelum log masuk.",
+          "success"
+        );
       }
-
     }else{
       const {error}=await db.auth.signInWithPassword({
         email,
@@ -284,14 +398,225 @@ async function submitAuth(){
 
       await loadAccount();
     }
-
   }catch(error){
-    showMessage(error.message || "Berlaku ralat. Sila cuba lagi.",true);
+    showBox("message",error.message || "Berlaku ralat. Sila cuba lagi.","error");
   }finally{
     button.disabled=false;
     button.textContent=isRegister?"Daftar Sekarang":"Log Masuk";
   }
 }
+
+/* FORGOT PASSWORD */
+
+function showForgotPassword(){
+  getElement("forgotEmail").value=getElement("email").value.trim();
+  hideBox("forgotMessage");
+  showOnly("forgotCard");
+}
+
+async function sendResetEmail(){
+  const email=getElement("forgotEmail").value.trim();
+  const button=getElement("forgotBtn");
+
+  if(!email){
+    showBox("forgotMessage","Sila masukkan alamat e-mel anda.","error");
+    return;
+  }
+
+  button.disabled=true;
+  button.textContent="Sedang menghantar...";
+
+  try{
+    const redirectURL=window.location.origin+
+      window.location.pathname+"?mode=reset";
+
+    const {error}=await db.auth.resetPasswordForEmail(email,{
+      redirectTo:redirectURL
+    });
+
+    if(error) throw error;
+
+    showBox(
+      "forgotMessage",
+      "Jika alamat e-mel tersebut berdaftar, pautan pemulihan akan dihantar. Sila semak Inbox dan folder Spam/Junk.",
+      "success"
+    );
+  }catch(error){
+    showBox("forgotMessage",error.message || "Tidak berjaya menghantar pautan pemulihan.","error");
+  }finally{
+    button.disabled=false;
+    button.textContent="Hantar Pautan Pemulihan";
+  }
+}
+
+/* RESET PASSWORD */
+
+async function showResetPassword(){
+  recoveryMode=true;
+  showOnly("resetCard");
+  hideBox("resetMessage");
+}
+
+async function saveNewPassword(){
+  const password=getElement("newPassword").value;
+  const confirm=getElement("confirmPassword").value;
+  const button=getElement("resetBtn");
+
+  if(!password || !confirm){
+    showBox("resetMessage","Sila isi kedua-dua ruangan kata laluan.","error");
+    return;
+  }
+
+  if(password.length<6){
+    showBox("resetMessage","Kata laluan mestilah sekurang-kurangnya 6 aksara.","error");
+    return;
+  }
+
+  if(password!==confirm){
+    showBox("resetMessage","Kata laluan tidak sepadan.","error");
+    return;
+  }
+
+  button.disabled=true;
+  button.textContent="Sedang menyimpan...";
+
+  try{
+    const {data,error}=await db.auth.updateUser({password});
+
+    if(error) throw error;
+
+    recoveryMode=false;
+
+    showBox(
+      "resetMessage",
+      "Kata laluan berjaya dikemaskini. Anda kini boleh menggunakan kata laluan baharu.",
+      "success"
+    );
+
+    getElement("newPassword").value="";
+    getElement("confirmPassword").value="";
+
+    setTimeout(async()=>{
+      if(data.user){
+        await loadAccount();
+      }else{
+        backToLogin();
+      }
+    },1800);
+
+  }catch(error){
+    showBox("resetMessage",error.message || "Tidak berjaya mengemaskini kata laluan.","error");
+  }finally{
+    button.disabled=false;
+    button.textContent="Simpan Kata Laluan Baharu";
+  }
+}
+
+/* PROFILE */
+
+function toggleProfileEdit(){
+  const panel=getElement("profileEdit");
+  const isVisible=panel.style.display==="block";
+
+  panel.style.display=isVisible?"none":"block";
+
+  if(!isVisible){
+    getElement("editFullName").value=
+      getElement("profileName").textContent==="Pelanggan SNNA"
+      ? ""
+      : getElement("profileName").textContent;
+  }
+}
+
+async function saveProfile(){
+  if(!currentUser) return;
+
+  const name=getElement("editFullName").value.trim();
+  const button=getElement("profileSaveBtn");
+
+  if(!name){
+    showBox("profileMessage","Sila masukkan nama penuh.","error");
+    return;
+  }
+
+  button.disabled=true;
+  button.textContent="Menyimpan...";
+
+  try{
+    const {error}=await db
+      .from("profiles")
+      .update({full_name:name})
+      .eq("id",currentUser.id);
+
+    if(error) throw error;
+
+    const {error:authError}=await db.auth.updateUser({
+      data:{full_name:name}
+    });
+
+    if(authError) throw authError;
+
+    getElement("profileName").textContent=name;
+    getElement("profileEdit").style.display="none";
+
+    showBox("profileMessage","Profil berjaya dikemaskini.","success");
+
+  }catch(error){
+    showBox(
+      "profileMessage",
+      "Tidak berjaya mengemaskini profil. Semak polisi RLS jadual profiles. "+error.message,
+      "error"
+    );
+  }finally{
+    button.disabled=false;
+    button.textContent="Simpan Profil";
+  }
+}
+
+/* CHANGE PASSWORD WHILE LOGGED IN */
+
+async function changePassword(){
+  const password=getElement("changePassword").value;
+  const confirm=getElement("confirmChangePassword").value;
+  const button=getElement("changePasswordBtn");
+
+  if(!password || !confirm){
+    showBox("securityMessage","Sila isi kedua-dua ruangan kata laluan.","error");
+    return;
+  }
+
+  if(password.length<6){
+    showBox("securityMessage","Kata laluan mestilah sekurang-kurangnya 6 aksara.","error");
+    return;
+  }
+
+  if(password!==confirm){
+    showBox("securityMessage","Kata laluan tidak sepadan.","error");
+    return;
+  }
+
+  button.disabled=true;
+  button.textContent="Sedang mengemaskini...";
+
+  try{
+    const {error}=await db.auth.updateUser({password});
+
+    if(error) throw error;
+
+    getElement("changePassword").value="";
+    getElement("confirmChangePassword").value="";
+
+    showBox("securityMessage","Kata laluan berjaya ditukar.","success");
+
+  }catch(error){
+    showBox("securityMessage",error.message || "Tidak berjaya menukar kata laluan.","error");
+  }finally{
+    button.disabled=false;
+    button.textContent="Tukar Kata Laluan";
+  }
+}
+
+/* ORDER HISTORY */
 
 function escapeHTML(value){
   return String(value ?? "").replace(/[&<>"']/g,function(char){
@@ -342,8 +667,7 @@ function statusText(value){
 }
 
 async function loadOrders(userId){
-  const list=document.getElementById("ordersList");
-
+  const list=getElement("ordersList");
   list.textContent="Sedang memuatkan pesanan...";
 
   try{
@@ -405,9 +729,7 @@ async function loadOrders(userId){
             <span class="status">${escapeHTML(statusText(order.status))}</span>
           </div>
 
-          <div class="order-products">
-            ${productHTML}
-          </div>
+          <div class="order-products">${productHTML}</div>
 
           <div class="order-total">
             <span>Jumlah</span>
@@ -415,7 +737,8 @@ async function loadOrders(userId){
           </div>
 
           <div class="section-intro" style="margin-top:9px">
-            Status bayaran: <strong>${escapeHTML(statusText(order.payment_status))}</strong>
+            Status bayaran:
+            <strong>${escapeHTML(statusText(order.payment_status))}</strong>
           </div>
         </div>
       `;
@@ -430,23 +753,24 @@ async function loadOrders(userId){
   }
 }
 
+/* ACCOUNT */
+
 async function loadAccount(){
   const {data,error}=await db.auth.getSession();
 
   if(error || !data.session){
-    document.getElementById("authCard").style.display="block";
-    document.getElementById("accountCard").style.display="none";
+    currentUser=null;
+    showOnly("authCard");
     return;
   }
 
   const user=data.session.user;
+  currentUser=user;
 
-  document.getElementById("authCard").style.display="none";
-  document.getElementById("accountCard").style.display="block";
-  document.getElementById("profileEmail").textContent=user.email || "";
+  showOnly("accountCard");
 
-  const profileMessage=document.getElementById("profileMessage");
-  profileMessage.style.display="none";
+  getElement("profileEmail").textContent=user.email || "";
+  getElement("profileMessage").style.display="none";
 
   const {data:profile,error:profileError}=await db
     .from("profiles")
@@ -454,15 +778,17 @@ async function loadAccount(){
     .eq("id",user.id)
     .maybeSingle();
 
-  document.getElementById("profileName").textContent=
+  getElement("profileName").textContent=
     profile?.full_name ||
     user.user_metadata?.full_name ||
     "Pelanggan SNNA";
 
   if(profileError){
-    profileMessage.textContent=
-      "Maklumat profil belum dapat dipaparkan. Akaun anda masih berjaya log masuk.";
-    profileMessage.style.display="block";
+    showBox(
+      "profileMessage",
+      "Maklumat profil belum dapat dipaparkan. Akaun anda masih berjaya log masuk.",
+      "error"
+    );
   }
 
   await loadOrders(user.id);
@@ -479,8 +805,42 @@ async function logout(){
   window.location.href="index.html";
 }
 
-loadAccount();
-</script>
+/* AUTH EVENTS */
 
+db.auth.onAuthStateChange((event,session)=>{
+  if(event==="PASSWORD_RECOVERY"){
+    recoveryMode=true;
+    showResetPassword();
+  }
+
+  if(event==="SIGNED_OUT"){
+    currentUser=null;
+    backToLogin();
+  }
+});
+
+/* INITIAL PAGE LOAD */
+
+async function initializePage(){
+  const params=new URLSearchParams(window.location.search);
+  const mode=params.get("mode");
+
+  const {data}=await db.auth.getSession();
+
+  if(mode==="reset" && data.session){
+    showResetPassword();
+    return;
+  }
+
+  if(data.session){
+    await loadAccount();
+  }else{
+    showOnly("authCard");
+  }
+}
+
+initializePage();
+
+</script>
 </body>
 </html>
