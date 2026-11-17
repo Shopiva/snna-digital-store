@@ -812,49 +812,49 @@ function showLogin(){
 
 
 
+
 function showDashboard(name){
 
- $("loginView").style.display="none";
- $("dashboard").style.display="block";
+  $("loginView").style.display="none";
+  $("dashboard").style.display="block";
 
- // Paparkan Menu dahulu
- const menu=$("menuToggle");
+  // Paparkan menu
+  const menu=$("menuToggle");
 
- if(menu){
-  menu.style.display="inline-flex";
-  menu.style.visibility="visible";
- }
+  if(menu){
+    menu.style.display="inline-flex";
+    menu.style.visibility="visible";
+  }
 
- // Email admin
- const emailBox=$("adminEmailLabel");
+  // Paparkan email admin
+  const emailBox=$("adminEmailLabel");
 
- if(emailBox){
-  emailBox.textContent=currentUser?.email||"-";
- }
+  if(emailBox){
+    emailBox.textContent=currentUser?.email||"-";
+  }
 
- // Butang keluar
- const logoutButton=$("logoutBtn");
+  // Paparkan butang keluar
+  const logoutButton=$("logoutBtn");
 
- if(logoutButton){
-  logoutButton.classList.remove("hidden");
- }
+  if(logoutButton){
+    logoutButton.classList.remove("hidden");
+  }
 
- $("adminLabel").textContent=name||"Admin";
+  closeAdminMenu();
 
- closeAdminMenu();
+  // Muatkan semua data
+  loadProducts();
+  loadOrders();
+  loadReviews();
+  loadSalesStats();
 
- // Muatkan semua data
- loadProducts();
- loadOrders();
- loadReviews();
- loadSalesStats();
+  if(window.lucide){
+    lucide.createIcons();
+  }
 
- if(window.lucide){
-  lucide.createIcons();
- }
-
- console.log("SNNA Dashboard berjaya dibuka");
+  console.log("SNNA Dashboard berjaya dibuka");
 }
+
 
 
 
