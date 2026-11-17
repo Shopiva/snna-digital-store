@@ -711,18 +711,6 @@ async function checkAdmin(){
  }
 
  currentUser=session.user;
- const {count,error:countError}=await db
-  .from("products")
-  .select("*",{count:"exact",head:true});
-
-alert(
-  "UID: "+currentUser.id+
-  "\nJumlah produk: "+count+
-  (countError ? "\nRalat: "+countError.message : "")
-);
- alert("LOGIN UID: " + currentUser.id);
-console.log("SNNA LOGIN UID:", currentUser.id);
-console.log("SNNA LOGIN EMAIL:", currentUser.email);
  const {data:profile,error:profileError}=await db
   .from("profiles")
   .select("role,full_name")
