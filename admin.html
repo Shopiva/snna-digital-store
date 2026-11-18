@@ -3096,7 +3096,15 @@ $("salesPeriod").addEventListener(
  "change",
  renderSalesStats
 );
+$("visitorPeriod").addEventListener(
+ "change",
+ renderVisitorStats
+);
 
+$("visitorSearch").addEventListener(
+ "input",
+ renderVisitorStats
+);
 /* AUTH STATE */
 
 db.auth.onAuthStateChange((event,session)=>{
