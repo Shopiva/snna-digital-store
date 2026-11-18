@@ -420,7 +420,11 @@ footer{text-align:center;color:#aaa;font-size:11px;padding:20px}
   <i data-lucide="star"></i>
   Pengurusan Ulasan
  </button>
-
+<button class="admin-menu-btn"
+  onclick="adminNavigate('downloadLogsPanel',this)">
+  <i data-lucide="download"></i>
+  Sejarah Muat Turun
+</button>
 <div class="sidebar-account">
 
  <div class="sidebar-account-label">
@@ -644,6 +648,57 @@ footer{text-align:center;color:#aaa;font-size:11px;padding:20px}
     <div class="help">Memuatkan ulasan...</div>
    </div>
   </section>
+
+<!-- SNNA DOWNLOAD HISTORY -->
+<section class="panel" id="downloadLogsPanel">
+
+  <h3>📥 Sejarah Muat Turun</h3>
+
+  <div class="stats">
+    <div class="stat">
+      <i data-lucide="download"></i>
+      <strong id="downloadTotal">0</strong>
+      <span>Jumlah muat turun</span>
+    </div>
+
+    <div class="stat">
+      <i data-lucide="users"></i>
+      <strong id="downloadCustomers">0</strong>
+      <span>Pelanggan</span>
+    </div>
+
+    <div class="stat">
+      <i data-lucide="package"></i>
+      <strong id="downloadProducts">0</strong>
+      <span>Produk dimuat turun</span>
+    </div>
+  </div>
+
+  <div class="field" style="margin-bottom:12px">
+    <label>Carian sejarah muat turun</label>
+    <input
+      id="downloadSearch"
+      type="search"
+      placeholder="Cari nama, email, produk atau nombor pesanan">
+  </div>
+
+  <div class="form-actions">
+    <button class="btn btn-gold"
+      onclick="loadDownloadLogs()">
+      <i data-lucide="refresh-cw"></i>
+      Muat Semula
+    </button>
+  </div>
+
+  <div id="downloadLogsStatus" class="status"></div>
+
+  <div id="downloadLogsList"
+    class="product-list"
+    style="margin-top:15px">
+    <div class="help">Memuatkan sejarah muat turun...</div>
+  </div>
+
+</section>
 
 </main>
 </div>
