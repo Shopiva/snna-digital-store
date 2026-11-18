@@ -466,6 +466,67 @@ function escapeHTML(value){
   })[char]);
 }
 
+/* =====================================
+   SNNA PRODUCT VISITOR TRACKING
+===================================== */
+
+const SNNA_VISITOR_KEY = "snna_visitor_id_v1";
+
+function getSNNAVisitorId(){
+  try{
+    let visitorId = localStorage.getItem(SNNA_VISITOR_KEY);
+
+    if(!visitorId){
+      visitorId = crypto.randomUUID
+        ? crypto.randomUUID()
+        : "snna-" + Date.now() + "-" +
+          Math.random().toString(36).slice(2);
+
+      localStorage.setItem(SNNA_VISITOR_KEY,visitorId);
+    }
+
+    return visitorId;
+  }catch(error){
+    console.warn("SNNA visitor ID unavailable:",error);
+    return null;
+  }
+}
+
+async function trackSNNAProductView(productId){
+  try{
+    const visitorId = getSNNAVisitorId();
+    if(!visitorId || !productId) return;
+
+    const eventKey = "snna_tracked_product_view_" + productId;
+
+    if(sessionStorage.getItem(eventKey)) return;
+
+    const referrer = document.referrer
+      ? new URL(document.referrer).origin
+      : null;
+
+    const {error} = await db
+      .from("visitor_logs")
+      .insert({
+        visitor_id: visitorId,
+        event_type: "product_view",
+        page_path: window.location.pathname,
+        product_id: productId,
+        referrer: referrer
+      });
+
+    if(error){
+      console.warn("SNNA product tracking error:",error);
+      return;
+    }
+
+    sessionStorage.setItem(eventKey,"1");
+
+  }catch(error){
+    console.warn("SNNA product tracking unavailable:",error);
+  }
+}
+
 function imageURL(path){
   if(!path) return "";
   if(path.startsWith("http://") || path.startsWith("https://")){
