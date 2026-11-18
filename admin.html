@@ -1745,7 +1745,11 @@ function renderDownloadLogs() {
 }
 
 $("orderSearch").addEventListener("input",renderOrders);
-$("orderFilter").addEventListener("change",renderOrders);
+$("downloadSearch").addEventListener(
+  "input",
+  renderDownloadLogs
+);
+ $("orderFilter").addEventListener("change",renderOrders);
 $("reviewFilter").addEventListener("change",renderReviews);
  $("salesPeriod").addEventListener("change",renderSalesStats);
  $("imageFile").addEventListener("change",()=>{
