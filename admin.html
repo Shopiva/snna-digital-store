@@ -1973,6 +1973,351 @@ async function updateOrderStatus(id,newStatus){
  await loadOrders();
 }
 
+/* VISITOR STATISTICS */
+
+let allVisitorLogs=[];
+
+function getVisitorPeriodStart(period){
+
+ const now=new Date();
+
+ if(period==="today"){
+  return new Date(
+   now.getFullYear(),
+   now.getMonth(),
+   now.getDate()
+  );
+ }
+
+ if(period==="month"){
+  return new Date(
+   now.getFullYear(),
+   now.getMonth(),
+   1
+  );
+ }
+
+ return null;
+}
+
+function visitorEventLabel(type){
+
+ const labels={
+  page_view:"Paparan halaman",
+  product_view:"Paparan produk",
+  affiliate_click:"Klik affiliate"
+ };
+
+ return labels[type]||type||"Aktiviti lain";
+}
+
+async function loadVisitorLogs(){
+
+ const area=$("visitorLogsList");
+
+ if(!area)return;
+
+ area.innerHTML=
+  '<div class="help">Sedang mengambil rekod pelawat...</div>';
+
+ showStatus(
+  "visitorStatsStatus",
+  "Sedang membaca data visitor_logs..."
+ );
+
+ const {data,error}=await db
+  .from("visitor_logs")
+  .select(`
+   id,
+   visitor_id,
+   event_type,
+   page_path,
+   product_id,
+   referrer,
+   created_at
+  `)
+  .order("created_at",{ascending:false})
+  .limit(1000);
+
+ if(error){
+
+  console.error("SNNA visitor logs error:",error);
+
+  area.innerHTML=
+   '<div class="help">Gagal memuatkan rekod pelawat.</div>';
+
+  showStatus(
+   "visitorStatsStatus",
+   "Ralat membaca visitor_logs: "+error.message,
+   "error"
+  );
+
+  return;
+ }
+
+ allVisitorLogs=data||[];
+
+ await renderVisitorStats();
+
+ showStatus(
+  "visitorStatsStatus",
+  "Statistik pelawat berjaya dikemas kini.",
+  "success"
+ );
+}
+
+async function renderVisitorStats(){
+
+ const period=$("visitorPeriod")?.value||"all";
+ const start=getVisitorPeriodStart(period);
+
+ const filtered=allVisitorLogs.filter(log=>{
+
+  if(!start)return true;
+
+  return log.created_at&&
+   new Date(log.created_at)>=start;
+ });
+
+ const todayStart=getVisitorPeriodStart("today");
+
+ const uniqueVisitors=new Set(
+  filtered
+   .map(log=>log.visitor_id)
+   .filter(Boolean)
+ );
+
+ const pageViews=filtered.filter(
+  log=>log.event_type==="page_view"
+ ).length;
+
+ const productViews=filtered.filter(
+  log=>log.event_type==="product_view"
+ ).length;
+
+ const affiliateClicks=filtered.filter(
+  log=>log.event_type==="affiliate_click"
+ ).length;
+
+ const todayActivities=allVisitorLogs.filter(log=>
+  log.created_at&&
+  new Date(log.created_at)>=todayStart
+ ).length;
+
+ $("visitorUnique").textContent=
+  uniqueVisitors.size.toLocaleString("en-MY");
+
+ $("visitorPageViews").textContent=
+  pageViews.toLocaleString("en-MY");
+
+ $("visitorProductViews").textContent=
+  productViews.toLocaleString("en-MY");
+
+ $("visitorAffiliateClicks").textContent=
+  affiliateClicks.toLocaleString("en-MY");
+
+ $("visitorTotalRecords").textContent=
+  filtered.length.toLocaleString("en-MY");
+
+ $("visitorToday").textContent=
+  todayActivities.toLocaleString("en-MY");
+
+ /* HALAMAN PALING POPULAR */
+
+ const pageGroups={};
+
+ filtered.forEach(log=>{
+
+  const page=log.page_path||"Halaman tidak diketahui";
+
+  pageGroups[page]=(pageGroups[page]||0)+1;
+
+ });
+
+ const topPages=Object.entries(pageGroups)
+  .sort((a,b)=>b[1]-a[1])
+  .slice(0,5);
+
+ $("visitorTopPages").innerHTML=topPages.length
+  ?topPages.map((item,index)=>`
+    <div class="product-row">
+     <div class="product-placeholder"
+      style="font-weight:800">
+      ${index+1}
+     </div>
+
+     <div class="product-detail">
+      <strong>${safeText(item[0])}</strong>
+      <small>${item[1].toLocaleString("en-MY")} aktiviti</small>
+     </div>
+    </div>
+   `).join("")
+  :'<div class="help">Belum ada rekod halaman.</div>';
+
+ /* PRODUK PALING BANYAK DILIHAT */
+
+ const productGroups={};
+
+ filtered
+  .filter(log=>log.event_type==="product_view"&&log.product_id)
+  .forEach(log=>{
+
+   productGroups[log.product_id]=
+    (productGroups[log.product_id]||0)+1;
+
+  });
+
+ const popularProducts=Object.entries(productGroups)
+  .sort((a,b)=>b[1]-a[1])
+  .slice(0,5);
+
+ const productIds=popularProducts.map(item=>item[0]);
+
+ let productNames={};
+
+ if(productIds.length){
+
+  const {data,error}=await db
+   .from("products")
+   .select("id,title")
+   .in("id",productIds);
+
+  if(error){
+   console.error("Visitor product lookup error:",error);
+  }else{
+   (data||[]).forEach(product=>{
+    productNames[product.id]=product.title;
+   });
+  }
+ }
+
+ $("visitorTopProducts").innerHTML=popularProducts.length
+  ?popularProducts.map((item,index)=>`
+    <div class="product-row">
+
+     <div class="product-placeholder"
+      style="font-weight:800">
+      ${index+1}
+     </div>
+
+     <div class="product-detail">
+      <strong>
+       ${safeText(productNames[item[0]]||"Produk tidak ditemui")}
+      </strong>
+      <small>
+       ${item[1].toLocaleString("en-MY")} kali dilihat
+      </small>
+     </div>
+
+    </div>
+   `).join("")
+  :'<div class="help">Belum ada rekod paparan produk.</div>';
+
+ /* SENARAI AKTIVITI */
+
+ const search=(
+  $("visitorSearch")?.value||""
+ ).toLowerCase().trim();
+
+ const searched=filtered.filter(log=>{
+
+  const text=[
+   log.visitor_id,
+   log.event_type,
+   log.page_path,
+   log.product_id,
+   log.referrer
+  ].join(" ").toLowerCase();
+
+  return !search||text.includes(search);
+
+ });
+
+ const visibleLogs=searched.slice(0,100);
+
+ if(!visibleLogs.length){
+
+  $("visitorLogsList").innerHTML=
+   '<div class="help">Tiada rekod aktiviti ditemui.</div>';
+
+  return;
+ }
+
+ $("visitorLogsList").innerHTML=visibleLogs.map(log=>{
+
+  const date=log.created_at
+   ?new Date(log.created_at).toLocaleString("ms-MY",{
+     dateStyle:"medium",
+     timeStyle:"short"
+    })
+   :"—";
+
+  return `
+   <div class="panel" style="margin:0">
+
+    <div style="
+     display:flex;
+     justify-content:space-between;
+     gap:10px;
+     flex-wrap:wrap">
+
+     <strong style="font-size:13px">
+      ${safeText(visitorEventLabel(log.event_type))}
+     </strong>
+
+     <span class="help">
+      ${safeText(date)}
+     </span>
+
+    </div>
+
+    <div style="margin-top:10px;font-size:12px">
+     <strong>Halaman:</strong>
+     ${safeText(log.page_path||"—")}
+    </div>
+
+    <div class="help" style="margin-top:7px">
+     ID pelawat:
+     ${safeText(log.visitor_id||"—")}
+    </div>
+
+    ${
+     log.product_id
+      ?`<div class="help" style="margin-top:5px">
+         ID produk: ${safeText(log.product_id)}
+        </div>`
+      :""
+    }
+
+    ${
+     log.referrer
+      ?`<div class="help" style="margin-top:5px">
+         Sumber: ${safeText(log.referrer)}
+        </div>`
+      :""
+    }
+
+   </div>
+  `;
+
+ }).join("");
+
+ if(searched.length>100){
+
+  $("visitorLogsList").insertAdjacentHTML(
+   "beforeend",
+   '<div class="help">Memaparkan 100 rekod terawal daripada '+
+   searched.length.toLocaleString("en-MY")+
+   ' rekod yang sepadan. Had data yang dimuatkan ialah 1,000 rekod.</div>'
+  );
+
+ }
+
+ if(window.lucide){
+  lucide.createIcons();
+ }
+}
+
 /* REVIEW MANAGEMENT */
 
 let allReviews=[];
