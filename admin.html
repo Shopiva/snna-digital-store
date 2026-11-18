@@ -961,6 +961,113 @@ footer{
 
    </section>
 
+<!-- VISITOR STATISTICS -->
+<section class="admin-page" id="visitorStatsPanel">
+
+ <div class="page-heading">
+  <h2>👥 Statistik Pelawat</h2>
+  <p>Pantau trafik, paparan halaman dan aktiviti pengunjung SNNA Digital Store.</p>
+ </div>
+
+ <div class="panel">
+
+  <div class="field">
+   <label>Tempoh statistik</label>
+   <select id="visitorPeriod">
+    <option value="all">Semua rekod</option>
+    <option value="today">Hari ini</option>
+    <option value="month">Bulan ini</option>
+   </select>
+  </div>
+
+  <div class="form-actions">
+   <button class="btn btn-gold" onclick="loadVisitorLogs()">
+    <i data-lucide="refresh-cw"></i>
+    Muat Semula Statistik
+   </button>
+  </div>
+
+  <div id="visitorStatsStatus" class="status"></div>
+
+ </div>
+
+ <div class="stats">
+
+  <div class="stat">
+   <i data-lucide="users"></i>
+   <strong id="visitorUnique">0</strong>
+   <span>Pelawat unik</span>
+  </div>
+
+  <div class="stat">
+   <i data-lucide="eye"></i>
+   <strong id="visitorPageViews">0</strong>
+   <span>Jumlah paparan halaman</span>
+  </div>
+
+  <div class="stat">
+   <i data-lucide="mouse-pointer-click"></i>
+   <strong id="visitorProductViews">0</strong>
+   <span>Paparan produk</span>
+  </div>
+
+ </div>
+
+ <div class="stats">
+
+  <div class="stat">
+   <i data-lucide="external-link"></i>
+   <strong id="visitorAffiliateClicks">0</strong>
+   <span>Klik affiliate</span>
+  </div>
+
+  <div class="stat">
+   <i data-lucide="file-text"></i>
+   <strong id="visitorTotalRecords">0</strong>
+   <span>Jumlah aktiviti direkodkan</span>
+  </div>
+
+  <div class="stat">
+   <i data-lucide="calendar-days"></i>
+   <strong id="visitorToday">0</strong>
+   <span>Aktiviti hari ini</span>
+  </div>
+
+ </div>
+
+ <div class="panel">
+  <h3>📄 Halaman Paling Popular</h3>
+  <div id="visitorTopPages" class="product-list">
+   <div class="help">Memuatkan statistik halaman...</div>
+  </div>
+ </div>
+
+ <div class="panel">
+  <h3>🔥 Produk Paling Banyak Dilihat</h3>
+  <div id="visitorTopProducts" class="product-list">
+   <div class="help">Memuatkan statistik produk...</div>
+  </div>
+ </div>
+
+ <div class="panel">
+
+  <h3>🕒 Rekod Aktiviti Pelawat</h3>
+
+  <div class="field">
+   <label>Carian aktiviti</label>
+   <input id="visitorSearch" type="search"
+    placeholder="Cari halaman, ID pelawat atau jenis aktiviti">
+  </div>
+
+  <div id="visitorLogsList" class="product-list"
+   style="margin-top:15px">
+   <div class="help">Memuatkan rekod aktiviti...</div>
+  </div>
+
+ </div>
+
+</section>
+
    <!-- REVIEWS -->
    <section class="admin-page" id="reviewsPanel">
 
