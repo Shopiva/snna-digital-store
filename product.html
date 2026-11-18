@@ -715,7 +715,10 @@ async function loadProduct(){
   }
 
   document.title = data.title + " — SNNA";
-  renderProduct(data);
+renderProduct(data);
+
+// Rekod pelawat yang melihat produk
+trackSNNAProductView(data.id);
 }
 
 /* LOAD PUBLIC REVIEWS */
