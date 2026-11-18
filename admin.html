@@ -1563,6 +1563,186 @@ async function setReviewStatus(id,publish){
 
  await loadReviews();
 }
+ 
+// =================================
+// SNNA DOWNLOAD HISTORY
+// =================================
+
+let allDownloadLogs = [];
+
+async function loadDownloadLogs() {
+  const area = $("downloadLogsList");
+
+  if (!area) return;
+
+  area.innerHTML =
+    '<div class="help">Memuatkan sejarah muat turun...</div>';
+
+  showStatus(
+    "downloadLogsStatus",
+    "Sedang mengambil rekod sejarah muat turun..."
+  );
+
+  const { data, error } = await db
+    .from("download_logs")
+    .select(`
+      id,
+      user_id,
+      order_item_id,
+      order_id,
+      product_id,
+      customer_name,
+      customer_email,
+      order_number,
+      product_title,
+      file_name,
+      downloaded_at
+    `)
+    .order("downloaded_at", { ascending: false });
+
+  if (error) {
+    console.error("SNNA download logs error:", error);
+
+    area.innerHTML =
+      '<div class="help">Gagal memuatkan sejarah muat turun.</div>';
+
+    showStatus(
+      "downloadLogsStatus",
+      "Ralat: " + error.message,
+      "error"
+    );
+
+    return;
+  }
+
+  allDownloadLogs = data || [];
+
+  renderDownloadLogs();
+
+  showStatus(
+    "downloadLogsStatus",
+    "Sejarah muat turun berjaya dikemas kini.",
+    "success"
+  );
+}
+
+function renderDownloadLogs() {
+  const area = $("downloadLogsList");
+
+  if (!area) return;
+
+  const search = (
+    $("downloadSearch")?.value || ""
+  ).toLowerCase().trim();
+
+  const filtered = allDownloadLogs.filter(log => {
+    const searchable = [
+      log.customer_name,
+      log.customer_email,
+      log.order_number,
+      log.product_title,
+      log.file_name
+    ].join(" ").toLowerCase();
+
+    return !search || searchable.includes(search);
+  });
+
+  // Statistik keseluruhan
+  $("downloadTotal").textContent =
+    allDownloadLogs.length.toLocaleString("en-MY");
+
+  $("downloadCustomers").textContent =
+    new Set(
+      allDownloadLogs.map(log => log.user_id).filter(Boolean)
+    ).size.toLocaleString("en-MY");
+
+  $("downloadProducts").textContent =
+    new Set(
+      allDownloadLogs.map(log => log.product_id).filter(Boolean)
+    ).size.toLocaleString("en-MY");
+
+  if (!filtered.length) {
+    area.innerHTML = `
+      <div class="help">
+        ${
+          allDownloadLogs.length
+            ? "Tiada rekod sepadan dengan carian."
+            : "Belum ada sejarah muat turun."
+        }
+      </div>
+    `;
+    return;
+  }
+
+  area.innerHTML = filtered.map(log => {
+    const date = log.downloaded_at
+      ? new Date(log.downloaded_at).toLocaleString("ms-MY", {
+          dateStyle: "medium",
+          timeStyle: "short"
+        })
+      : "—";
+
+    return `
+      <div class="panel" style="margin:0">
+
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          gap:10px;
+          flex-wrap:wrap">
+
+          <strong style="font-size:14px">
+            ${safeText(log.product_title || "Produk tanpa nama")}
+          </strong>
+
+          <span class="help">
+            ${safeText(date)}
+          </span>
+
+        </div>
+
+        <hr style="
+          border:0;
+          border-top:1px solid #eee;
+          margin:12px 0">
+
+        <strong style="font-size:13px">
+          ${safeText(log.customer_name || "Pelanggan")}
+        </strong>
+
+        <div class="help" style="margin-top:5px">
+          ${safeText(log.customer_email || "Tiada e-mel")}
+        </div>
+
+        <div style="margin-top:12px;font-size:12px">
+          <strong>Nombor pesanan:</strong>
+          ${safeText(log.order_number || "—")}
+        </div>
+
+        <div style="margin-top:7px;font-size:12px">
+          <strong>Nama fail:</strong>
+          ${safeText(log.file_name || "—")}
+        </div>
+
+        <div class="help" style="margin-top:9px">
+          ID pelanggan:
+          ${safeText(log.user_id || "—")}
+        </div>
+
+        <div class="help">
+          ID rekod:
+          ${safeText(log.id || "—")}
+        </div>
+
+      </div>
+    `;
+  }).join("");
+
+  if (window.lucide) {
+    lucide.createIcons();
+  }
+}
+
 $("orderSearch").addEventListener("input",renderOrders);
 $("orderFilter").addEventListener("change",renderOrders);
 $("reviewFilter").addEventListener("change",renderReviews);
