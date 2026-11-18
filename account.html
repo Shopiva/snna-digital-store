@@ -8,181 +8,56 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
-  --navy:#172A35;
-  --navy2:#263E4B;
-  --gold:#C6A46A;
-  --gold2:#D8BC8A;
-  --ivory:#F7F5F0;
-  --line:#E6E0D5;
-  --muted:#78838A;
-  --white:#fff;
-  --red:#c94b4b;
+  --navy:#172A35;--navy2:#263E4B;--gold:#C6A46A;
+  --gold2:#D8BC8A;--ivory:#F7F5F0;--line:#E6E0D5;
+  --muted:#78838A;--white:#fff;--red:#c94b4b;
 }
 *{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:var(--ivory);
-  color:var(--navy);
-}
-header{
-  background:var(--navy);
-  color:white;
-  padding:17px 20px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-.brand{
-  font-size:22px;
-  font-weight:800;
-  letter-spacing:2px;
-}
-.back{
-  color:white;
-  text-decoration:none;
-  font-size:13px;
-}
-main{
-  max-width:650px;
-  margin:25px auto;
-  padding:0 15px 40px;
-}
-.card{
-  background:white;
-  border:1px solid var(--line);
-  border-radius:17px;
-  padding:22px;
-  margin-bottom:17px;
-  box-shadow:0 4px 16px rgba(0,0,0,.035);
-}
+body{margin:0;font-family:Arial,sans-serif;background:var(--ivory);color:var(--navy)}
+header{background:var(--navy);color:white;padding:17px 20px;display:flex;align-items:center;justify-content:space-between}
+.brand{font-size:22px;font-weight:800;letter-spacing:2px}
+.back{color:white;text-decoration:none;font-size:13px}
+main{max-width:650px;margin:25px auto;padding:0 15px 40px}
+.card{background:white;border:1px solid var(--line);border-radius:17px;padding:22px;margin-bottom:17px;box-shadow:0 4px 16px rgba(0,0,0,.035)}
 h2{font-size:20px;margin:0 0 8px}
 h3{font-size:16px;margin:0 0 14px}
 p{color:var(--muted);font-size:13px;line-height:1.6}
-input{
-  width:100%;
-  padding:13px;
-  border:1px solid var(--line);
-  border-radius:10px;
-  margin:7px 0 12px;
-  font-size:14px;
-  background:#fff;
-}
-label{
-  display:block;
-  font-size:12px;
-  font-weight:700;
-  margin-top:8px;
-}
-button{
-  border:0;
-  border-radius:10px;
-  padding:13px 17px;
-  background:var(--navy);
-  color:white;
-  font-weight:700;
-  cursor:pointer;
-  font-size:13px;
-}
+input{width:100%;padding:13px;border:1px solid var(--line);border-radius:10px;margin:7px 0 12px;font-size:14px;background:#fff}
+label{display:block;font-size:12px;font-weight:700;margin-top:8px}
+button{border:0;border-radius:10px;padding:13px 17px;background:var(--navy);color:white;font-weight:700;cursor:pointer;font-size:13px}
 button.gold{background:var(--gold);color:#172A35}
-button.light{
-  background:#f0ede6;
-  color:var(--navy);
-}
+button.light{background:#f0ede6;color:var(--navy)}
 button.danger{background:#fff0f0;color:var(--red)}
+button.download{background:var(--navy);width:100%;margin-top:12px}
 button:disabled{opacity:.5;cursor:not-allowed}
 .full{width:100%}
 .hidden{display:none!important}
-.message{
-  font-size:13px;
-  padding:10px;
-  border-radius:9px;
-  margin-top:10px;
-  display:none;
-  line-height:1.5;
-}
+.message{font-size:13px;padding:10px;border-radius:9px;margin-top:10px;display:none;line-height:1.5}
 .message.ok{display:block;background:#eaf7ed;color:#24733b}
 .message.err{display:block;background:#fff0f0;color:#b33b3b}
-.switch{
-  text-align:center;
-  margin-top:16px;
-  font-size:13px;
-}
+.switch{text-align:center;margin-top:16px;font-size:13px}
 .switch a{color:#9b773e;font-weight:bold;cursor:pointer}
-.profile-head{
-  text-align:center;
-  padding:10px 0 20px;
-}
-.avatar-wrap{
-  width:112px;
-  height:112px;
-  margin:0 auto 12px;
-  position:relative;
-}
-.avatar{
-  width:112px;
-  height:112px;
-  border-radius:50%;
-  object-fit:cover;
-  border:4px solid #f0e8d8;
-  background:#eee9df;
-}
-.avatar-default{
-  width:112px;
-  height:112px;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:#eee9df;
-  color:var(--navy);
-  font-size:40px;
-  font-weight:bold;
-  border:4px solid #f0e8d8;
-}
-.photo-actions{
-  display:flex;
-  justify-content:center;
-  gap:8px;
-  flex-wrap:wrap;
-  margin-top:12px;
-}
+.profile-head{text-align:center;padding:10px 0 20px}
+.avatar-wrap{width:112px;height:112px;margin:0 auto 12px;position:relative}
+.avatar{width:112px;height:112px;border-radius:50%;object-fit:cover;border:4px solid #f0e8d8;background:#eee9df}
+.avatar-default{width:112px;height:112px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#eee9df;color:var(--navy);font-size:40px;font-weight:bold;border:4px solid #f0e8d8}
+.photo-actions{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:12px}
 .photo-actions button{padding:10px 13px}
 .small-note{font-size:11px;color:var(--muted)}
-.info-row{
-  display:flex;
-  justify-content:space-between;
-  gap:12px;
-  border-bottom:1px solid var(--line);
-  padding:12px 0;
-  font-size:13px;
-}
+.info-row{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding:12px 0;font-size:13px}
 .info-row:last-child{border-bottom:0}
-.section-title{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:12px;
-}
-.order{
-  border:1px solid var(--line);
-  border-radius:12px;
-  padding:13px;
-  margin:10px 0;
-}
-.order small{color:var(--muted)}
+.section-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:10px}
+.order,.digital-item{border:1px solid var(--line);border-radius:12px;padding:13px;margin:10px 0}
+.order small,.digital-item small{color:var(--muted)}
 .order-total{font-weight:bold;color:#9b773e;margin-top:8px}
-footer{
-  text-align:center;
-  color:var(--muted);
-  font-size:11px;
-  padding:20px;
-}
+.digital-item h4{font-size:14px;margin:0 0 7px}
+.paid-label{display:inline-block;background:#eaf7ed;color:#24733b;border-radius:20px;padding:5px 9px;font-size:11px;font-weight:bold;margin:5px 0}
+.pending-label{display:inline-block;background:#fff4dc;color:#936b22;border-radius:20px;padding:5px 9px;font-size:11px;font-weight:bold}
+footer{text-align:center;color:var(--muted);font-size:11px;padding:20px}
 </style>
 </head>
 
 <body>
-
 <header>
   <div class="brand">SNNA</div>
   <a class="back" href="index.html">← Kembali ke Homepage</a>
@@ -190,163 +65,112 @@ footer{
 
 <main>
 
-  <!-- LOGIN / REGISTER -->
-  <section id="authCard" class="card">
-    <h2 id="formTitle">Log Masuk</h2>
-    <p id="formSubtitle">Log masuk untuk melihat akaun dan pesanan anda.</p>
+<section id="authCard" class="card">
+  <h2 id="formTitle">Log Masuk</h2>
+  <p id="formSubtitle">Log masuk untuk melihat akaun dan pesanan anda.</p>
 
-    <div id="nameField" class="hidden">
-      <label>Nama penuh</label>
-      <input id="fullName" type="text" placeholder="Nama anda">
+  <div id="nameField" class="hidden">
+    <label>Nama penuh</label>
+    <input id="fullName" type="text" placeholder="Nama anda">
+  </div>
+
+  <label>Email</label>
+  <input id="email" type="email" placeholder="Alamat email" autocomplete="email">
+
+  <label>Kata laluan</label>
+  <input id="password" type="password" placeholder="Kata laluan" autocomplete="current-password">
+
+  <button id="submitBtn" class="full" onclick="submitAuth()">Log Masuk</button>
+  <div id="message" class="message"></div>
+
+  <div class="switch"><a onclick="showForgot()">Lupa kata laluan?</a></div>
+  <div class="switch">
+    <span id="switchText">Belum mempunyai akaun?</span>
+    <a id="switchLink" onclick="toggleMode"> Daftar sekarang</a>
+  </div>
+</section>
+
+<section id="forgotCard" class="card hidden">
+  <h2>Lupa Kata Laluan</h2>
+  <p>Masukkan email anda untuk menerima pautan reset.</p>
+  <label>Alamat email</label>
+  <input id="forgotEmail" type="email" placeholder="Alamat email">
+  <button class="full" onclick="sendResetEmail()">Hantar Pautan Reset</button>
+  <div id="forgotMessage" class="message"></div>
+  <div class="switch"><a onclick="showLogin()">Kembali ke Log Masuk</a></div>
+</section>
+
+<section id="resetCard" class="card hidden">
+  <h2>Tetapkan Kata Laluan Baharu</h2>
+  <p>Masukkan kata laluan baharu untuk akaun anda.</p>
+  <label>Kata laluan baharu</label>
+  <input id="newPassword" type="password" placeholder="Minimum 6 aksara">
+  <label>Sahkan kata laluan</label>
+  <input id="confirmPassword" type="password" placeholder="Ulang kata laluan">
+  <button class="full" onclick="updatePassword()">Simpan Kata Laluan</button>
+  <div id="resetMessage" class="message"></div>
+</section>
+
+<section id="accountCard" class="hidden">
+
+  <div class="card">
+    <div class="profile-head">
+      <div class="avatar-wrap">
+        <img id="profilePhoto" class="avatar hidden" alt="Gambar profil">
+        <div id="defaultAvatar" class="avatar-default">S</div>
+      </div>
+      <h2 id="profileName">Pengguna SNNA</h2>
+      <p id="profileEmail"></p>
+
+      <div class="photo-actions">
+        <button class="gold" onclick="document.getElementById('photoInput').click()">Upload / Tukar Foto</button>
+        <button class="danger hidden" id="deletePhotoBtn" onclick="deletePhoto()">Padam Foto</button>
+      </div>
+
+      <input id="photoInput" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" onchange="uploadPhoto(event)">
+      <p class="small-note">JPG, PNG atau WebP. Maksimum 2MB.</p>
+      <div id="photoMessage" class="message"></div>
     </div>
+  </div>
 
-    <label>Email</label>
-    <input id="email" type="email" placeholder="Alamat email" autocomplete="email">
+  <div class="card">
+    <h3>Maklumat Profil</h3>
+    <label>Nama penuh</label>
+    <input id="editName" type="text" placeholder="Nama penuh">
+    <button class="full gold" onclick="saveProfile()">Simpan Perubahan Profil</button>
+    <div id="profileMessage" class="message"></div>
+    <div class="info-row"><span>Email</span><strong id="accountEmail"></strong></div>
+    <div class="info-row"><span>Jenis akaun</span><strong id="accountRole">Pelanggan</strong></div>
+  </div>
 
-    <label>Kata laluan</label>
-    <input id="password" type="password" placeholder="Kata laluan" autocomplete="current-password">
-
-    <button id="submitBtn" class="full" onclick="submitAuth()">Log Masuk</button>
-
-    <div id="message" class="message"></div>
-
-    <div class="switch">
-      <a onclick="showForgot()">Lupa kata laluan?</a>
-    </div>
-
-    <div class="switch">
-      <span id="switchText">Belum mempunyai akaun?</span>
-      <a id="switchLink" onclick="toggleMode()"> Daftar sekarang</a>
-    </div>
-  </section>
-
-  <!-- FORGOT PASSWORD -->
-  <section id="forgotCard" class="card hidden">
-    <h2>Lupa Kata Laluan</h2>
-    <p>Masukkan email anda. Kami akan menghantar pautan untuk menetapkan semula kata laluan.</p>
-
-    <label>Alamat email</label>
-    <input id="forgotEmail" type="email" placeholder="Alamat email">
-
-    <button class="full" onclick="sendResetEmail()">Hantar Pautan Reset</button>
-    <div id="forgotMessage" class="message"></div>
-
-    <div class="switch">
-      <a onclick="showLogin()">Kembali ke Log Masuk</a>
-    </div>
-  </section>
-
-  <!-- RESET PASSWORD -->
-  <section id="resetCard" class="card hidden">
-    <h2>Tetapkan Kata Laluan Baharu</h2>
-    <p>Masukkan kata laluan baharu untuk akaun anda.</p>
-
+  <div class="card">
+    <h3>Tukar Kata Laluan</h3>
     <label>Kata laluan baharu</label>
-    <input id="newPassword" type="password" placeholder="Minimum 6 aksara">
-
+    <input id="changePassword" type="password" placeholder="Minimum 6 aksara">
     <label>Sahkan kata laluan</label>
-    <input id="confirmPassword" type="password" placeholder="Ulang kata laluan">
+    <input id="confirmChangePassword" type="password" placeholder="Ulang kata laluan">
+    <button class="full" onclick="changePassword()">Kemaskini Kata Laluan</button>
+    <div id="passwordMessage" class="message"></div>
+  </div>
 
-    <button class="full" onclick="updatePassword()">Simpan Kata Laluan</button>
-    <div id="resetMessage" class="message"></div>
-  </section>
-
-  <!-- ACCOUNT -->
-  <section id="accountCard" class="hidden">
-
-    <!-- PROFILE PHOTO -->
-    <div class="card">
-      <div class="profile-head">
-        <div class="avatar-wrap">
-          <img id="profilePhoto" class="avatar hidden" alt="Gambar profil">
-          <div id="defaultAvatar" class="avatar-default">S</div>
-        </div>
-
-        <h2 id="profileName">Pengguna SNNA</h2>
-        <p id="profileEmail"></p>
-
-        <div class="photo-actions">
-          <button class="gold" onclick="document.getElementById('photoInput').click()">
-            Upload / Tukar Foto
-          </button>
-          <button class="danger" id="deletePhotoBtn" onclick="deletePhoto()">
-            Padam Foto
-          </button>
-        </div>
-
-        <input
-          id="photoInput"
-          type="file"
-          accept="image/jpeg,image/png,image/webp"
-          class="hidden"
-          onchange="uploadPhoto(event)"
-        >
-
-        <p class="small-note">JPG, PNG atau WebP. Maksimum 2MB.</p>
-        <div id="photoMessage" class="message"></div>
-      </div>
+  <div class="card">
+    <div class="section-title">
+      <h3>Rekod Pesanan</h3>
+      <button class="light" onclick="loadOrders()">Muat Semula</button>
     </div>
+    <div id="ordersList"><p>Memuatkan rekod pesanan...</p></div>
+  </div>
 
-    <!-- PROFILE DETAILS -->
-    <div class="card">
-      <h3>Maklumat Profil</h3>
+  <div class="card">
+    <h3>Produk Digital Saya</h3>
+    <p>Produk yang telah dibeli dan bayaran disahkan boleh dimuat turun di sini.</p>
+    <div id="digitalProducts"><p>Memuatkan produk digital...</p></div>
+  </div>
 
-      <label>Nama penuh</label>
-      <input id="editName" type="text" placeholder="Nama penuh">
-
-      <button class="full gold" onclick="saveProfile()">Simpan Perubahan Profil</button>
-      <div id="profileMessage" class="message"></div>
-
-      <div class="info-row">
-        <span>Email</span>
-        <strong id="accountEmail"></strong>
-      </div>
-      <div class="info-row">
-        <span>Jenis akaun</span>
-        <strong id="accountRole">Pelanggan</strong>
-      </div>
-    </div>
-
-    <!-- CHANGE PASSWORD -->
-    <div class="card">
-      <h3>Tukar Kata Laluan</h3>
-
-      <label>Kata laluan baharu</label>
-      <input id="changePassword" type="password" placeholder="Minimum 6 aksara">
-
-      <label>Sahkan kata laluan</label>
-      <input id="confirmChangePassword" type="password" placeholder="Ulang kata laluan">
-
-      <button class="full" onclick="changePassword()">Kemaskini Kata Laluan</button>
-      <div id="passwordMessage" class="message"></div>
-    </div>
-
-    <!-- ORDER HISTORY -->
-    <div class="card">
-      <div class="section-title">
-        <h3>Rekod Pesanan</h3>
-        <button class="light" onclick="loadOrders()">Muat Semula</button>
-      </div>
-      <div id="ordersList">
-        <p>Memuatkan rekod pesanan...</p>
-      </div>
-    </div>
-
-    <!-- DIGITAL PRODUCTS -->
-    <div class="card">
-      <h3>Produk Digital Saya</h3>
-      <p>Produk digital yang telah dibeli akan dipaparkan di bahagian ini apabila rekod pembelian dan akses muat turun tersedia.</p>
-      <div id="digitalProducts">
-        <p>Tiada produk digital untuk dipaparkan buat masa ini.</p>
-      </div>
-    </div>
-
-    <div class="card">
-      <button class="danger full" onclick="logout()">Log Keluar</button>
-    </div>
-
-  </section>
-
+  <div class="card">
+    <button class="danger full" onclick="logout()">Log Keluar</button>
+  </div>
+</section>
 </main>
 
 <footer>© SNNA Digital Store</footer>
@@ -354,482 +178,395 @@ footer{
 <script>
 const SUPABASE_URL = "https://xbnvgcsvicealimwlsmv.supabase.co";
 const SUPABASE_KEY = "sb_publishable_nQAJM6sx1KmuNMBXTO40Zw_wFvPpCzD";
-
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let currentUser = null;
 let isRegister = false;
-let recoveryMode = false;
 
 const $ = id => document.getElementById(id);
 
-function showMessage(id, text, type="ok"){
-  const el = $(id);
-  if(!el) return;
-  el.textContent = text;
-  el.className = "message " + type;
+function showMessage(id,text,type="ok"){
+  const el=$(id);
+  if(!el)return;
+  el.textContent=text;
+  el.className="message "+type;
 }
-
 function clearMessage(id){
-  const el = $(id);
-  if(!el) return;
-  el.textContent = "";
-  el.className = "message";
+  const el=$(id);
+  if(!el)return;
+  el.textContent="";
+  el.className="message";
 }
-
 function showOnly(id){
-  ["authCard","forgotCard","resetCard","accountCard"].forEach(x=>{
-    $(x).classList.add("hidden");
-  });
+  ["authCard","forgotCard","resetCard","accountCard"].forEach(x=>$(x).classList.add("hidden"));
   $(id).classList.remove("hidden");
 }
-
 function showLogin(){
-  recoveryMode = false;
-  isRegister = false;
-  $("formTitle").textContent = "Log Masuk";
-  $("formSubtitle").textContent = "Log masuk untuk melihat akaun dan pesanan anda.";
+  isRegister=false;
+  $("formTitle").textContent="Log Masuk";
+  $("formSubtitle").textContent="Log masuk untuk melihat akaun dan pesanan anda.";
   $("nameField").classList.add("hidden");
-  $("submitBtn").textContent = "Log Masuk";
-  $("switchText").textContent = "Belum mempunyai akaun?";
-  $("switchLink").textContent = " Daftar sekarang";
-  $("switchLink").onclick = toggleMode;
+  $("submitBtn").textContent="Log Masuk";
+  $("switchText").textContent="Belum mempunyai akaun?";
+  $("switchLink").textContent=" Daftar sekarang";
+  $("switchLink").onclick=toggleMode;
   clearMessage("message");
   showOnly("authCard");
 }
-
 function toggleMode(){
-  isRegister = !isRegister;
-  $("formTitle").textContent = isRegister ? "Daftar Akaun" : "Log Masuk";
-  $("formSubtitle").textContent = isRegister
-    ? "Cipta akaun SNNA anda."
-    : "Log masuk untuk melihat akaun dan pesanan anda.";
+  isRegister=!isRegister;
+  $("formTitle").textContent=isRegister?"Daftar Akaun":"Log Masuk";
+  $("formSubtitle").textContent=isRegister?"Cipta akaun SNNA anda.":"Log masuk untuk melihat akaun dan pesanan anda.";
   $("nameField").classList.toggle("hidden",!isRegister);
-  $("submitBtn").textContent = isRegister ? "Daftar Sekarang" : "Log Masuk";
-  $("switchText").textContent = isRegister
-    ? "Sudah mempunyai akaun?"
-    : "Belum mempunyai akaun?";
-  $("switchLink").textContent = isRegister ? " Log masuk" : " Daftar sekarang";
+  $("submitBtn").textContent=isRegister?"Daftar Sekarang":"Log Masuk";
+  $("switchText").textContent=isRegister?"Sudah mempunyai akaun?":"Belum mempunyai akaun?";
+  $("switchLink").textContent=isRegister?" Log masuk":" Daftar sekarang";
   clearMessage("message");
 }
 
 async function submitAuth(){
-  const email = $("email").value.trim();
-  const password = $("password").value;
-  const fullName = $("fullName").value.trim();
+  const email=$("email").value.trim();
+  const password=$("password").value;
+  const fullName=$("fullName").value.trim();
 
-  if(!email || !password){
-    showMessage("message","Sila masukkan email dan kata laluan.","err");
-    return;
+  if(!email||!password){
+    showMessage("message","Sila masukkan email dan kata laluan.","err");return;
+  }
+  if(isRegister&&!fullName){
+    showMessage("message","Sila masukkan nama penuh.","err");return;
   }
 
-  if(isRegister && !fullName){
-    showMessage("message","Sila masukkan nama penuh.","err");
-    return;
-  }
-
-  $("submitBtn").disabled = true;
-
+  $("submitBtn").disabled=true;
   try{
     if(isRegister){
-      const {data,error} = await db.auth.signUp({
-        email,
-        password,
-        options:{data:{full_name:fullName}}
+      const {data,error}=await db.auth.signUp({
+        email,password,options:{data:{full_name:fullName}}
       });
-      if(error) throw error;
-
-      if(data.session){
-        showMessage("message","Pendaftaran berjaya!","ok");
-      }else{
-        showMessage("message","Pendaftaran berjaya. Sila semak email untuk pengesahan akaun.","ok");
-      }
+      if(error)throw error;
+      showMessage("message",data.session?"Pendaftaran berjaya!":"Pendaftaran berjaya. Sila semak email untuk pengesahan akaun.","ok");
     }else{
-      const {error} = await db.auth.signInWithPassword({email,password});
-      if(error) throw error;
+      const {error}=await db.auth.signInWithPassword({email,password});
+      if(error)throw error;
       await loadAccount();
     }
   }catch(error){
-    showMessage("message",error.message || "Tidak berjaya. Sila cuba lagi.","err");
-  }finally{
-    $("submitBtn").disabled = false;
-  }
+    showMessage("message",error.message||"Tidak berjaya. Sila cuba lagi.","err");
+  }finally{$("submitBtn").disabled=false;}
 }
 
 function showForgot(){
-  $("forgotEmail").value = $("email").value.trim();
+  $("forgotEmail").value=$("email").value.trim();
   clearMessage("forgotMessage");
   showOnly("forgotCard");
 }
-
 async function sendResetEmail(){
-  const email = $("forgotEmail").value.trim();
-
-  if(!email){
-    showMessage("forgotMessage","Sila masukkan alamat email.","err");
-    return;
-  }
-
+  const email=$("forgotEmail").value.trim();
+  if(!email){showMessage("forgotMessage","Sila masukkan alamat email.","err");return;}
   try{
-    const redirectTo = window.location.origin + window.location.pathname + "?mode=reset";
-    const {error} = await db.auth.resetPasswordForEmail(email,{redirectTo});
-    if(error) throw error;
-    showMessage("forgotMessage","Pautan reset telah dihantar jika alamat email tersebut berdaftar. Sila semak inbox atau folder spam.","ok");
-  }catch(error){
-    showMessage("forgotMessage",error.message,"err");
-  }
+    const redirectTo=window.location.origin+window.location.pathname+"?mode=reset";
+    const {error}=await db.auth.resetPasswordForEmail(email,{redirectTo});
+    if(error)throw error;
+    showMessage("forgotMessage","Pautan reset telah dihantar jika email tersebut berdaftar. Sila semak inbox atau folder spam.","ok");
+  }catch(error){showMessage("forgotMessage",error.message,"err");}
 }
 
 async function updatePassword(){
-  const p1 = $("newPassword").value;
-  const p2 = $("confirmPassword").value;
-
-  if(p1.length < 6){
-    showMessage("resetMessage","Kata laluan mestilah sekurang-kurangnya 6 aksara.","err");
-    return;
-  }
-  if(p1 !== p2){
-    showMessage("resetMessage","Kata laluan tidak sepadan.","err");
-    return;
-  }
-
+  const p1=$("newPassword").value,p2=$("confirmPassword").value;
+  if(p1.length<6){showMessage("resetMessage","Kata laluan mestilah sekurang-kurangnya 6 aksara.","err");return;}
+  if(p1!==p2){showMessage("resetMessage","Kata laluan tidak sepadan.","err");return;}
   try{
-    const {error} = await db.auth.updateUser({password:p1});
-    if(error) throw error;
+    const {error}=await db.auth.updateUser({password:p1});
+    if(error)throw error;
     showMessage("resetMessage","Kata laluan berjaya dikemaskini. Sila log masuk semula.","ok");
-    setTimeout(async()=>{
-      await db.auth.signOut();
-      showLogin();
-    },1500);
-  }catch(error){
-    showMessage("resetMessage",error.message,"err");
-  }
+    setTimeout(async()=>{await db.auth.signOut();showLogin();},1500);
+  }catch(error){showMessage("resetMessage",error.message,"err");}
 }
 
 async function loadAccount(){
-  const {data:{session}} = await db.auth.getSession();
-
-  if(!session){
-    currentUser = null;
-    showLogin();
-    return;
-  }
-
-  currentUser = session.user;
+  const {data:{session}}=await db.auth.getSession();
+  if(!session){currentUser=null;showLogin();return;}
+  currentUser=session.user;
   showOnly("accountCard");
+  $("profileEmail").textContent=currentUser.email||"";
+  $("accountEmail").textContent=currentUser.email||"";
 
-  $("profileEmail").textContent = currentUser.email || "";
-  $("accountEmail").textContent = currentUser.email || "";
-
-  let profile = null;
-
+  let profile=null;
   try{
-    const {data} = await db.from("profiles")
-      .select("full_name,role")
-      .eq("id",currentUser.id)
-      .maybeSingle();
-    profile = data;
-  }catch(e){
-    console.warn("Profile load:",e.message);
-  }
+    const {data}=await db.from("profiles").select("full_name,role").eq("id",currentUser.id).maybeSingle();
+    profile=data;
+  }catch(e){console.warn("Profile load:",e.message);}
 
-  const name =
-    profile?.full_name ||
-    currentUser.user_metadata?.full_name ||
-    "Pengguna SNNA";
-
-  $("profileName").textContent = name;
-  $("editName").value = name;
-  $("accountRole").textContent = profile?.role || "Pelanggan";
-
+  const name=profile?.full_name||currentUser.user_metadata?.full_name||"Pengguna SNNA";
+  $("profileName").textContent=name;
+  $("editName").value=name;
+  $("accountRole").textContent=profile?.role||"Pelanggan";
   renderAvatar();
   await loadOrders();
 }
 
 async function saveProfile(){
-  if(!currentUser) return;
-
-  const name = $("editName").value.trim();
-  if(!name){
-    showMessage("profileMessage","Sila masukkan nama penuh.","err");
-    return;
-  }
-
+  if(!currentUser)return;
+  const name=$("editName").value.trim();
+  if(!name){showMessage("profileMessage","Sila masukkan nama penuh.","err");return;}
   try{
-    const {error:authError} = await db.auth.updateUser({
-      data:{full_name:name}
-    });
-    if(authError) throw authError;
-
-    const {error:profileError} = await db.from("profiles").upsert({
-      id:currentUser.id,
-      full_name:name
-    },{onConflict:"id"});
-
-    if(profileError) throw profileError;
-
-    $("profileName").textContent = name;
+    const {error:authError}=await db.auth.updateUser({data:{full_name:name}});
+    if(authError)throw authError;
+    const {error:profileError}=await db.from("profiles").upsert({id:currentUser.id,full_name:name},{onConflict:"id"});
+    if(profileError)throw profileError;
+    $("profileName").textContent=name;
     showMessage("profileMessage","Profil berjaya dikemaskini.","ok");
-  }catch(error){
-    showMessage("profileMessage",error.message,"err");
-  }
+  }catch(error){showMessage("profileMessage",error.message,"err");}
 }
 
 function renderAvatar(){
-  if(!currentUser) return;
-
-  const path = currentUser.user_metadata?.avatar_path;
-  const photo = $("profilePhoto");
-  const fallback = $("defaultAvatar");
-
+  if(!currentUser)return;
+  const path=currentUser.user_metadata?.avatar_path;
+  const photo=$("profilePhoto"),fallback=$("defaultAvatar");
   if(path){
-    const {data} = db.storage.from("profile-photos").getPublicUrl(path);
-    const url = data.publicUrl + "?t=" + Date.now();
-    photo.src = url;
+    const {data}=db.storage.from("profile-photos").getPublicUrl(path);
+    photo.src=data.publicUrl+"?t="+Date.now();
     photo.classList.remove("hidden");
     fallback.classList.add("hidden");
     $("deletePhotoBtn").classList.remove("hidden");
-
-    photo.onerror = ()=>{
-      photo.classList.add("hidden");
-      fallback.classList.remove("hidden");
-    };
+    photo.onerror=()=>{photo.classList.add("hidden");fallback.classList.remove("hidden");};
   }else{
     photo.removeAttribute("src");
     photo.classList.add("hidden");
     fallback.classList.remove("hidden");
     $("deletePhotoBtn").classList.add("hidden");
   }
-
-  const name = currentUser.user_metadata?.full_name || "S";
-  fallback.textContent = name.charAt(0).toUpperCase();
+  const name=currentUser.user_metadata?.full_name||"S";
+  fallback.textContent=name.charAt(0).toUpperCase();
 }
 
 async function uploadPhoto(event){
-  const file = event.target.files?.[0];
-  event.target.value = "";
-
-  if(!file || !currentUser) return;
-
-  const allowed = ["image/jpeg","image/png","image/webp"];
-
-  if(!allowed.includes(file.type)){
-    showMessage("photoMessage","Format tidak disokong. Gunakan JPG, PNG atau WebP.","err");
-    return;
-  }
-
-  if(file.size > 2 * 1024 * 1024){
-    showMessage("photoMessage","Saiz gambar melebihi 2MB. Sila pilih gambar yang lebih kecil.","err");
-    return;
-  }
-
+  const file=event.target.files?.[0];
+  event.target.value="";
+  if(!file||!currentUser)return;
+  const allowed=["image/jpeg","image/png","image/webp"];
+  if(!allowed.includes(file.type)){showMessage("photoMessage","Format tidak disokong. Gunakan JPG, PNG atau WebP.","err");return;}
+  if(file.size>2*1024*1024){showMessage("photoMessage","Saiz gambar melebihi 2MB.","err");return;}
   showMessage("photoMessage","Sedang memuat naik gambar...","ok");
-
-  const ext = file.type === "image/png" ? "png" :
-              file.type === "image/webp" ? "webp" : "jpg";
-
-  const path = currentUser.id + "/" + Date.now() + "." + ext;
-  const oldPath = currentUser.user_metadata?.avatar_path || null;
-
+  const ext=file.type==="image/png"?"png":file.type==="image/webp"?"webp":"jpg";
+  const path=currentUser.id+"/"+Date.now()+"."+ext;
+  const oldPath=currentUser.user_metadata?.avatar_path||null;
   try{
-    const {error:uploadError} = await db.storage
-      .from("profile-photos")
-      .upload(path,file,{
-        cacheControl:"3600",
-        upsert:false,
-        contentType:file.type
-      });
-
-    if(uploadError) throw uploadError;
-
-    const {data,error:updateError} = await db.auth.updateUser({
-      data:{avatar_path:path}
+    const {error:uploadError}=await db.storage.from("profile-photos").upload(path,file,{
+      cacheControl:"3600",upsert:false,contentType:file.type
     });
-
-    if(updateError){
-      await db.storage.from("profile-photos").remove([path]);
-      throw updateError;
-    }
-
-    currentUser = data.user;
+    if(uploadError)throw uploadError;
+    const {data,error:updateError}=await db.auth.updateUser({data:{avatar_path:path}});
+    if(updateError){await db.storage.from("profile-photos").remove([path]);throw updateError;}
+    currentUser=data.user;
     renderAvatar();
-
-    if(oldPath && oldPath !== path){
-      const {error:removeError} = await db.storage
-        .from("profile-photos")
-        .remove([oldPath]);
-
-      if(removeError) console.warn("Old photo cleanup:",removeError.message);
+    if(oldPath&&oldPath!==path){
+      const {error:removeError}=await db.storage.from("profile-photos").remove([oldPath]);
+      if(removeError)console.warn("Old photo cleanup:",removeError.message);
     }
-
     showMessage("photoMessage","Gambar profil berjaya dikemaskini!","ok");
-  }catch(error){
-    showMessage("photoMessage",error.message || "Upload gambar tidak berjaya.","err");
-  }
+  }catch(error){showMessage("photoMessage",error.message||"Upload gambar tidak berjaya.","err");}
 }
 
 async function deletePhoto(){
-  if(!currentUser) return;
-
-  const oldPath = currentUser.user_metadata?.avatar_path;
-  if(!oldPath) return;
-
-  if(!confirm("Adakah anda pasti mahu memadam gambar profil?")) return;
-
+  if(!currentUser)return;
+  const oldPath=currentUser.user_metadata?.avatar_path;
+  if(!oldPath)return;
+  if(!confirm("Adakah anda pasti mahu memadam gambar profil?"))return;
   try{
-    const {data,error:updateError} = await db.auth.updateUser({
-      data:{avatar_path:null}
-    });
-
-    if(updateError) throw updateError;
-
-    currentUser = data.user;
-
-    const {error:removeError} = await db.storage
-      .from("profile-photos")
-      .remove([oldPath]);
-
+    const {data,error:updateError}=await db.auth.updateUser({data:{avatar_path:null}});
+    if(updateError)throw updateError;
+    currentUser=data.user;
+    const {error:removeError}=await db.storage.from("profile-photos").remove([oldPath]);
     renderAvatar();
-
-    if(removeError){
-      showMessage("photoMessage","Gambar profil telah dinyahaktifkan tetapi fail lama tidak dapat dipadam: " + removeError.message,"err");
-    }else{
-      showMessage("photoMessage","Gambar profil berjaya dipadam.","ok");
-    }
-  }catch(error){
-    showMessage("photoMessage",error.message,"err");
-  }
+    if(removeError)showMessage("photoMessage","Gambar profil dinyahaktifkan tetapi fail lama tidak dapat dipadam: "+removeError.message,"err");
+    else showMessage("photoMessage","Gambar profil berjaya dipadam.","ok");
+  }catch(error){showMessage("photoMessage",error.message,"err");}
 }
 
 async function changePassword(){
-  const p1 = $("changePassword").value;
-  const p2 = $("confirmChangePassword").value;
-
-  if(p1.length < 6){
-    showMessage("passwordMessage","Kata laluan mestilah sekurang-kurangnya 6 aksara.","err");
-    return;
-  }
-  if(p1 !== p2){
-    showMessage("passwordMessage","Kata laluan tidak sepadan.","err");
-    return;
-  }
-
+  const p1=$("changePassword").value,p2=$("confirmChangePassword").value;
+  if(p1.length<6){showMessage("passwordMessage","Kata laluan mestilah sekurang-kurangnya 6 aksara.","err");return;}
+  if(p1!==p2){showMessage("passwordMessage","Kata laluan tidak sepadan.","err");return;}
   try{
-    const {error} = await db.auth.updateUser({password:p1});
-    if(error) throw error;
-
-    $("changePassword").value = "";
-    $("confirmChangePassword").value = "";
+    const {error}=await db.auth.updateUser({password:p1});
+    if(error)throw error;
+    $("changePassword").value="";
+    $("confirmChangePassword").value="";
     showMessage("passwordMessage","Kata laluan berjaya ditukar.","ok");
-  }catch(error){
-    showMessage("passwordMessage",error.message,"err");
-  }
+  }catch(error){showMessage("passwordMessage",error.message,"err");}
 }
 
 async function loadOrders(){
-  if(!currentUser) return;
-
-  const container = $("ordersList");
-  container.innerHTML = "<p>Memuatkan rekod pesanan...</p>";
+  if(!currentUser)return;
+  const container=$("ordersList");
+  const digital=$("digitalProducts");
+  container.innerHTML="<p>Memuatkan rekod pesanan...</p>";
+  digital.innerHTML="<p>Memuatkan produk digital...</p>";
 
   try{
-    const {data:orders,error} = await db.from("orders")
+    const {data:orders,error}=await db.from("orders")
       .select("id,order_number,total,status,payment_status,created_at")
       .eq("customer_id",currentUser.id)
       .order("created_at",{ascending:false});
+    if(error)throw error;
 
-    if(error) throw error;
-
-    if(!orders || orders.length === 0){
-      container.innerHTML = "<p>Anda belum mempunyai rekod pesanan.</p>";
+    if(!orders||orders.length===0){
+      container.innerHTML="<p>Anda belum mempunyai rekod pesanan.</p>";
+      digital.innerHTML="<p>Anda belum mempunyai produk digital yang boleh dimuat turun.</p>";
       return;
     }
 
-    container.innerHTML = "";
+    container.innerHTML="";
+    digital.innerHTML="";
+    let downloadableItems=[];
 
     for(const order of orders){
-      const {data:items,error:itemError} = await db.from("order_items")
-        .select("product_title,unit_price,quantity")
+      const {data:items,error:itemError}=await db.from("order_items")
+        .select("id,product_id,product_title,unit_price,quantity")
         .eq("order_id",order.id);
 
-      const itemList = itemError ? [] : (items || []);
-      const itemHTML = itemList.length
-        ? itemList.map(item =>
-            `<div style="font-size:12px;margin-top:6px">
-              ${escapeHTML(item.product_title || "Produk")}
-              × ${Number(item.quantity || 1)}
-            </div>`
-          ).join("")
-        : `<small>Butiran produk tidak tersedia.</small>`;
+      if(itemError)console.warn("Order items:",itemError.message);
+      const itemList=itemError?[]:(items||[]);
 
-      const div = document.createElement("div");
-      div.className = "order";
-      div.innerHTML = `
-        <strong>Pesanan #${escapeHTML(order.order_number || order.id)}</strong>
+      const itemHTML=itemList.length
+        ?itemList.map(item=>`<div style="font-size:12px;margin-top:6px">${escapeHTML(item.product_title||"Produk")} × ${Number(item.quantity||1)}</div>`).join("")
+        :"<small>Butiran produk tidak tersedia.</small>";
+
+      const paid=String(order.payment_status||"").toLowerCase()==="paid";
+
+      const div=document.createElement("div");
+      div.className="order";
+      div.innerHTML=`
+        <strong>Pesanan #${escapeHTML(order.order_number||order.id)}</strong>
         <div><small>${formatDate(order.created_at)}</small></div>
         ${itemHTML}
-        <div class="info-row">
-          <span>Status</span>
-          <strong>${escapeHTML(order.status || order.payment_status || "Dalam proses")}</strong>
-        </div>
-        <div class="order-total">Jumlah: RM ${Number(order.total || 0).toFixed(2)}</div>
+        <div class="info-row"><span>Status pesanan</span><strong>${escapeHTML(order.status||"Dalam proses")}</strong></div>
+        <div class="info-row"><span>Status bayaran</span><strong>${paid?"Paid":escapeHTML(order.payment_status||"Belum disahkan")}</strong></div>
+        <div class="order-total">Jumlah: RM ${Number(order.total||0).toFixed(2)}</div>
       `;
       container.appendChild(div);
+
+      // Hanya item daripada pesanan yang telah dibayar dipaparkan
+      if(paid){
+        itemList.forEach(item=>downloadableItems.push({
+          id:item.id,
+          title:item.product_title||"Produk Digital",
+          orderNumber:order.order_number||order.id
+        }));
+      }
     }
+
+    if(downloadableItems.length===0){
+      digital.innerHTML="<p>Belum ada produk digital yang mempunyai bayaran disahkan (paid).</p>";
+      return;
+    }
+
+    for(const item of downloadableItems){
+      const card=document.createElement("div");
+      card.className="digital-item";
+
+      const title=document.createElement("h4");
+      title.textContent=item.title;
+
+      const orderInfo=document.createElement("small");
+      orderInfo.textContent="Pesanan #"+item.orderNumber;
+
+      const status=document.createElement("div");
+      status.innerHTML='<span class="paid-label">Bayaran disahkan</span>';
+
+      const btn=document.createElement("button");
+      btn.className="download";
+      btn.textContent="Muat Turun Produk";
+      btn.onclick=()=>downloadDigital(item.id,btn);
+
+      card.append(title,orderInfo,status,btn);
+      digital.appendChild(card);
+    }
+
   }catch(error){
-    container.innerHTML =
-      `<p>Rekod pesanan tidak dapat dimuatkan: ${escapeHTML(error.message)}</p>`;
+    container.innerHTML=`<p>Rekod pesanan tidak dapat dimuatkan: ${escapeHTML(error.message)}</p>`;
+    digital.innerHTML="<p>Produk digital tidak dapat dimuatkan buat masa ini.</p>";
+  }
+}
+
+async function downloadDigital(orderItemId,button){
+  if(!currentUser){
+    alert("Sila log masuk semula.");
+    return;
+  }
+
+  const originalText=button.textContent;
+  button.disabled=true;
+  button.textContent="Sedang menyediakan muat turun...";
+
+  try{
+    // Panggilan kepada Edge Function.
+    // Supabase menghantar token sesi pelanggan secara automatik.
+    const {data,error}=await db.functions.invoke("snna-download",{
+      body:{orderItemId:orderItemId}
+    });
+
+    if(error){
+      let detail=error.message||"Ralat Edge Function.";
+      try{
+        const response=error.context;
+        if(response && typeof response.json==="function"){
+          const body=await response.json();
+          if(body.error)detail=body.error;
+        }
+      }catch(e){}
+      throw new Error(detail);
+    }
+
+    if(!data||!data.success||!data.download_url){
+      throw new Error(data?.error||"Pautan muat turun tidak diterima.");
+    }
+
+    // Pautan ini sementara dan dijana selepas pengesahan server.
+    window.location.assign(data.download_url);
+
+  }catch(error){
+    alert("Muat turun tidak berjaya: "+(error.message||"Sila cuba lagi."));
+    button.disabled=false;
+    button.textContent=originalText;
   }
 }
 
 function escapeHTML(value){
-  return String(value ?? "").replace(/[&<>"']/g, char => ({
-    "&":"&amp;",
-    "<":"&lt;",
-    ">":"&gt;",
-    '"':"&quot;",
-    "'":"&#39;"
+  return String(value??"").replace(/[&<>"']/g,char=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
   })[char]);
 }
 
 function formatDate(value){
-  if(!value) return "-";
+  if(!value)return "-";
   return new Date(value).toLocaleString("ms-MY",{
-    day:"numeric",
-    month:"short",
-    year:"numeric",
-    hour:"2-digit",
-    minute:"2-digit"
+    day:"numeric",month:"short",year:"numeric",
+    hour:"2-digit",minute:"2-digit"
   });
 }
 
 async function logout(){
-  const {error} = await db.auth.signOut();
-  if(error){
-    alert(error.message);
-    return;
-  }
-  currentUser = null;
+  const {error}=await db.auth.signOut();
+  if(error){alert(error.message);return;}
+  currentUser=null;
   showLogin();
 }
 
 db.auth.onAuthStateChange((event,session)=>{
-  if(event === "PASSWORD_RECOVERY"){
-    recoveryMode = true;
+  if(event==="PASSWORD_RECOVERY"){
     showOnly("resetCard");
     return;
   }
-
-  if(event === "SIGNED_OUT"){
-    currentUser = null;
+  if(event==="SIGNED_OUT"){
+    currentUser=null;
     showLogin();
   }
 });
 
 async function init(){
-  const params = new URLSearchParams(window.location.search);
-
-  if(params.get("mode") === "reset"){
+  const params=new URLSearchParams(window.location.search);
+  if(params.get("mode")==="reset"){
     showOnly("resetCard");
   }else{
     await loadAccount();
@@ -838,6 +575,5 @@ async function init(){
 
 init();
 </script>
-
 </body>
 </html>
