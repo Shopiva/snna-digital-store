@@ -5,106 +5,117 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SNNA Admin Dashboard</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
+
 <style>
 :root{
- --yellow:#FFF0B8;--gold:#F4CE62;--cream:#FFFCF3;
- --white:#fff;--text:#333;--muted:#888;--line:#eee;
- --red:#d9534f;--green:#32865a;
+ --yellow:#FFF0B8;
+ --gold:#F4CE62;
+ --cream:#FFFCF3;
+ --white:#fff;
+ --text:#333;
+ --muted:#888;
+ --line:#eee;
+ --red:#d9534f;
+ --green:#32865a;
 }
+
 *{box-sizing:border-box}
-body{margin:0;background:var(--cream);color:var(--text);
- font-family:Arial,sans-serif}
+
+body{
+ margin:0;
+ background:var(--cream);
+ color:var(--text);
+ font-family:Arial,sans-serif;
+}
+
 button,input,textarea,select{font:inherit}
 button{cursor:pointer}
-header{background:#fff;border-bottom:1px solid var(--line);
- padding:15px 18px;display:flex;justify-content:space-between;
- align-items:center;position:sticky;top:0;z-index:5}
-.brand{font-size:25px;font-weight:800;letter-spacing:2px}
+
+header{
+ background:#fff;
+ border-bottom:1px solid var(--line);
+ padding:13px 18px;
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ position:sticky;
+ top:0;
+ z-index:15;
+ min-height:70px;
+}
+
+.brand{
+ font-size:25px;
+ font-weight:800;
+ letter-spacing:2px;
+}
+
 .brand span{color:#C99B25}
-.brand small{display:block;font-size:9px;letter-spacing:4px;
- font-weight:600;margin-top:4px}
-.header-right{display:flex;align-items:center;gap:10px}
-.btn{border:0;border-radius:9px;padding:11px 15px;
- font-weight:700;font-size:13px}
-.btn-gold{background:var(--gold);color:#49380D}
-.btn-light{background:#f4f4f4;color:#555}
-.btn-red{background:#fff0ef;color:var(--red)}
-main{max-width:1100px;margin:auto;padding:20px 15px 50px}
-.welcome{margin-bottom:20px}
-.welcome h2{margin:0 0 6px;font-size:23px}
-.welcome p{margin:0;color:var(--muted);font-size:13px}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;
- margin-bottom:22px}
-.stat{background:#fff;border:1px solid var(--line);
- border-radius:13px;padding:15px}
-.stat svg{width:21px;color:#B68A20}
-.stat strong{display:block;font-size:23px;margin-top:9px}
-.stat span{font-size:12px;color:var(--muted)}
-.panel{background:#fff;border:1px solid var(--line);
- border-radius:14px;padding:17px;margin-bottom:18px}
-.panel h3{font-size:17px;margin:0 0 15px}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
-.field{display:flex;flex-direction:column;gap:6px}
-.field.full{grid-column:1/-1}
-label{font-size:12px;font-weight:700;color:#555}
-input,textarea,select{
- width:100%;border:1px solid #e5e5e5;border-radius:9px;
- padding:12px;background:#fff;outline:none;color:var(--text);
+
+.brand small{
+ display:block;
+ font-size:9px;
+ letter-spacing:4px;
+ font-weight:600;
+ margin-top:4px;
+}
+
+.header-right{
+ display:flex;
+ align-items:center;
+ gap:10px;
+}
+
+.btn{
+ border:0;
+ border-radius:9px;
+ padding:11px 15px;
+ font-weight:700;
  font-size:13px;
 }
-input:focus,textarea:focus,select:focus{border-color:var(--gold)}
-textarea{min-height:95px;resize:vertical}
-.help{font-size:11px;color:var(--muted);line-height:1.5}
-.check-row{display:flex;align-items:center;gap:9px;font-size:13px}
-.check-row input{width:auto}
-.file-box{background:#FFFCF3;border:1px dashed #E7CE83;
- border-radius:10px;padding:12px}
-.file-box input{border:0;padding:8px 0;background:transparent}
-.preview{width:100px;height:100px;object-fit:cover;
- border-radius:10px;display:none;margin-top:10px}
-.form-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}
-.status{font-size:12px;margin-top:10px;line-height:1.5}
-.status.error{color:var(--red)}
-.status.success{color:var(--green)}
-.product-list{display:grid;gap:10px}
-.product-row{border:1px solid var(--line);border-radius:11px;
- padding:11px;display:flex;gap:12px;align-items:center}
-.product-row img,.product-placeholder{
- width:65px;height:65px;object-fit:cover;border-radius:8px;
- background:#FFF5D5;flex-shrink:0;
-}
-.product-placeholder{display:grid;place-items:center;color:#B68A20}
-.product-detail{flex:1;min-width:0}
-.product-detail strong{font-size:13px;display:block;
- overflow-wrap:anywhere}
-.product-detail small{display:block;color:var(--muted);
- font-size:11px;margin-top:5px}
-.product-actions{display:flex;gap:5px;flex-wrap:wrap}
-.product-actions button{border:0;border-radius:7px;
- padding:8px;font-size:11px;font-weight:700}
-.login-wrap{max-width:420px;margin:65px auto;padding:15px}
-.login-card{background:#fff;border:1px solid var(--line);
- border-radius:17px;padding:25px}
-.login-card h2{margin:0 0 8px}
-.login-card p{font-size:13px;color:var(--muted);line-height:1.5}
-.login-card .field{margin-top:14px}
-.login-card .btn{width:100%;margin-top:18px}
-#dashboard{display:none}
-#loginView{display:block}
- 
 
-/* SNNA ADMIN NAVIGATION - RESPONSIVE */
+.btn:disabled{
+ opacity:.6;
+ cursor:not-allowed;
+}
+
+.btn-gold{
+ background:var(--gold);
+ color:#49380D;
+}
+
+.btn-light{
+ background:#f4f4f4;
+ color:#555;
+}
+
+.btn-red{
+ background:#fff0ef;
+ color:var(--red);
+}
+
+#menuToggle{
+ display:none;
+ align-items:center;
+ gap:7px;
+}
+
+#menuToggle svg{
+ width:18px;
+ height:18px;
+}
 
 .dashboard-layout{
  display:flex;
- align-items:flex-start;
+ align-items:stretch;
  min-height:calc(100vh - 70px);
 }
 
 .admin-sidebar{
- width:225px;
+ width:235px;
  flex-shrink:0;
  background:#fff;
  border-right:1px solid var(--line);
@@ -122,7 +133,7 @@ textarea{min-height:95px;resize:vertical}
  font-weight:800;
  letter-spacing:2px;
  color:#aaa;
- padding:8px 12px 15px;
+ padding:17px 12px 13px;
 }
 
 .admin-menu-btn{
@@ -202,28 +213,317 @@ textarea{min-height:95px;resize:vertical}
 .dashboard-layout main{
  flex:1;
  min-width:0;
- max-width:1100px;
  width:100%;
+ max-width:1200px;
  margin:0 auto;
+ padding:24px 20px 50px;
 }
 
-#menuToggle{
+/* Paparan menu berasingan */
+.admin-page{
  display:none;
+ animation:pageIn .18s ease;
 }
 
-#menuBackdrop{
+.admin-page.active{
+ display:block;
+}
+
+@keyframes pageIn{
+ from{opacity:.65;transform:translateY(5px)}
+ to{opacity:1;transform:translateY(0)}
+}
+
+.page-heading{
+ margin-bottom:20px;
+}
+
+.page-heading h2{
+ margin:0 0 6px;
+ font-size:23px;
+}
+
+.page-heading p{
+ margin:0;
+ color:var(--muted);
+ font-size:13px;
+ line-height:1.5;
+}
+
+.welcome{
+ margin-bottom:20px;
+}
+
+.welcome h2{
+ margin:0 0 6px;
+ font-size:23px;
+}
+
+.welcome p{
+ margin:0;
+ color:var(--muted);
+ font-size:13px;
+}
+
+.stats{
+ display:grid;
+ grid-template-columns:repeat(3,minmax(0,1fr));
+ gap:12px;
+ margin-bottom:22px;
+}
+
+.stat{
+ background:#fff;
+ border:1px solid var(--line);
+ border-radius:13px;
+ padding:15px;
+ min-width:0;
+}
+
+.stat svg{
+ width:21px;
+ height:21px;
+ color:#B68A20;
+}
+
+.stat strong{
+ display:block;
+ font-size:23px;
+ margin-top:9px;
+ overflow-wrap:anywhere;
+}
+
+.stat span{
+ font-size:12px;
+ color:var(--muted);
+ line-height:1.4;
+}
+
+.panel{
+ background:#fff;
+ border:1px solid var(--line);
+ border-radius:14px;
+ padding:17px;
+ margin-bottom:18px;
+}
+
+.panel h3{
+ font-size:17px;
+ margin:0 0 15px;
+}
+
+.form-grid{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:13px;
+}
+
+.field{
+ display:flex;
+ flex-direction:column;
+ gap:6px;
+ min-width:0;
+}
+
+.field.full{grid-column:1/-1}
+
+label{
+ font-size:12px;
+ font-weight:700;
+ color:#555;
+}
+
+input,textarea,select{
+ width:100%;
+ border:1px solid #e5e5e5;
+ border-radius:9px;
+ padding:12px;
+ background:#fff;
+ outline:none;
+ color:var(--text);
+ font-size:13px;
+}
+
+input:focus,textarea:focus,select:focus{
+ border-color:var(--gold);
+}
+
+textarea{
+ min-height:95px;
+ resize:vertical;
+}
+
+.help{
+ font-size:11px;
+ color:var(--muted);
+ line-height:1.5;
+ overflow-wrap:anywhere;
+}
+
+.check-row{
+ display:flex;
+ align-items:center;
+ gap:9px;
+ font-size:13px;
+ margin-bottom:8px;
+}
+
+.check-row input{
+ width:auto;
+}
+
+.file-box{
+ background:#FFFCF3;
+ border:1px dashed #E7CE83;
+ border-radius:10px;
+ padding:12px;
+}
+
+.file-box input{
+ border:0;
+ padding:8px 0;
+ background:transparent;
+}
+
+.preview{
+ width:100px;
+ height:100px;
+ object-fit:cover;
+ border-radius:10px;
  display:none;
+ margin-top:10px;
+}
+
+.form-actions{
+ display:flex;
+ gap:9px;
+ flex-wrap:wrap;
+ margin-top:15px;
+}
+
+.status{
+ font-size:12px;
+ margin-top:10px;
+ line-height:1.5;
+ overflow-wrap:anywhere;
+}
+
+.status.error{color:var(--red)}
+.status.success{color:var(--green)}
+
+.product-list{
+ display:grid;
+ gap:10px;
+}
+
+.product-row{
+ border:1px solid var(--line);
+ border-radius:11px;
+ padding:11px;
+ display:flex;
+ gap:12px;
+ align-items:center;
+ min-width:0;
+}
+
+.product-row img,
+.product-placeholder{
+ width:65px;
+ height:65px;
+ object-fit:cover;
+ border-radius:8px;
+ background:#FFF5D5;
+ flex-shrink:0;
+}
+
+.product-placeholder{
+ display:grid;
+ place-items:center;
+ color:#B68A20;
+}
+
+.product-detail{
+ flex:1;
+ min-width:0;
+}
+
+.product-detail strong{
+ font-size:13px;
+ display:block;
+ overflow-wrap:anywhere;
+}
+
+.product-detail small{
+ display:block;
+ color:var(--muted);
+ font-size:11px;
+ margin-top:5px;
+ line-height:1.4;
+}
+
+.product-actions{
+ display:flex;
+ gap:5px;
+ flex-wrap:wrap;
+}
+
+.product-actions button{
+ border:0;
+ border-radius:7px;
+ padding:8px;
+ font-size:11px;
+ font-weight:700;
+}
+
+.login-wrap{
+ max-width:420px;
+ margin:65px auto;
+ padding:15px;
+}
+
+.login-card{
+ background:#fff;
+ border:1px solid var(--line);
+ border-radius:17px;
+ padding:25px;
+}
+
+.login-card h2{margin:0 0 8px}
+
+.login-card p{
+ font-size:13px;
+ color:var(--muted);
+ line-height:1.5;
+}
+
+.login-card .field{margin-top:14px}
+
+.login-card .btn{
+ width:100%;
+ margin-top:18px;
+}
+
+.hidden{display:none!important}
+
+#dashboard{display:none}
+#loginView{display:block}
+
+#menuBackdrop{display:none}
+
+footer{
+ text-align:center;
+ color:#aaa;
+ font-size:11px;
+ padding:20px;
 }
 
 @media(max-width:700px){
 
- .dashboard-layout{
-  display:block;
- }
+ .dashboard-layout{display:block}
 
  .admin-sidebar{
   position:fixed;
-  z-index:20;
+  z-index:21;
   top:0;
   left:0;
   width:270px;
@@ -244,83 +544,25 @@ textarea{min-height:95px;resize:vertical}
   display:block;
   position:fixed;
   inset:0;
-  z-index:19;
+  z-index:20;
   background:rgba(0,0,0,.35);
  }
 
  #menuToggle{
   display:inline-flex;
-  align-items:center;
-  gap:7px;
  }
 
  .dashboard-layout main{
-  padding:17px 12px 45px;
+  padding:18px 12px 45px;
  }
 
- header{
-  z-index:10;
-  padding:12px 14px;
- }
-
- .brand{
-  font-size:23px;
- }
-
- .header-right{
-  gap:5px;
- }
-
+ header{padding:12px 14px}
+ .brand{font-size:23px}
+ .header-right{gap:5px}
 }
 
 @media(max-width:600px){
 
- .stats{
-  gap:7px;
- }
-
- .stat{
-  padding:11px;
- }
-
- .stat strong{
-  font-size:19px;
- }
-
- .stat span{
-  font-size:10px;
- }
-
- .form-grid{
-  grid-template-columns:1fr;
- }
-
- .field.full{
-  grid-column:auto;
- }
-
- .product-row{
-  align-items:flex-start;
- }
-
- .product-actions{
-  flex-direction:column;
- }
-
- .product-actions button{
-  padding:7px;
- }
-
-}
-
-
- 
-
- 
-
-.hidden{display:none!important}
-footer{text-align:center;color:#aaa;font-size:11px;padding:20px}
-@media(max-width:600px){
  .stats{gap:7px}
  .stat{padding:11px}
  .stat strong{font-size:19px}
@@ -330,12 +572,13 @@ footer{text-align:center;color:#aaa;font-size:11px;padding:20px}
  .product-row{align-items:flex-start}
  .product-actions{flex-direction:column}
  .product-actions button{padding:7px}
- header{padding:12px}
+ .panel{padding:14px}
+ .page-heading h2{font-size:21px}
 }
 </style>
 </head>
-<body>
 
+<body>
 
 <header>
  <div class="brand">
@@ -344,364 +587,465 @@ footer{text-align:center;color:#aaa;font-size:11px;padding:20px}
  </div>
 
  <div class="header-right">
-
-  <button class="btn btn-light"
-   id="menuToggle"
-   onclick="toggleAdminMenu()"
-   style="display:none">
-
+  <button class="btn btn-light" id="menuToggle"
+   onclick="toggleAdminMenu()">
    <i data-lucide="menu"></i>
    Menu
-
   </button>
-
  </div>
 </header>
 
-
+<!-- LOGIN -->
 <section id="loginView" class="login-wrap">
  <div class="login-card">
   <div class="brand">SN<span>NA</span></div>
   <h2>Admin Login</h2>
   <p>Log masuk untuk menguruskan produk digital SNNA.</p>
+
   <div class="field">
    <label>Email</label>
-   <input type="email" id="email" placeholder="Email admin" autocomplete="username">
+   <input type="email" id="email"
+    placeholder="Email admin" autocomplete="username">
   </div>
+
   <div class="field">
    <label>Kata laluan</label>
-   <input type="password" id="password" placeholder="Kata laluan" autocomplete="current-password">
+   <input type="password" id="password"
+    placeholder="Kata laluan" autocomplete="current-password">
   </div>
-  <button class="btn btn-gold" id="loginBtn" onclick="login()">Log Masuk</button>
+
+  <button class="btn btn-gold" id="loginBtn" onclick="login()">
+   Log Masuk
+  </button>
+
   <div id="loginStatus" class="status"></div>
  </div>
 </section>
 
-
+<!-- DASHBOARD -->
 <div id="dashboard">
 
-<div id="menuBackdrop" onclick="closeAdminMenu()"></div>
+ <div id="menuBackdrop" onclick="closeAdminMenu()"></div>
 
-<div class="dashboard-layout">
+ <div class="dashboard-layout">
 
-<aside class="admin-sidebar" id="adminSidebar">
-<a href="index.html" class="admin-menu-btn">
-  <i data-lucide="house"></i>
-  <span>Lihat Homepage</span>
-</a>
- <div class="sidebar-title">SNNA MANAGEMENT</div>
+  <!-- SIDEBAR -->
+  <aside class="admin-sidebar" id="adminSidebar">
 
- <button class="admin-menu-btn active"
-  onclick="adminNavigate('dashboardHome',this)">
-  <i data-lucide="layout-dashboard"></i>
-  Dashboard
- </button>
+   <a href="index.html" class="admin-menu-btn">
+    <i data-lucide="house"></i>
+    <span>Lihat Homepage</span>
+   </a>
 
- <button class="admin-menu-btn"
-  onclick="adminNavigate('productFormPanel',this)">
-  <i data-lucide="package"></i>
-  Produk
- </button>
+   <div class="sidebar-title">SNNA MANAGEMENT</div>
 
- <button class="admin-menu-btn"
-  onclick="adminNavigate('ordersPanel',this)">
-  <i data-lucide="shopping-bag"></i>
-  Pesanan
- </button>
+   <button class="admin-menu-btn active"
+    data-target="dashboardHome"
+    onclick="adminNavigate('dashboardHome',this)">
+    <i data-lucide="layout-dashboard"></i>
+    Dashboard
+   </button>
 
- <button class="admin-menu-btn"
-  onclick="adminNavigate('salesStatsPanel',this)">
-  <i data-lucide="chart-no-axes-column-increasing"></i>
-  Analisis Jualan
- </button>
+   <button class="admin-menu-btn"
+    data-target="productsPage"
+    onclick="adminNavigate('productsPage',this)">
+    <i data-lucide="package"></i>
+    Produk
+   </button>
 
- <button class="admin-menu-btn"
-  onclick="adminNavigate('reviewsPanel',this)">
-  <i data-lucide="star"></i>
-  Pengurusan Ulasan
- </button>
-<button class="admin-menu-btn"
-  onclick="adminNavigate('downloadLogsPanel',this)">
-  <i data-lucide="download"></i>
-  Sejarah Muat Turun
-</button>
-<div class="sidebar-account">
-
- <div class="sidebar-account-label">
-  AKAUN ADMIN
- </div>
-
- <div class="sidebar-account-email"
-  id="adminEmailLabel">
-  -
- </div>
-
- <button class="sidebar-logout"
-  id="logoutBtn"
-  onclick="logout()">
-
-  <i data-lucide="log-out"></i>
-  Keluar
-
- </button>
-
-</div>
-
-</aside>
-
-<main>
-
- <div class="welcome" id="dashboardHome">
-  <h2>Dashboard Admin 👋</h2>
-  <p>Selamat datang ke pengurusan SNNA Digital Store.</p>
- </div>
-
- <div class="stats">
-  <div class="stat"><i data-lucide="package"></i>
-   <strong id="totalProducts">0</strong><span>Jumlah produk</span>
-  </div>
-  <div class="stat"><i data-lucide="check-circle"></i>
-   <strong id="activeProducts">0</strong><span>Produk aktif</span>
-  </div>
-  <div class="stat"><i data-lucide="star"></i>
-   <strong id="featuredProducts">0</strong><span>Produk pilihan</span>
-  </div>
- </div>
- <!-- SNNA SALES STATISTICS -->
- <section class="panel" id="salesStatsPanel">
-  <h3>📊 Statistik Jualan Produk</h3>
-
-  <div class="field" style="margin-bottom:15px">
-   <label>Tempoh statistik</label>
-   <select id="salesPeriod">
-    <option value="all">Semua rekod</option>
-    <option value="today">Hari ini</option>
-    <option value="month">Bulan ini</option>
-    <option value="year">Tahun ini</option>
-   </select>
-  </div>
-
-  <div class="stats">
-   <div class="stat">
+   <button class="admin-menu-btn"
+    data-target="ordersPanel"
+    onclick="adminNavigate('ordersPanel',this)">
     <i data-lucide="shopping-bag"></i>
-    <strong id="salesUnits">0</strong>
-    <span>Unit terjual</span>
+    Pesanan
+   </button>
+
+   <button class="admin-menu-btn"
+    data-target="salesStatsPanel"
+    onclick="adminNavigate('salesStatsPanel',this)">
+    <i data-lucide="chart-no-axes-column-increasing"></i>
+    Analisis Jualan
+   </button>
+
+   <button class="admin-menu-btn"
+    data-target="reviewsPanel"
+    onclick="adminNavigate('reviewsPanel',this)">
+    <i data-lucide="star"></i>
+    Pengurusan Ulasan
+   </button>
+
+   <button class="admin-menu-btn"
+    data-target="downloadLogsPanel"
+    onclick="adminNavigate('downloadLogsPanel',this)">
+    <i data-lucide="download"></i>
+    Sejarah Muat Turun
+   </button>
+
+   <div class="sidebar-account">
+    <div class="sidebar-account-label">AKAUN ADMIN</div>
+
+    <div class="sidebar-account-email" id="adminEmailLabel">-</div>
+
+    <button class="sidebar-logout" id="logoutBtn" onclick="logout()">
+     <i data-lucide="log-out"></i>
+     Keluar
+    </button>
    </div>
 
-   <div class="stat">
-    <i data-lucide="wallet"></i>
-    <strong id="salesRevenue">RM 0.00</strong>
-    <span>Jumlah hasil pesanan dibayar</span>
-   </div>
+  </aside>
 
-   <div class="stat">
-    <i data-lucide="receipt"></i>
-    <strong id="salesOrders">0</strong>
-    <span>Pesanan dibayar</span>
-   </div>
-  </div>
+  <!-- MAIN CONTENT -->
+  <main>
 
-  <h3 style="margin-top:20px">🏆 Produk Paling Laris</h3>
+   <!-- DASHBOARD HOME -->
+   <section class="admin-page active" id="dashboardHome">
 
-  <div id="bestSellingProducts" class="product-list">
-   <div class="help">Memuatkan statistik jualan...</div>
-  </div>
+    <div class="welcome">
+     <h2>Dashboard Admin 👋</h2>
+     <p>Selamat datang ke pengurusan SNNA Digital Store.</p>
+    </div>
 
-  <div id="salesStatsStatus" class="status"></div>
- </section>
- <section class="panel" id="productFormPanel">
-  <h3 id="formHeading">Tambah Produk Baharu</h3>
-  <form id="productForm">
-   <div class="form-grid">
-    <div class="field full">
-     <label>Nama produk *</label>
-     <input id="title" required maxlength="180" placeholder="Contoh: Ebook Panduan Bisnes">
-    </div>
-    <div class="field">
-     <label>Kategori *</label>
-     <select id="category" required>
-      <option value="">Pilih kategori</option>
-      <option>Ebook</option>
-      <option>Planner</option>
-      <option>Template</option>
-      <option>Artwork</option>
-      <option>Printable</option>
-      <option>Business</option>
-      <option>Bundle</option>
-      <option>Lain-lain</option>
-     </select>
-    </div>
-    <div class="field">
-     <label>Harga jualan (RM) *</label>
-     <input id="price" type="number" min="0" step="0.01" required placeholder="19.90">
-    </div>
-    <div class="field">
-     <label>Harga asal (RM)</label>
-     <input id="comparePrice" type="number" min="0" step="0.01" placeholder="29.90">
-    </div>
-    <div class="field">
-     <label>Susunan produk</label>
-     <input id="sortOrder" type="number" step="1" value="0">
-    </div>
-    <div class="field full">
-     <label>Penerangan produk</label>
-     <textarea id="description" placeholder="Terangkan kandungan dan manfaat produk..."></textarea>
-    </div>
-    <div class="field">
-     <label>Gambar produk</label>
-     <div class="file-box">
-      <input id="imageFile" type="file" accept="image/jpeg,image/png,image/webp">
-      <div class="help">JPG, PNG atau WebP. Maksimum 5MB.</div>
-      <img id="imagePreview" class="preview" alt="Preview gambar">
+    <div class="stats">
+
+     <div class="stat">
+      <i data-lucide="package"></i>
+      <strong id="totalProducts">0</strong>
+      <span>Jumlah produk</span>
      </div>
-     <div class="help" id="imageCurrent"></div>
-    </div>
-    <div class="field">
-     <label>Fail digital *</label>
-     <div class="file-box">
-      <input id="digitalFile" type="file">
-      <div class="help">PDF, ZIP atau fail digital lain. Maksimum 50MB.</div>
+
+     <div class="stat">
+      <i data-lucide="check-circle"></i>
+      <strong id="activeProducts">0</strong>
+      <span>Produk aktif</span>
      </div>
-     <div class="help" id="fileCurrent"></div>
+
+     <div class="stat">
+      <i data-lucide="star"></i>
+      <strong id="featuredProducts">0</strong>
+      <span>Produk pilihan</span>
+     </div>
+
     </div>
-    <div class="field full">
-     <label class="check-row">
-      <input type="checkbox" id="isActive" checked>
-      Paparkan produk di homepage
-     </label>
-     <label class="check-row">
-      <input type="checkbox" id="isFeatured">
-      Jadikan produk pilihan
-     </label>
+
+    <div class="panel">
+     <h3>Selamat Datang ke SNNA Admin</h3>
+     <p class="help">
+      Gunakan menu di sebelah untuk menguruskan produk digital,
+      pesanan pelanggan, analisis jualan, ulasan dan sejarah muat turun.
+     </p>
     </div>
-   </div>
-   <div class="form-actions">
-    <button type="submit" class="btn btn-gold" id="saveBtn">Simpan Produk</button>
-    <button type="button" class="btn btn-light hidden" id="cancelBtn" onclick="resetForm()">Batal Edit</button>
-   </div>
-   <div id="formStatus" class="status"></div>
-  </form>
- </section>
 
- <section class="panel">
-  <h3>Senarai Produk</h3>
-  <div id="productList" class="product-list">
-   <div class="help">Memuatkan produk...</div>
-  </div>
- </section>
-  <section class="panel" id="ordersPanel">
-  <h3>📦 Pengurusan Pesanan</h3>
-
-  <div class="form-grid">
-   <div class="field">
-    <label>Carian pesanan</label>
-    <input id="orderSearch"
-     placeholder="Nama, email atau nombor pesanan">
-   </div>
-
-   <div class="field">
-    <label>Penapis status</label>
-    <select id="orderFilter">
-     <option value="">Semua pesanan</option>
-     <option value="pending">Pending</option>
-     <option value="processing">Processing</option>
-     <option value="completed">Completed</option>
-     <option value="cancelled">Cancelled</option>
-    </select>
-   </div>
-  </div>
-
-  <div class="form-actions">
-   <button class="btn btn-gold"
-    onclick="loadOrders()">Muat Semula</button>
-  </div>
-
-  <div id="orderList" class="product-list"
-   style="margin-top:15px">
-   <div class="help">Memuatkan pesanan...</div>
-  </div>
-  
    </section>
 
-  <!-- SNNA REVIEW MANAGEMENT -->
-  <section class="panel" id="reviewsPanel">
-   <h3>⭐ Pengurusan Ulasan Pelanggan</h3>
+   <!-- PRODUCTS PAGE -->
+   <section class="admin-page" id="productsPage">
 
-   <div class="form-grid">
-    <div class="field">
-     <label>Penapis ulasan</label>
-     <select id="reviewFilter">
-      <option value="all">Semua ulasan</option>
-      <option value="pending">Menunggu kelulusan</option>
-      <option value="published">Sudah diterbitkan</option>
-     </select>
-    </div>
-   </div>
-
-   <div class="form-actions">
-    <button class="btn btn-gold" onclick="loadReviews()">
-     Muat Semula Ulasan
-    </button>
-   </div>
-
-   <div id="reviewList" class="product-list" style="margin-top:15px">
-    <div class="help">Memuatkan ulasan...</div>
-   </div>
-  </section>
-
-<!-- SNNA DOWNLOAD HISTORY -->
-<section class="panel" id="downloadLogsPanel">
-
-  <h3>📥 Sejarah Muat Turun</h3>
-
-  <div class="stats">
-    <div class="stat">
-      <i data-lucide="download"></i>
-      <strong id="downloadTotal">0</strong>
-      <span>Jumlah muat turun</span>
+    <div class="page-heading">
+     <h2>📦 Pengurusan Produk</h2>
+     <p>Tambah, kemas kini dan urus katalog produk digital SNNA.</p>
     </div>
 
-    <div class="stat">
-      <i data-lucide="users"></i>
-      <strong id="downloadCustomers">0</strong>
-      <span>Pelanggan</span>
+    <section class="panel" id="productFormPanel">
+     <h3 id="formHeading">Tambah Produk Baharu</h3>
+
+     <form id="productForm">
+
+      <div class="form-grid">
+
+       <div class="field full">
+        <label>Nama produk *</label>
+        <input id="title" required maxlength="180"
+         placeholder="Contoh: Ebook Panduan Bisnes">
+       </div>
+
+       <div class="field">
+        <label>Kategori *</label>
+        <select id="category" required>
+         <option value="">Pilih kategori</option>
+         <option>Ebook</option>
+         <option>Planner</option>
+         <option>Template</option>
+         <option>Artwork</option>
+         <option>Printable</option>
+         <option>Business</option>
+         <option>Bundle</option>
+         <option>Lain-lain</option>
+        </select>
+       </div>
+
+       <div class="field">
+        <label>Harga jualan (RM) *</label>
+        <input id="price" type="number" min="0"
+         step="0.01" required placeholder="19.90">
+       </div>
+
+       <div class="field">
+        <label>Harga asal (RM)</label>
+        <input id="comparePrice" type="number"
+         min="0" step="0.01" placeholder="29.90">
+       </div>
+
+       <div class="field">
+        <label>Susunan produk</label>
+        <input id="sortOrder" type="number" step="1" value="0">
+       </div>
+
+       <div class="field full">
+        <label>Penerangan produk</label>
+        <textarea id="description"
+         placeholder="Terangkan kandungan dan manfaat produk..."></textarea>
+       </div>
+
+       <div class="field">
+        <label>Gambar produk</label>
+        <div class="file-box">
+         <input id="imageFile" type="file"
+          accept="image/jpeg,image/png,image/webp">
+         <div class="help">JPG, PNG atau WebP. Maksimum 5MB.</div>
+         <img id="imagePreview" class="preview" alt="Preview gambar">
+        </div>
+        <div class="help" id="imageCurrent"></div>
+       </div>
+
+       <div class="field">
+        <label>Fail digital *</label>
+        <div class="file-box">
+         <input id="digitalFile" type="file">
+         <div class="help">PDF, ZIP atau fail digital lain. Maksimum 50MB.</div>
+        </div>
+        <div class="help" id="fileCurrent"></div>
+       </div>
+
+       <div class="field full">
+        <label class="check-row">
+         <input type="checkbox" id="isActive" checked>
+         Paparkan produk di homepage
+        </label>
+
+        <label class="check-row">
+         <input type="checkbox" id="isFeatured">
+         Jadikan produk pilihan
+        </label>
+       </div>
+
+      </div>
+
+      <div class="form-actions">
+       <button type="submit" class="btn btn-gold" id="saveBtn">
+        Simpan Produk
+       </button>
+
+       <button type="button" class="btn btn-light hidden"
+        id="cancelBtn" onclick="resetForm()">
+        Batal Edit
+       </button>
+      </div>
+
+      <div id="formStatus" class="status"></div>
+
+     </form>
+    </section>
+
+    <section class="panel">
+     <h3>Senarai Produk</h3>
+     <div id="productList" class="product-list">
+      <div class="help">Memuatkan produk...</div>
+     </div>
+    </section>
+
+   </section>
+
+   <!-- ORDERS -->
+   <section class="admin-page" id="ordersPanel">
+
+    <div class="page-heading">
+     <h2>🛍️ Pengurusan Pesanan</h2>
+     <p>Semak pesanan pelanggan dan kemas kini status pesanan.</p>
     </div>
 
-    <div class="stat">
-      <i data-lucide="package"></i>
-      <strong id="downloadProducts">0</strong>
-      <span>Produk dimuat turun</span>
+    <div class="panel">
+
+     <div class="form-grid">
+
+      <div class="field">
+       <label>Carian pesanan</label>
+       <input id="orderSearch"
+        placeholder="Nama, email atau nombor pesanan">
+      </div>
+
+      <div class="field">
+       <label>Penapis status</label>
+       <select id="orderFilter">
+        <option value="">Semua pesanan</option>
+        <option value="pending">Pending</option>
+        <option value="processing">Processing</option>
+        <option value="completed">Completed</option>
+        <option value="cancelled">Cancelled</option>
+       </select>
+      </div>
+
+     </div>
+
+     <div class="form-actions">
+      <button class="btn btn-gold" onclick="loadOrders()">
+       Muat Semula
+      </button>
+     </div>
+
     </div>
-  </div>
 
-  <div class="field" style="margin-bottom:12px">
-    <label>Carian sejarah muat turun</label>
-    <input
-      id="downloadSearch"
-      type="search"
-      placeholder="Cari nama, email, produk atau nombor pesanan">
-  </div>
+    <div id="orderList" class="product-list">
+     <div class="help">Memuatkan pesanan...</div>
+    </div>
 
-  <div class="form-actions">
-    <button class="btn btn-gold"
-      onclick="loadDownloadLogs()">
-      <i data-lucide="refresh-cw"></i>
-      Muat Semula
-    </button>
-  </div>
+   </section>
 
-  <div id="downloadLogsStatus" class="status"></div>
+   <!-- SALES -->
+   <section class="admin-page" id="salesStatsPanel">
 
-  <div id="downloadLogsList"
-    class="product-list"
-    style="margin-top:15px">
-    <div class="help">Memuatkan sejarah muat turun...</div>
-  </div>
+    <div class="page-heading">
+     <h2>📊 Analisis Jualan</h2>
+     <p>Pantau prestasi jualan dan produk paling laris.</p>
+    </div>
 
-</section>
+    <div class="panel">
 
-</main>
-</div>
+     <div class="field" style="margin-bottom:15px">
+      <label>Tempoh statistik</label>
+      <select id="salesPeriod">
+       <option value="all">Semua rekod</option>
+       <option value="today">Hari ini</option>
+       <option value="month">Bulan ini</option>
+       <option value="year">Tahun ini</option>
+      </select>
+     </div>
+
+     <div class="stats">
+
+      <div class="stat">
+       <i data-lucide="shopping-bag"></i>
+       <strong id="salesUnits">0</strong>
+       <span>Unit terjual</span>
+      </div>
+
+      <div class="stat">
+       <i data-lucide="wallet"></i>
+       <strong id="salesRevenue">RM 0.00</strong>
+       <span>Jumlah hasil pesanan dibayar</span>
+      </div>
+
+      <div class="stat">
+       <i data-lucide="receipt"></i>
+       <strong id="salesOrders">0</strong>
+       <span>Pesanan dibayar</span>
+      </div>
+
+     </div>
+
+     <h3 style="margin-top:20px">🏆 Produk Paling Laris</h3>
+
+     <div id="bestSellingProducts" class="product-list">
+      <div class="help">Memuatkan statistik jualan...</div>
+     </div>
+
+     <div id="salesStatsStatus" class="status"></div>
+
+    </div>
+
+   </section>
+
+   <!-- REVIEWS -->
+   <section class="admin-page" id="reviewsPanel">
+
+    <div class="page-heading">
+     <h2>⭐ Pengurusan Ulasan</h2>
+     <p>Semak, luluskan atau sembunyikan ulasan pelanggan.</p>
+    </div>
+
+    <div class="panel">
+
+     <div class="form-grid">
+      <div class="field">
+       <label>Penapis ulasan</label>
+       <select id="reviewFilter">
+        <option value="all">Semua ulasan</option>
+        <option value="pending">Menunggu kelulusan</option>
+        <option value="published">Sudah diterbitkan</option>
+       </select>
+      </div>
+     </div>
+
+     <div class="form-actions">
+      <button class="btn btn-gold" onclick="loadReviews()">
+       Muat Semula Ulasan
+      </button>
+     </div>
+
+    </div>
+
+    <div id="reviewList" class="product-list">
+     <div class="help">Memuatkan ulasan...</div>
+    </div>
+
+   </section>
+
+   <!-- DOWNLOAD HISTORY -->
+   <section class="admin-page" id="downloadLogsPanel">
+
+    <div class="page-heading">
+     <h2>📥 Sejarah Muat Turun</h2>
+     <p>Pantau rekod muat turun fail digital oleh pelanggan.</p>
+    </div>
+
+    <div class="panel">
+
+     <div class="stats">
+
+      <div class="stat">
+       <i data-lucide="download"></i>
+       <strong id="downloadTotal">0</strong>
+       <span>Jumlah muat turun</span>
+      </div>
+
+      <div class="stat">
+       <i data-lucide="users"></i>
+       <strong id="downloadCustomers">0</strong>
+       <span>Pelanggan</span>
+      </div>
+
+      <div class="stat">
+       <i data-lucide="package"></i>
+       <strong id="downloadProducts">0</strong>
+       <span>Produk dimuat turun</span>
+      </div>
+
+     </div>
+
+     <div class="field" style="margin-bottom:12px">
+      <label>Carian sejarah muat turun</label>
+      <input id="downloadSearch" type="search"
+       placeholder="Cari nama, email, produk atau nombor pesanan">
+     </div>
+
+     <div class="form-actions">
+      <button class="btn btn-gold" onclick="loadDownloadLogs()">
+       <i data-lucide="refresh-cw"></i>
+       Muat Semula
+      </button>
+     </div>
+
+     <div id="downloadLogsStatus" class="status"></div>
+
+    </div>
+
+    <div id="downloadLogsList" class="product-list">
+     <div class="help">Memuatkan sejarah muat turun...</div>
+    </div>
+
+   </section>
+
+  </main>
+ </div>
 </div>
 
 <footer>© 2026 SNNA Digital Store</footer>
@@ -722,19 +1066,25 @@ const $=id=>document.getElementById(id);
 
 function showStatus(id,message,type=""){
  const el=$(id);
+ if(!el)return;
  el.textContent=message;
  el.className="status "+type;
 }
 
 function safeText(value){
  return String(value??"").replace(/[&<>"']/g,c=>({
-  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  "&":"&amp;",
+  "<":"&lt;",
+  ">":"&gt;",
+  '"':"&quot;",
+  "'":"&#39;"
  }[c]));
 }
 
 function makeSlug(value){
  return value.toLowerCase()
-  .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+  .normalize("NFD")
+  .replace(/[\u0300-\u036f]/g,"")
   .replace(/[^a-z0-9]+/g,"-")
   .replace(/^-|-$/g,"") || "produk";
 }
@@ -745,13 +1095,16 @@ function uniqueSlug(value){
 
 function publicImage(path){
  if(!path)return "";
+
  return SUPABASE_URL+
   "/storage/v1/object/public/product-images/"+
   path.split("/").map(encodeURIComponent).join("/");
 }
 
+/* AUTHENTICATION */
 
 async function checkAdmin(){
+
  const {data:{session},error}=await db.auth.getSession();
 
  if(error){
@@ -766,6 +1119,7 @@ async function checkAdmin(){
  }
 
  currentUser=session.user;
+
  const {data:profile,error:profileError}=await db
   .from("profiles")
   .select("role,full_name")
@@ -805,120 +1159,77 @@ async function checkAdmin(){
  showDashboard(profile.full_name||currentUser.email);
 }
 
-
-function toggleAdminMenu(){
- const sidebar=$("adminSidebar");
- const backdrop=$("menuBackdrop");
-
- sidebar.classList.toggle("open");
- backdrop.classList.toggle("open");
-}
-
-function closeAdminMenu(){
- $("adminSidebar").classList.remove("open");
- $("menuBackdrop").classList.remove("open");
-}
-
-function adminNavigate(target,button){
- const section=$(target);
-
- if(!section)return;
-
- document.querySelectorAll(".admin-menu-btn")
-  .forEach(btn=>btn.classList.remove("active"));
-
- if(button)button.classList.add("active");
-
- closeAdminMenu();
-
- section.scrollIntoView({
-  behavior:"smooth",
-  block:"start"
- });
-}
-
-
-
 function showLogin(){
 
-  $("menuToggle").style.display="none";
+ $("menuToggle").style.display="none";
+ $("loginView").style.display="block";
+ $("dashboard").style.display="none";
 
-  $("loginView").style.display="block";
-  $("dashboard").style.display="none";
+ $("logoutBtn").classList.add("hidden");
+ $("adminEmailLabel").textContent="";
 
-  $("logoutBtn").classList.add("hidden");
-
-  $("adminEmailLabel").textContent="";
-
-  closeAdminMenu();
+ closeAdminMenu();
 }
-
-
-
-
 
 function showDashboard(name){
 
-  $("loginView").style.display="none";
-  $("dashboard").style.display="block";
+ $("loginView").style.display="none";
+ $("dashboard").style.display="block";
 
-  // Paparkan menu
-  const menu=$("menuToggle");
+ $("menuToggle").style.display="inline-flex";
 
-  if(menu){
-    menu.style.display="inline-flex";
-    menu.style.visibility="visible";
-  }
+ $("adminEmailLabel").textContent=currentUser?.email||"-";
+ $("logoutBtn").classList.remove("hidden");
 
-  // Paparkan email admin
-  const emailBox=$("adminEmailLabel");
+ closeAdminMenu();
 
-  if(emailBox){
-    emailBox.textContent=currentUser?.email||"-";
-  }
+ // Paparan pertama selepas login
+ adminNavigate(
+  "dashboardHome",
+  document.querySelector('[data-target="dashboardHome"]'),
+  false
+ );
 
-  // Paparkan butang keluar
-  const logoutButton=$("logoutBtn");
+ // Muatkan semua data seperti fungsi asal
+ loadProducts();
+ loadOrders();
+ loadReviews();
+ loadSalesStats();
+ loadDownloadLogs();
 
-  if(logoutButton){
-    logoutButton.classList.remove("hidden");
-  }
+ if(window.lucide){
+  lucide.createIcons();
+ }
 
-  closeAdminMenu();
-
-  // Muatkan semua data
-  loadProducts();
-loadOrders();
-loadReviews();
-loadSalesStats();
-loadDownloadLogs();
-
-  if(window.lucide){
-    lucide.createIcons();
-  }
-
-  console.log("SNNA Dashboard berjaya dibuka");
+ console.log("SNNA Dashboard berjaya dibuka");
 }
 
-
-
-
 async function login(){
+
  const email=$("email").value.trim();
  const password=$("password").value;
+
  if(!email||!password){
   showStatus("loginStatus","Masukkan email dan kata laluan.","error");
   return;
  }
+
  $("loginBtn").disabled=true;
  $("loginBtn").textContent="Sedang log masuk...";
- const {error}=await db.auth.signInWithPassword({email,password});
+
+ const {error}=await db.auth.signInWithPassword({
+  email,
+  password
+ });
+
  $("loginBtn").disabled=false;
  $("loginBtn").textContent="Log Masuk";
+
  if(error){
   showStatus("loginStatus","Login gagal: "+error.message,"error");
   return;
  }
+
  await checkAdmin();
 }
 
@@ -928,72 +1239,144 @@ async function logout(){
  showLogin();
 }
 
+/* NAVIGATION */
 
+function toggleAdminMenu(){
+ $("adminSidebar").classList.toggle("open");
+ $("menuBackdrop").classList.toggle("open");
+}
+
+function closeAdminMenu(){
+ $("adminSidebar").classList.remove("open");
+ $("menuBackdrop").classList.remove("open");
+}
+
+function adminNavigate(target,button,scrollTop=true){
+
+ const page=$(target);
+
+ if(!page)return;
+
+ // Sembunyikan semua halaman
+ document.querySelectorAll(".admin-page").forEach(section=>{
+  section.classList.remove("active");
+ });
+
+ // Paparkan halaman pilihan
+ page.classList.add("active");
+
+ // Kemaskini menu aktif
+ document.querySelectorAll(".admin-menu-btn[data-target]").forEach(btn=>{
+  btn.classList.remove("active");
+ });
+
+ if(button){
+  button.classList.add("active");
+ }
+
+ closeAdminMenu();
+
+ if(scrollTop){
+  window.scrollTo({
+   top:0,
+   behavior:"smooth"
+  });
+ }
+
+ if(window.lucide){
+  lucide.createIcons();
+ }
+}
+
+/* PRODUCTS */
 
 async function loadProducts(){
 
-  const {data,error}=await db
-    .from("products")
-    .select("*")
-    .order("sort_order",{ascending:true})
-    .order("created_at",{ascending:false});
+ const {data,error}=await db
+  .from("products")
+  .select("*")
+  .order("sort_order",{ascending:true})
+  .order("created_at",{ascending:false});
 
-  if(error){
-    console.error("PRODUCT ERROR:",error);
-    $("productList").textContent=
-      "Gagal memuatkan produk: "+error.message;
-    return;
-  }
+ if(error){
+  console.error("PRODUCT ERROR:",error);
+  $("productList").textContent=
+   "Gagal memuatkan produk: "+error.message;
+  return;
+ }
 
-  products=data||[];
+ products=data||[];
 
-  updateStats();
-  renderList();
+ updateStats();
+ renderList();
 }
-
-
-
 
 function updateStats(){
  $("totalProducts").textContent=products.length;
- $("activeProducts").textContent=products.filter(p=>p.is_active).length;
- $("featuredProducts").textContent=products.filter(p=>p.is_featured).length;
+
+ $("activeProducts").textContent=
+  products.filter(p=>p.is_active).length;
+
+ $("featuredProducts").textContent=
+  products.filter(p=>p.is_featured).length;
 }
 
 function renderList(){
+
  const area=$("productList");
+
  if(!products.length){
-  area.innerHTML='<div class="help">Belum ada produk. Tambah produk pertama SNNA.</div>';
+  area.innerHTML=
+   '<div class="help">Belum ada produk. Tambah produk pertama SNNA.</div>';
   return;
  }
+
  area.innerHTML=products.map(p=>{
+
   const img=p.image_path
    ?`<img src="${safeText(publicImage(p.image_path))}" alt="">`
    :'<div class="product-placeholder"><i data-lucide="image"></i></div>';
+
   return `
    <div class="product-row">
+
     ${img}
+
     <div class="product-detail">
      <strong>${safeText(p.title)}</strong>
-     <small>${safeText(p.category)} · RM ${Number(p.price).toFixed(2)}</small>
-     <small>${p.is_active?"Aktif":"Tidak aktif"} · ${p.is_featured?"Produk pilihan":"Biasa"}</small>
-    </div>
-    <div class="product-actions">
-     <button class="btn-light" onclick="editProduct('${p.id}')">Edit</button>
-     <button class="btn-red" onclick="deleteProduct('${p.id}')">Padam</button>
-    </div>
-   </div>`;
- }).join("");
- lucide.createIcons();
-}
-// =================================
-// SNNA ORDER MANAGEMENT
-// =================================
 
-let allOrders=[];
-// =================================
-// SNNA PRODUCT SALES STATISTICS
-// =================================
+     <small>
+      ${safeText(p.category)} · RM ${Number(p.price).toFixed(2)}
+     </small>
+
+     <small>
+      ${p.is_active?"Aktif":"Tidak aktif"} ·
+      ${p.is_featured?"Produk pilihan":"Biasa"}
+     </small>
+    </div>
+
+    <div class="product-actions">
+     <button class="btn-light"
+      onclick="editProduct('${p.id}')">
+      Edit
+     </button>
+
+     <button class="btn-red"
+      onclick="deleteProduct('${p.id}')">
+      Padam
+     </button>
+    </div>
+
+   </div>
+  `;
+ }).join("");
+
+ if(window.lucide){
+  lucide.createIcons();
+ }
+}
+
+/* SALES STATISTICS */
 
 let salesOrders=[];
 let salesItems=[];
@@ -1006,6 +1389,7 @@ function moneyRM(value){
 }
 
 function getSalesPeriodStart(period){
+
  const now=new Date();
 
  if(period==="today"){
@@ -1036,15 +1420,18 @@ function getSalesPeriodStart(period){
 }
 
 async function loadSalesStats(){
+
  const area=$("bestSellingProducts");
 
  if(!area)return;
- console.log("SNNA: Statistik mula dimuatkan");
 
  area.innerHTML=
   '<div class="help">Memuatkan statistik jualan...</div>';
 
- showStatus("salesStatsStatus","Mengambil rekod pembayaran yang disahkan...");
+ showStatus(
+  "salesStatsStatus",
+  "Mengambil rekod pembayaran yang disahkan..."
+ );
 
  const {data:orders,error:orderError}=await db
   .from("orders")
@@ -1053,6 +1440,7 @@ async function loadSalesStats(){
   .order("created_at",{ascending:false});
 
  if(orderError){
+
   area.innerHTML=
    '<div class="help">Gagal membaca pesanan.</div>';
 
@@ -1061,18 +1449,27 @@ async function loadSalesStats(){
    "Ralat pesanan: "+orderError.message,
    "error"
   );
+
   return;
  }
 
  salesOrders=orders||[];
-console.log("SNNA: Jumlah pesanan dibayar:",salesOrders.length);
+
+ console.log(
+  "SNNA: Jumlah pesanan dibayar:",
+  salesOrders.length
+ );
+
  if(!salesOrders.length){
+
   salesItems=[];
   renderSalesStats();
+
   showStatus(
    "salesStatsStatus",
    "Belum ada pesanan dengan pembayaran disahkan."
   );
+
   return;
  }
 
@@ -1084,6 +1481,7 @@ console.log("SNNA: Jumlah pesanan dibayar:",salesOrders.length);
   .in("order_id",orderIds);
 
  if(itemError){
+
   area.innerHTML=
    '<div class="help">Gagal membaca item jualan.</div>';
 
@@ -1092,12 +1490,19 @@ console.log("SNNA: Jumlah pesanan dibayar:",salesOrders.length);
    "Ralat item: "+itemError.message,
    "error"
   );
+
   return;
  }
 
  salesItems=items||[];
-console.log("SNNA: Jumlah item jualan:",salesItems.length);
+
+ console.log(
+  "SNNA: Jumlah item jualan:",
+  salesItems.length
+ );
+
  renderSalesStats();
+
  showStatus(
   "salesStatsStatus",
   "Statistik berjaya dikemas kini.",
@@ -1106,12 +1511,12 @@ console.log("SNNA: Jumlah item jualan:",salesItems.length);
 }
 
 function renderSalesStats(){
+
  const period=$("salesPeriod").value;
  const start=getSalesPeriodStart(period);
 
  const filteredOrders=salesOrders.filter(order=>{
   if(!start)return true;
-
   return new Date(order.created_at)>=start;
  });
 
@@ -1143,6 +1548,7 @@ function renderSalesStats(){
  const grouped={};
 
  filteredItems.forEach(item=>{
+
   const key=item.product_id||item.product_title||"unknown";
 
   if(!grouped[key]){
@@ -1174,7 +1580,9 @@ function renderSalesStats(){
  }
 
  area.innerHTML=bestSelling.map((item,index)=>`
+
   <div class="product-row">
+
    <div class="product-placeholder"
     style="font-weight:800;font-size:18px">
     ${index+1}
@@ -1182,23 +1590,34 @@ function renderSalesStats(){
 
    <div class="product-detail">
     <strong>${safeText(item.title)}</strong>
+
     <small>
      ${item.quantity.toLocaleString("en-MY")} unit terjual
     </small>
+
     <small>
      Nilai jualan produk: ${moneyRM(item.revenue)}
     </small>
    </div>
+
   </div>
+
  `).join("");
 }
+
+/* ORDER MANAGEMENT */
+
+let allOrders=[];
+
 function orderStatusLabel(status){
+
  const labels={
   pending:"Pending",
   processing:"Processing",
   completed:"Completed",
   cancelled:"Cancelled"
  };
+
  return labels[status]||status||"Tidak diketahui";
 }
 
@@ -1207,10 +1626,13 @@ function paymentStatusLabel(status){
 }
 
 async function loadOrders(){
+
  const area=$("orderList");
+
  if(!area)return;
 
- area.innerHTML='<div class="help">Memuatkan pesanan...</div>';
+ area.innerHTML=
+  '<div class="help">Memuatkan pesanan...</div>';
 
  const {data,error}=await db
   .from("orders")
@@ -1231,15 +1653,18 @@ async function loadOrders(){
   .order("created_at",{ascending:false});
 
  if(error){
-  area.textContent="Gagal memuatkan pesanan: "+error.message;
+  area.textContent=
+   "Gagal memuatkan pesanan: "+error.message;
   return;
  }
 
  allOrders=data||[];
+
  await renderOrders();
 }
 
 async function renderOrders(){
+
  const area=$("orderList");
 
  const search=($("orderSearch")?.value||"")
@@ -1247,7 +1672,8 @@ async function renderOrders(){
 
  const filter=$("orderFilter")?.value||"";
 
- let filtered=allOrders.filter(order=>{
+ const filtered=allOrders.filter(order=>{
+
   const text=[
    order.order_number,
    order.customer_name,
@@ -1273,21 +1699,27 @@ async function renderOrders(){
   .in("order_id",ids);
 
  if(error){
-  area.textContent="Gagal membaca item pesanan: "+error.message;
+  area.textContent=
+   "Gagal membaca item pesanan: "+error.message;
   return;
  }
 
  area.innerHTML=filtered.map(order=>{
+
   const orderItems=(items||[]).filter(
    item=>item.order_id===order.id
   );
 
   const itemHTML=orderItems.map(item=>`
-   <div style="font-size:12px;padding:5px 0;
+   <div style="
+    font-size:12px;
+    padding:5px 0;
     border-bottom:1px solid #eee">
+
     ${safeText(item.product_title)}
     × ${Number(item.quantity)}
     — RM ${Number(item.unit_price).toFixed(2)}
+
    </div>
   `).join("");
 
@@ -1296,14 +1728,28 @@ async function renderOrders(){
    :"—";
 
   return `
+
    <div class="panel" style="margin:0">
-    <div style="display:flex;justify-content:space-between;
-     gap:10px;flex-wrap:wrap">
-     <strong>${safeText(order.order_number||order.id)}</strong>
-     <span class="help">${safeText(date)}</span>
+
+    <div style="
+     display:flex;
+     justify-content:space-between;
+     gap:10px;
+     flex-wrap:wrap">
+
+     <strong>
+      ${safeText(order.order_number||order.id)}
+     </strong>
+
+     <span class="help">
+      ${safeText(date)}
+     </span>
+
     </div>
 
-    <hr style="border:0;border-top:1px solid #eee;
+    <hr style="
+     border:0;
+     border-top:1px solid #eee;
      margin:12px 0">
 
     <strong style="font-size:13px">
@@ -1320,7 +1766,10 @@ async function renderOrders(){
 
     <div style="margin-top:13px">
      <strong style="font-size:12px">Produk dipesan</strong>
-     <div style="margin-top:7px">${itemHTML||"Tiada item"}</div>
+
+     <div style="margin-top:7px">
+      ${itemHTML||"Tiada item"}
+     </div>
     </div>
 
     <div style="margin-top:12px;font-size:14px">
@@ -1330,30 +1779,54 @@ async function renderOrders(){
 
     <div class="help" style="margin-top:8px">
      Status pembayaran:
-     <strong>${safeText(paymentStatusLabel(order.payment_status))}</strong>
+     <strong>
+      ${safeText(paymentStatusLabel(order.payment_status))}
+     </strong>
     </div>
 
     <div class="field" style="margin-top:12px">
      <label>Status pesanan</label>
+
      <select id="status-${order.id}"
       onchange="updateOrderStatus('${order.id}',this.value)">
+
       <option value="pending"
-       ${order.status==="pending"?"selected":""}>Pending</option>
+       ${order.status==="pending"?"selected":""}>
+       Pending
+      </option>
+
       <option value="processing"
-       ${order.status==="processing"?"selected":""}>Processing</option>
+       ${order.status==="processing"?"selected":""}>
+       Processing
+      </option>
+
       <option value="completed"
-       ${order.status==="completed"?"selected":""}>Completed</option>
+       ${order.status==="completed"?"selected":""}>
+       Completed
+      </option>
+
       <option value="cancelled"
-       ${order.status==="cancelled"?"selected":""}>Cancelled</option>
+       ${order.status==="cancelled"?"selected":""}>
+       Cancelled
+      </option>
+
      </select>
     </div>
+
    </div>
+
   `;
  }).join("");
 }
 
 async function updateOrderStatus(id,newStatus){
- const allowed=["pending","processing","completed","cancelled"];
+
+ const allowed=[
+  "pending",
+  "processing",
+  "completed",
+  "cancelled"
+ ];
 
  if(!allowed.includes(newStatus)){
   alert("Status tidak sah.");
@@ -1382,16 +1855,18 @@ async function updateOrderStatus(id,newStatus){
  }
 
  alert("Status pesanan berjaya dikemas kini.");
+
  await loadOrders();
 }
-// =================================
-// SNNA REVIEW MANAGEMENT
-// =================================
+
+/* REVIEW MANAGEMENT */
 
 let allReviews=[];
 
 async function loadReviews(){
+
  const area=$("reviewList");
+
  if(!area)return;
 
  area.innerHTML=
@@ -1420,7 +1895,6 @@ async function loadReviews(){
 
  allReviews=data||[];
 
- // Dapatkan nama produk berkaitan
  const productIds=[
   ...new Set(allReviews.map(r=>r.product_id).filter(Boolean))
  ];
@@ -1428,6 +1902,7 @@ async function loadReviews(){
  let productMap={};
 
  if(productIds.length){
+
   const {data:productData,error:productError}=await db
    .from("products")
    .select("id,title")
@@ -1451,14 +1926,18 @@ async function loadReviews(){
 }
 
 function renderReviews(){
+
  const area=$("reviewList");
+
  if(!area)return;
 
  const filter=$("reviewFilter")?.value||"all";
 
- let filtered=allReviews.filter(review=>{
+ const filtered=allReviews.filter(review=>{
+
   if(filter==="pending")return !review.is_published;
   if(filter==="published")return review.is_published;
+
   return true;
  });
 
@@ -1469,6 +1948,7 @@ function renderReviews(){
  }
 
  area.innerHTML=filtered.map(review=>{
+
   const date=review.created_at
    ?new Date(review.created_at).toLocaleString("ms-MY")
    :"—";
@@ -1492,52 +1972,80 @@ function renderReviews(){
      </button>`;
 
   return `
+
    <div class="panel" style="margin:0">
-    <div style="display:flex;justify-content:space-between;
-     gap:10px;flex-wrap:wrap">
+
+    <div style="
+     display:flex;
+     justify-content:space-between;
+     gap:10px;
+     flex-wrap:wrap">
 
      <strong style="font-size:14px">
       ${safeText(review.product_title)}
      </strong>
 
-     <span class="help">${safeText(date)}</span>
+     <span class="help">
+      ${safeText(date)}
+     </span>
+
     </div>
 
-    <div style="color:#D5A52C;font-size:19px;
-     margin-top:9px;letter-spacing:2px">
+    <div style="
+     color:#D5A52C;
+     font-size:19px;
+     margin-top:9px;
+     letter-spacing:2px">
+
      ${stars}
+
      <span style="font-size:12px;color:#888">
       (${Number(review.rating)||0}/5)
      </span>
+
     </div>
 
-    <div style="font-weight:700;font-size:13px;
+    <div style="
+     font-weight:700;
+     font-size:13px;
      margin-top:9px">
+
      ${safeText(review.review_title||"Ulasan pelanggan")}
+
     </div>
 
-    <p style="font-size:13px;line-height:1.6;
-     color:#555;white-space:pre-wrap;overflow-wrap:anywhere">
+    <p style="
+     font-size:13px;
+     line-height:1.6;
+     color:#555;
+     white-space:pre-wrap;
+     overflow-wrap:anywhere">
+
      ${safeText(review.review_text)}
+
     </p>
 
     <div class="help" style="margin-bottom:12px">
-     ID pelanggan: ${safeText(
-      String(review.customer_id||"").slice(0,8)
-     )}...
+     ID pelanggan:
+     ${safeText(String(review.customer_id||"").slice(0,8))}...
+
      <br>
+
      Status: ${status}
     </div>
 
     <div class="form-actions">
      ${action}
     </div>
+
    </div>
+
   `;
  }).join("");
 }
 
 async function setReviewStatus(id,publish){
+
  const action=publish
   ?"meluluskan dan menerbitkan"
   :"menyembunyikan";
@@ -1564,315 +2072,440 @@ async function setReviewStatus(id,publish){
 
  await loadReviews();
 }
- 
-// =================================
-// SNNA DOWNLOAD HISTORY
-// =================================
 
-let allDownloadLogs = [];
+/* DOWNLOAD HISTORY */
 
-async function loadDownloadLogs() {
-  const area = $("downloadLogsList");
+let allDownloadLogs=[];
 
-  if (!area) return;
+async function loadDownloadLogs(){
 
-  area.innerHTML =
-    '<div class="help">Memuatkan sejarah muat turun...</div>';
+ const area=$("downloadLogsList");
 
-  showStatus(
-    "downloadLogsStatus",
-    "Sedang mengambil rekod sejarah muat turun..."
-  );
+ if(!area)return;
 
-  const { data, error } = await db
-    .from("download_logs")
-    .select(`
-      id,
-      user_id,
-      order_item_id,
-      order_id,
-      product_id,
-      customer_name,
-      customer_email,
-      order_number,
-      product_title,
-      file_name,
-      downloaded_at
-    `)
-    .order("downloaded_at", { ascending: false });
+ area.innerHTML=
+  '<div class="help">Memuatkan sejarah muat turun...</div>';
 
-  if (error) {
-    console.error("SNNA download logs error:", error);
+ showStatus(
+  "downloadLogsStatus",
+  "Sedang mengambil rekod sejarah muat turun..."
+ );
 
-    area.innerHTML =
-      '<div class="help">Gagal memuatkan sejarah muat turun.</div>';
+ const {data,error}=await db
+  .from("download_logs")
+  .select(`
+   id,
+   user_id,
+   order_item_id,
+   order_id,
+   product_id,
+   customer_name,
+   customer_email,
+   order_number,
+   product_title,
+   file_name,
+   downloaded_at
+  `)
+  .order("downloaded_at",{ascending:false});
 
-    showStatus(
-      "downloadLogsStatus",
-      "Ralat: " + error.message,
-      "error"
-    );
+ if(error){
 
-    return;
-  }
+  console.error("SNNA download logs error:",error);
 
-  allDownloadLogs = data || [];
-
-  renderDownloadLogs();
+  area.innerHTML=
+   '<div class="help">Gagal memuatkan sejarah muat turun.</div>';
 
   showStatus(
-    "downloadLogsStatus",
-    "Sejarah muat turun berjaya dikemas kini.",
-    "success"
+   "downloadLogsStatus",
+   "Ralat: "+error.message,
+   "error"
   );
+
+  return;
+ }
+
+ allDownloadLogs=data||[];
+
+ renderDownloadLogs();
+
+ showStatus(
+  "downloadLogsStatus",
+  "Sejarah muat turun berjaya dikemas kini.",
+  "success"
+ );
 }
 
-function renderDownloadLogs() {
-  const area = $("downloadLogsList");
+function renderDownloadLogs(){
 
-  if (!area) return;
+ const area=$("downloadLogsList");
 
-  const search = (
-    $("downloadSearch")?.value || ""
-  ).toLowerCase().trim();
+ if(!area)return;
 
-  const filtered = allDownloadLogs.filter(log => {
-    const searchable = [
-      log.customer_name,
-      log.customer_email,
-      log.order_number,
-      log.product_title,
-      log.file_name
-    ].join(" ").toLowerCase();
+ const search=(
+  $("downloadSearch")?.value||""
+ ).toLowerCase().trim();
 
-    return !search || searchable.includes(search);
-  });
+ const filtered=allDownloadLogs.filter(log=>{
 
-  // Statistik keseluruhan
-  $("downloadTotal").textContent =
-    allDownloadLogs.length.toLocaleString("en-MY");
+  const searchable=[
+   log.customer_name,
+   log.customer_email,
+   log.order_number,
+   log.product_title,
+   log.file_name
+  ].join(" ").toLowerCase();
 
-  $("downloadCustomers").textContent =
-    new Set(
-      allDownloadLogs.map(log => log.user_id).filter(Boolean)
-    ).size.toLocaleString("en-MY");
+  return !search||searchable.includes(search);
+ });
 
-  $("downloadProducts").textContent =
-    new Set(
-      allDownloadLogs.map(log => log.product_id).filter(Boolean)
-    ).size.toLocaleString("en-MY");
+ $("downloadTotal").textContent=
+  allDownloadLogs.length.toLocaleString("en-MY");
 
-  if (!filtered.length) {
-    area.innerHTML = `
-      <div class="help">
-        ${
-          allDownloadLogs.length
-            ? "Tiada rekod sepadan dengan carian."
-            : "Belum ada sejarah muat turun."
-        }
-      </div>
-    `;
-    return;
-  }
+ $("downloadCustomers").textContent=
+  new Set(
+   allDownloadLogs.map(log=>log.user_id).filter(Boolean)
+  ).size.toLocaleString("en-MY");
 
-  area.innerHTML = filtered.map(log => {
-    const date = log.downloaded_at
-      ? new Date(log.downloaded_at).toLocaleString("ms-MY", {
-          dateStyle: "medium",
-          timeStyle: "short"
-        })
-      : "—";
+ $("downloadProducts").textContent=
+  new Set(
+   allDownloadLogs.map(log=>log.product_id).filter(Boolean)
+  ).size.toLocaleString("en-MY");
 
-    return `
-      <div class="panel" style="margin:0">
+ if(!filtered.length){
 
-        <div style="
-          display:flex;
-          justify-content:space-between;
-          gap:10px;
-          flex-wrap:wrap">
+  area.innerHTML=`
+   <div class="help">
+    ${
+     allDownloadLogs.length
+      ?"Tiada rekod sepadan dengan carian."
+      :"Belum ada sejarah muat turun."
+    }
+   </div>
+  `;
 
-          <strong style="font-size:14px">
-            ${safeText(log.product_title || "Produk tanpa nama")}
-          </strong>
+  return;
+ }
 
-          <span class="help">
-            ${safeText(date)}
-          </span>
+ area.innerHTML=filtered.map(log=>{
 
-        </div>
+  const date=log.downloaded_at
+   ?new Date(log.downloaded_at).toLocaleString("ms-MY",{
+     dateStyle:"medium",
+     timeStyle:"short"
+    })
+   :"—";
 
-        <hr style="
-          border:0;
-          border-top:1px solid #eee;
-          margin:12px 0">
+  return `
 
-        <strong style="font-size:13px">
-          ${safeText(log.customer_name || "Pelanggan")}
-        </strong>
+   <div class="panel" style="margin:0">
 
-        <div class="help" style="margin-top:5px">
-          ${safeText(log.customer_email || "Tiada e-mel")}
-        </div>
+    <div style="
+     display:flex;
+     justify-content:space-between;
+     gap:10px;
+     flex-wrap:wrap">
 
-        <div style="margin-top:12px;font-size:12px">
-          <strong>Nombor pesanan:</strong>
-          ${safeText(log.order_number || "—")}
-        </div>
+     <strong style="font-size:14px">
+      ${safeText(log.product_title||"Produk tanpa nama")}
+     </strong>
 
-        <div style="margin-top:7px;font-size:12px">
-          <strong>Nama fail:</strong>
-          ${safeText(log.file_name || "—")}
-        </div>
+     <span class="help">
+      ${safeText(date)}
+     </span>
 
-        <div class="help" style="margin-top:9px">
-          ID pelanggan:
-          ${safeText(log.user_id || "—")}
-        </div>
+    </div>
 
-        <div class="help">
-          ID rekod:
-          ${safeText(log.id || "—")}
-        </div>
+    <hr style="
+     border:0;
+     border-top:1px solid #eee;
+     margin:12px 0">
 
-      </div>
-    `;
-  }).join("");
+    <strong style="font-size:13px">
+     ${safeText(log.customer_name||"Pelanggan")}
+    </strong>
 
-  if (window.lucide) {
-    lucide.createIcons();
-  }
+    <div class="help" style="margin-top:5px">
+     ${safeText(log.customer_email||"Tiada e-mel")}
+    </div>
+
+    <div style="margin-top:12px;font-size:12px">
+     <strong>Nombor pesanan:</strong>
+     ${safeText(log.order_number||"—")}
+    </div>
+
+    <div style="margin-top:7px;font-size:12px">
+     <strong>Nama fail:</strong>
+     ${safeText(log.file_name||"—")}
+    </div>
+
+    <div class="help" style="margin-top:9px">
+     ID pelanggan:
+     ${safeText(log.user_id||"—")}
+    </div>
+
+    <div class="help">
+     ID rekod:
+     ${safeText(log.id||"—")}
+    </div>
+
+   </div>
+
+  `;
+ }).join("");
+
+ if(window.lucide){
+  lucide.createIcons();
+ }
 }
 
-$("orderSearch").addEventListener("input",renderOrders);
-$("downloadSearch").addEventListener(
-  "input",
-  renderDownloadLogs
-);
- $("orderFilter").addEventListener("change",renderOrders);
-$("reviewFilter").addEventListener("change",renderReviews);
- $("salesPeriod").addEventListener("change",renderSalesStats);
- $("imageFile").addEventListener("change",()=>{
+/* IMAGE PREVIEW */
+
+$("imageFile").addEventListener("change",()=>{
+
  const file=$("imageFile").files[0];
  const preview=$("imagePreview");
- if(!file){preview.style.display="none";return;}
+
+ if(!file){
+  preview.style.display="none";
+  return;
+ }
+
  if(file.size>5*1024*1024){
   alert("Gambar melebihi 5MB.");
   $("imageFile").value="";
   preview.style.display="none";
   return;
  }
+
  if(!["image/jpeg","image/png","image/webp"].includes(file.type)){
   alert("Format gambar mesti JPG, PNG atau WebP.");
   $("imageFile").value="";
   preview.style.display="none";
   return;
  }
+
  preview.src=URL.createObjectURL(file);
  preview.style.display="block";
 });
 
+/* FILE UPLOAD */
+
 async function uploadFile(bucket,file,maxBytes){
+
  if(!file)return null;
- if(file.size>maxBytes)throw new Error("Saiz fail melebihi had yang dibenarkan.");
- const ext=(file.name.split(".").pop()||"bin").toLowerCase().replace(/[^a-z0-9]/g,"");
+
+ if(file.size>maxBytes){
+  throw new Error("Saiz fail melebihi had yang dibenarkan.");
+ }
+
+ const ext=(file.name.split(".").pop()||"bin")
+  .toLowerCase()
+  .replace(/[^a-z0-9]/g,"");
+
  const path="products/"+crypto.randomUUID()+"."+ext;
+
  const {error}=await db.storage.from(bucket).upload(path,file,{
   cacheControl:"3600",
   upsert:false,
   contentType:file.type||"application/octet-stream"
  });
+
  if(error)throw error;
+
  return path;
 }
 
+/* SAVE PRODUCT */
+
 $("productForm").addEventListener("submit",async event=>{
+
  event.preventDefault();
+
  if(!currentUser)return;
 
  const title=$("title").value.trim();
  const price=Number($("price").value);
+
  const compareRaw=$("comparePrice").value;
  const comparePrice=compareRaw===""?null:Number(compareRaw);
+
  const imageFile=$("imageFile").files[0];
  const digitalFile=$("digitalFile").files[0];
 
- if(!title||!$("category").value||!Number.isFinite(price)||price<0){
-  showStatus("formStatus","Sila semak nama, kategori dan harga.","error");
+ if(!title||!$("category").value||
+  !Number.isFinite(price)||price<0){
+
+  showStatus(
+   "formStatus",
+   "Sila semak nama, kategori dan harga.",
+   "error"
+  );
+
   return;
  }
- if(comparePrice!==null&&(!Number.isFinite(comparePrice)||comparePrice<0)){
-  showStatus("formStatus","Harga asal tidak sah.","error");
+
+ if(comparePrice!==null&&
+  (!Number.isFinite(comparePrice)||comparePrice<0)){
+
+  showStatus(
+   "formStatus",
+   "Harga asal tidak sah.",
+   "error"
+  );
+
   return;
  }
+
  if(!editingId&&!digitalFile){
-  showStatus("formStatus","Sila pilih fail digital untuk produk baharu.","error");
+
+  showStatus(
+   "formStatus",
+   "Sila pilih fail digital untuk produk baharu.",
+   "error"
+  );
+
   return;
  }
+
  if(digitalFile&&digitalFile.size>50*1024*1024){
-  showStatus("formStatus","Fail digital melebihi 50MB.","error");
+
+  showStatus(
+   "formStatus",
+   "Fail digital melebihi 50MB.",
+   "error"
+  );
+
   return;
  }
 
  $("saveBtn").disabled=true;
  $("saveBtn").textContent="Sedang menyimpan...";
- showStatus("formStatus","Sedang memproses fail dan menyimpan produk...");
+
+ showStatus(
+  "formStatus",
+  "Sedang memproses fail dan menyimpan produk..."
+ );
 
  let uploadedImage=null;
  let uploadedDigital=null;
 
  try{
+
   if(imageFile){
-   uploadedImage=await uploadFile("product-images",imageFile,5*1024*1024);
-  }
-  if(digitalFile){
-   uploadedDigital=await uploadFile("digital-files",digitalFile,50*1024*1024);
+   uploadedImage=await uploadFile(
+    "product-images",
+    imageFile,
+    5*1024*1024
+   );
   }
 
-  const old=editingId?products.find(p=>p.id===editingId):null;
+  if(digitalFile){
+   uploadedDigital=await uploadFile(
+    "digital-files",
+    digitalFile,
+    50*1024*1024
+   );
+  }
+
+  const old=editingId
+   ?products.find(p=>p.id===editingId)
+   :null;
+
   const payload={
+
    title,
+
    slug:old?old.slug:uniqueSlug(title),
+
    description:$("description").value.trim()||null,
+
    price,
+
    compare_at_price:comparePrice,
+
    category:$("category").value,
+
    image_path:uploadedImage||currentImagePath||null,
+
    file_path:uploadedDigital||currentFilePath||null,
-   file_name:digitalFile?digitalFile.name:(old?.file_name||null),
-   file_size_bytes:digitalFile?digitalFile.size:(old?.file_size_bytes||null),
+
+   file_name:digitalFile
+    ?digitalFile.name
+    :(old?.file_name||null),
+
+   file_size_bytes:digitalFile
+    ?digitalFile.size
+    :(old?.file_size_bytes||null),
+
    is_active:$("isActive").checked,
+
    is_featured:$("isFeatured").checked,
+
    sort_order:parseInt($("sortOrder").value,10)||0,
+
    updated_at:new Date().toISOString()
   };
 
   let result;
+
   if(editingId){
-   result=await db.from("products").update(payload).eq("id",editingId);
+
+   result=await db
+    .from("products")
+    .update(payload)
+    .eq("id",editingId);
+
   }else{
-   result=await db.from("products").insert(payload);
+
+   result=await db
+    .from("products")
+    .insert(payload);
+
   }
 
   if(result.error)throw result.error;
 
-  showStatus("formStatus","Produk berjaya disimpan!","success");
+  showStatus(
+   "formStatus",
+   "Produk berjaya disimpan!",
+   "success"
+  );
+
   resetForm();
+
   await loadProducts();
 
  }catch(error){
+
   console.error(error);
-  showStatus("formStatus","Ralat: "+error.message,"error");
+
+  showStatus(
+   "formStatus",
+   "Ralat: "+error.message,
+   "error"
+  );
+
  }finally{
+
   $("saveBtn").disabled=false;
-  $("saveBtn").textContent=editingId?"Kemaskini Produk":"Simpan Produk";
+
+  $("saveBtn").textContent=
+   editingId
+    ?"Kemaskini Produk"
+    :"Simpan Produk";
  }
 });
 
+/* EDIT PRODUCT */
+
 function editProduct(id){
+
  const p=products.find(item=>item.id===id);
+
  if(!p)return;
+
  editingId=id;
+
  currentImagePath=p.image_path;
  currentFilePath=p.file_path;
 
@@ -1882,59 +2515,148 @@ function editProduct(id){
  $("comparePrice").value=p.compare_at_price??"";
  $("sortOrder").value=p.sort_order??0;
  $("description").value=p.description||"";
+
  $("isActive").checked=p.is_active;
  $("isFeatured").checked=p.is_featured;
+
  $("imageFile").value="";
  $("digitalFile").value="";
+
  $("imagePreview").style.display="none";
- $("imageCurrent").textContent=p.image_path?"Gambar sedia ada dikekalkan jika tidak diganti.":"Tiada gambar.";
- $("fileCurrent").textContent=p.file_name?"Fail sedia ada: "+p.file_name+". Pilih fail baharu jika mahu menggantikannya.":"Tiada fail.";
+
+ $("imageCurrent").textContent=
+  p.image_path
+   ?"Gambar sedia ada dikekalkan jika tidak diganti."
+   :"Tiada gambar.";
+
+ $("fileCurrent").textContent=
+  p.file_name
+   ?"Fail sedia ada: "+p.file_name+
+    ". Pilih fail baharu jika mahu menggantikannya."
+   :"Tiada fail.";
+
  $("formHeading").textContent="Edit Produk";
  $("saveBtn").textContent="Kemaskini Produk";
+
  $("cancelBtn").classList.remove("hidden");
+
  $("formStatus").textContent="";
- $("productFormPanel").scrollIntoView({behavior:"smooth"});
+
+ // Jika edit produk, pastikan borang kelihatan
+ adminNavigate(
+  "productsPage",
+  document.querySelector('[data-target="productsPage"]'),
+  false
+ );
+
+ $("productFormPanel").scrollIntoView({
+  behavior:"smooth",
+  block:"start"
+ });
 }
 
+/* RESET FORM */
+
 function resetForm(){
+
  editingId=null;
  currentImagePath=null;
  currentFilePath=null;
+
  $("productForm").reset();
+
  $("isActive").checked=true;
  $("sortOrder").value=0;
+
  $("imagePreview").style.display="none";
+ $("imagePreview").removeAttribute("src");
+
  $("imageCurrent").textContent="";
  $("fileCurrent").textContent="";
+
  $("formHeading").textContent="Tambah Produk Baharu";
  $("saveBtn").textContent="Simpan Produk";
+
  $("cancelBtn").classList.add("hidden");
+ $("formStatus").textContent="";
 }
 
-async function deleteProduct(id){
- const p=products.find(item=>item.id===id);
- if(!p)return;
- if(!confirm("Padam produk '"+p.title+"' daripada katalog?"))return;
+/* DELETE PRODUCT */
 
- const {error}=await db.from("products").delete().eq("id",id);
+async function deleteProduct(id){
+
+ const p=products.find(item=>item.id===id);
+
+ if(!p)return;
+
+ if(!confirm(
+  "Padam produk '"+p.title+"' daripada katalog?"
+ )){
+  return;
+ }
+
+ const {error}=await db
+  .from("products")
+  .delete()
+  .eq("id",id);
+
  if(error){
   alert("Gagal memadam produk: "+error.message);
   return;
  }
- if(editingId===id)resetForm();
+
+ if(editingId===id){
+  resetForm();
+ }
+
  await loadProducts();
+
  alert("Produk berjaya dipadam daripada katalog.");
 }
 
+/* SEARCH AND FILTER EVENTS */
+
+$("orderSearch").addEventListener("input",renderOrders);
+
+$("downloadSearch").addEventListener(
+ "input",
+ renderDownloadLogs
+);
+
+$("orderFilter").addEventListener(
+ "change",
+ renderOrders
+);
+
+$("reviewFilter").addEventListener(
+ "change",
+ renderReviews
+);
+
+$("salesPeriod").addEventListener(
+ "change",
+ renderSalesStats
+);
+
+/* AUTH STATE */
+
 db.auth.onAuthStateChange((event,session)=>{
+
  if(event==="SIGNED_OUT"){
   currentUser=null;
   showLogin();
  }
+
 });
 
+/* START */
+
 checkAdmin();
-lucide.createIcons();
+
+if(window.lucide){
+ lucide.createIcons();
+}
 </script>
+
 </body>
 </html>
