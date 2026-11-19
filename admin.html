@@ -3177,6 +3177,51 @@ db.auth.onAuthStateChange((event,session)=>{
 
 /* START */
 
+/* SNNA ADMIN LANGUAGE & CURRENCY SETTINGS */
+const ADMIN_LANGUAGE_KEY = "snna_admin_language";
+const ADMIN_CURRENCY_KEY = "snna_admin_currency";
+
+function initAdminLanguageCurrency(){
+  const languageSelect = document.getElementById("adminLanguage");
+  const currencySelect = document.getElementById("adminCurrency");
+
+  if(!languageSelect || !currencySelect) return;
+
+  const savedLanguage = localStorage.getItem(ADMIN_LANGUAGE_KEY) || "ms";
+  const savedCurrency = localStorage.getItem(ADMIN_CURRENCY_KEY) || "MYR";
+
+  languageSelect.value = savedLanguage;
+  currencySelect.value = savedCurrency;
+
+  languageSelect.addEventListener("change", function(){
+    localStorage.setItem(ADMIN_LANGUAGE_KEY, this.value);
+    updateAdminToolbarLabels();
+  });
+
+  currencySelect.addEventListener("change", function(){
+    localStorage.setItem(ADMIN_CURRENCY_KEY, this.value);
+  });
+
+  updateAdminToolbarLabels();
+}
+
+function updateAdminToolbarLabels(){
+  const language = localStorage.getItem(ADMIN_LANGUAGE_KEY) || "ms";
+  const menuButton = document.getElementById("menuToggle");
+
+  if(menuButton){
+    menuButton.innerHTML = language === "en"
+      ? '<i data-lucide="menu"></i> Menu'
+      : '<i data-lucide="menu"></i> Menu';
+  }
+
+  if(window.lucide){
+    lucide.createIcons();
+  }
+}
+
+initAdminLanguageCurrency();
+
 checkAdmin();
 
 if(window.lucide){
