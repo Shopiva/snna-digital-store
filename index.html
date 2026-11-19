@@ -779,14 +779,23 @@ function renderProducts(){
     list = list.filter(p=>favorites.includes(p.id));
   }
 
-  if(!list.length){
+    if(!list.length){
     grid.innerHTML = selectedCategory === "Disukai"
-      ? '<div class="empty">Belum ada produk disukai. Tekan ikon hati pada produk untuk menyimpannya ❤️</div>'
+      ? `<div class="empty">${tr(
+          "Belum ada produk disukai. Tekan ikon hati pada produk untuk menyimpannya ❤️",
+          "No favorite products yet. Tap the heart icon to save products ❤️"
+        )}</div>`
       : selectedProductView === "featured"
-        ? '<div class="empty">Belum ada produk pilihan buat masa ini.</div>'
-        : '<div class="empty">Belum ada produk untuk dipaparkan.</div>';
+        ? `<div class="empty">${tr(
+            "Belum ada produk pilihan buat masa ini.",
+            "No featured products available at the moment."
+          )}</div>`
+        : `<div class="empty">${tr(
+            "Belum ada produk untuk dipaparkan.",
+            "No products available to display."
+          )}</div>`;
     return;
-  }
+    }
 
   grid.innerHTML = list.map(product=>{
     const title = escapeHTML(product.title);
