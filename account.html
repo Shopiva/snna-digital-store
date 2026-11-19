@@ -401,16 +401,7 @@ function setAccountLanguage(lang){
 
 applyAccountLanguage();
 
-/* Translate text inserted later by login, orders and other functions */
-const accountLanguageObserver = new MutationObserver(()=>{
-  applyAccountLanguage();
-});
 
-accountLanguageObserver.observe(document.body,{
-  childList:true,
-  subtree:true,
-  characterData:true
-});
 function showMessage(id,text,type="ok"){
   const el=$(id);
   if(!el)return;
