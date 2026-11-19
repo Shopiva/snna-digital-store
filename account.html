@@ -15,7 +15,55 @@
 *{box-sizing:border-box}
 body{margin:0;font-family:Arial,sans-serif;background:var(--ivory);color:var(--navy)}
 header{background:var(--navy);color:white;padding:17px 20px;display:flex;align-items:center;justify-content:space-between}
-.brand{font-size:22px;font-weight:800;letter-spacing:2px}
+.account-header-right{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.language-switch{
+  display:flex;
+  gap:4px;
+}
+
+.language-switch button{
+  padding:6px 9px;
+  border-radius:7px;
+  background:transparent;
+  border:1px solid rgba(255,255,255,.35);
+  color:#fff;
+  font-size:11px;
+}
+
+.language-switch button.active{
+  background:var(--gold);
+  color:var(--navy);
+  border-color:var(--gold);
+}
+
+@media(max-width:420px){
+  header{
+    padding:14px 10px;
+    gap:8px;
+  }
+
+  .brand{
+    font-size:19px;
+  }
+
+  .account-header-right{
+    gap:6px;
+  }
+
+  .back{
+    font-size:11px;
+  }
+
+  .language-switch button{
+    padding:6px;
+  }
+}
+  .brand{font-size:22px;font-weight:800;letter-spacing:2px}
 .back{color:white;text-decoration:none;font-size:13px}
 main{max-width:650px;margin:25px auto;padding:0 15px 40px}
 .card{background:white;border:1px solid var(--line);border-radius:17px;padding:22px;margin-bottom:17px;box-shadow:0 4px 16px rgba(0,0,0,.035)}
@@ -60,7 +108,15 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:20px}
 <body>
 <header>
   <div class="brand">SNNA</div>
-  <a class="back" href="index.html">← Kembali ke Homepage</a>
+
+  <div class="account-header-right">
+    <div class="language-switch">
+      <button type="button" id="accountLangBM" onclick="setAccountLanguage('ms')">BM</button>
+      <button type="button" id="accountLangEN" onclick="setAccountLanguage('en')">EN</button>
+    </div>
+
+    <a class="back" href="index.html" id="accountBack">← Kembali ke Homepage</a>
+  </div>
 </header>
 
 <main>
