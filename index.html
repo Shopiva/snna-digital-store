@@ -285,7 +285,54 @@ main{max-width:1200px;margin:auto;padding:18px 16px 100px}
 .preview-success h3{font-size:19px;margin:8px 0}
 .preview-success p{color:#777;font-size:13px;line-height:1.6}
 footer{text-align:center;color:#999;font-size:11px;padding:20px 10px 25px}
+/* LANGUAGE SWITCHER */
+.language-switch{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  white-space:nowrap;
+}
 
+.lang-btn{
+  border:1px solid transparent;
+  background:transparent;
+  color:#777;
+  padding:7px 9px;
+  border-radius:8px;
+  font-size:12px;
+  font-weight:700;
+}
+
+.lang-btn.active{
+  background:#FFF8E4;
+  border-color:#F4CE62;
+  color:#8B6814;
+}
+
+.lang-divider{
+  color:#ccc;
+  font-size:12px;
+}
+
+@media(max-width:380px){
+  .header-inner{
+    gap:6px;
+    padding-left:8px;
+    padding-right:8px;
+  }
+
+  .logo-name{
+    font-size:27px;
+  }
+
+  .logo-sub{
+    letter-spacing:3px;
+  }
+
+  .lang-btn{
+    padding:6px;
+  }
+}
 @media(min-width:650px){
   main{padding-left:25px;padding-right:25px}
   .products-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
@@ -308,9 +355,17 @@ footer{text-align:center;color:#999;font-size:11px;padding:20px 10px 25px}
     </button>
 
     <div class="logo">
-      <div class="logo-name">SN<span>NA</span></div>
-      <div class="logo-sub">DIGITAL STORE</div>
-    </div>
+  <div class="logo-name">SN<span>NA</span></div>
+  <div class="logo-sub">DIGITAL STORE</div>
+</div>
+
+<div class="language-switch">
+  <button id="langBM" class="lang-btn active"
+          onclick="setLanguage('ms')">BM</button>
+  <span class="lang-divider">|</span>
+  <button id="langEN" class="lang-btn"
+          onclick="setLanguage('en')">EN</button>
+</div>
 
     <button class="icon-btn cart-wrap" onclick="openCart()" aria-label="Troli">
       <i data-lucide="shopping-bag"></i>
@@ -1255,10 +1310,260 @@ async function trackSNNAEvent(eventType, productId = null){
 
 // Rekod lawatan homepage
 trackSNNAEvent("page_view");
+/* =====================================
+   SNNA LANGUAGE SYSTEM — BM / EN
+===================================== */
 
+const SNNA_LANG_KEY = "snna_language_v1";
+
+let snnaLang = localStorage.getItem(SNNA_LANG_KEY) || "ms";
+
+function setLanguage(lang){
+  snnaLang = lang === "en" ? "en" : "ms";
+
+  localStorage.setItem(SNNA_LANG_KEY, snnaLang);
+
+  document.getElementById("langBM").classList.toggle("active", snnaLang === "ms");
+  document.getElementById("langEN").classList.toggle("active", snnaLang === "en");
+
+  document.documentElement.lang = snnaLang === "en" ? "en" : "ms";
+
+  applyLanguage();
+  renderProducts();
+  updateCart();
+
+  if(document.getElementById("checkoutSection").classList.contains("show")){
+    renderCheckoutSummary();
+  }
+}
+
+function tr(ms,en){
+  return snnaLang === "en" ? en : ms;
+}
+
+/* TUKAR TEKS TANPA MEMBUANG IKON */
+function setLabel(element,ms,en){
+  if(!element) return;
+
+  const text = tr(ms,en);
+  const nodes = [...element.childNodes];
+  const textNode = nodes.find(node=>node.nodeType === 3);
+
+  if(textNode){
+    textNode.textContent = " " + text;
+  }else{
+    element.appendChild(document.createTextNode(text));
+  }
+}
+
+/* TERJEMAHAN HOMEPAGE */
+function applyLanguage(){
+
+  /* SEARCH */
+  document.getElementById("searchInput").placeholder =
+    tr("Cari produk di SNNA...","Search SNNA products...");
+
+  /* TAJUK */
+  document.querySelector("#categoriesSection h2").textContent =
+    tr("Kategori","Categories");
+
+  document.getElementById("productHeading").textContent =
+    selectedCategory === "Disukai"
+      ? tr("Produk Disukai","Favorites")
+      : selectedCategory === "Semua"
+        ? selectedProductView === "all"
+          ? tr("Produk Pilihan","Featured Products")
+          : tr("Produk Pilihan","Featured Products")
+        : selectedCategory;
+
+  document.getElementById("viewAllButton").textContent =
+    tr("Lihat Semua →","View All →");
+
+  /* KATEGORI */
+  const categoryLabels = [
+    ["Semua","All"],
+    ["Ebook","E-books"],
+    ["Planner","Planners"],
+    ["Template","Templates"],
+    ["Artwork","Artwork"]
+  ];
+
+  document.querySelectorAll(".category span").forEach((el,i)=>{
+    if(categoryLabels[i]){
+      el.textContent = tr(categoryLabels[i][0],categoryLabels[i][1]);
+    }
+  });
+
+  /* MENU DRAWER */
+  const menuLabels = [
+    ["Laman Utama","Home"],
+    ["Kategori Produk","Categories"],
+    ["Semua Produk","All Products"],
+    ["Produk Pilihan","Featured Products"],
+    ["Produk Disukai","Favorites"],
+    ["Troli Saya","My Cart"],
+    ["Akaun Saya","My Account"]
+  ];
+
+  document.querySelectorAll(".menu-link").forEach((el,i)=>{
+    if(menuLabels[i]){
+      setLabel(el,menuLabels[i][0],menuLabels[i][1]);
+    }
+  });
+
+  const menuCaption = document.querySelector(".menu-caption");
+  if(menuCaption){
+    menuCaption.textContent = tr("AKAUN & PEMBELIAN","ACCOUNT & SHOPPING");
+  }
+
+  /* NAV BAWAH */
+  const navLabels = [
+    ["Home","Home"],
+    ["Share","Share"],
+    ["Disukai","Favorites"],
+    ["Me","Account"]
+  ];
+
+  document.querySelectorAll(".nav-item span").forEach((el,i)=>{
+    if(navLabels[i]){
+      el.textContent = tr(navLabels[i][0],navLabels[i][1]);
+    }
+  });
+
+  /* FOOTER */
+  const footer = document.querySelector("footer");
+  if(footer){
+    footer.childNodes[0].textContent =
+      tr("© 2026 SNNA Digital Store. All rights reserved.",
+         "© 2026 SNNA Digital Store. All rights reserved.");
+  }
+
+  const adminLink = document.querySelector("footer a");
+  if(adminLink){
+    adminLink.textContent = tr("Admin Login","Admin Login");
+  }
+
+  /* TROLI */
+  const cartTitle = document.querySelector("#cartSection .drawer-head h3");
+  if(cartTitle) cartTitle.textContent = tr("Troli Saya","My Cart");
+
+  const cartTotalLabel = document.querySelector("#cartSection .cart-total span");
+  if(cartTotalLabel) cartTotalLabel.textContent = tr("Jumlah","Total");
+
+  const checkoutBtn = document.getElementById("checkoutButton");
+  if(checkoutBtn){
+    checkoutBtn.textContent = tr("Teruskan ke Checkout →","Proceed to Checkout →");
+  }
+
+  const emptyNotice = document.getElementById("emptyCartNotice");
+  if(emptyNotice){
+    emptyNotice.textContent = tr(
+      "Troli ini masih dalam mod pratonton. Checkout dan pembayaran sebenar belum diaktifkan.",
+      "This cart is in preview mode. Real checkout and payment are not yet enabled."
+    );
+  }
+
+  /* CHECKOUT */
+  const checkoutTitle = document.querySelector("#checkoutSection .drawer-head h3");
+  if(checkoutTitle) checkoutTitle.textContent = tr("Checkout SNNA","SNNA Checkout");
+
+  const checkoutIntro = document.querySelector(".checkout-intro");
+  if(checkoutIntro){
+    checkoutIntro.textContent = tr(
+      "Sila isi maklumat pelanggan untuk melihat ringkasan pesanan anda.",
+      "Please fill in your customer details to view your order summary."
+    );
+  }
+
+  const labels = document.querySelectorAll(".form-group label");
+  const labelTranslations = [
+    ["Nama penuh","Full name"],
+    ["Alamat e-mel","Email address"],
+    ["Nombor telefon","Phone number"]
+  ];
+
+  labels.forEach((el,i)=>{
+    if(labelTranslations[i]){
+      el.textContent = tr(labelTranslations[i][0],labelTranslations[i][1]);
+    }
+  });
+
+  document.getElementById("customerName").placeholder =
+    tr("Masukkan nama penuh","Enter your full name");
+
+  document.getElementById("customerEmail").placeholder =
+    tr("nama@email.com","name@email.com");
+
+  document.getElementById("customerPhone").placeholder =
+    tr("Contoh: 0123456789","Example: 0123456789");
+
+  const summaryTitle = document.querySelector(".summary-title");
+  if(summaryTitle){
+    summaryTitle.textContent = tr("Ringkasan Pesanan","Order Summary");
+  }
+
+  const checkoutNotice = document.querySelector("#checkoutForm .notice");
+  if(checkoutNotice){
+    checkoutNotice.textContent = tr(
+      "Ini hanya checkout pratonton. Tiada pembayaran atau pesanan sebenar akan dibuat.",
+      "This is a checkout preview only. No real payment or order will be made."
+    );
+  }
+
+  const submitBtn = document.querySelector("#checkoutForm button[type='submit']");
+  if(submitBtn){
+    submitBtn.textContent = tr("Lihat Pengesahan Pratonton","View Preview Confirmation");
+  }
+
+  const backBtn = document.querySelector("#checkoutForm .secondary-btn");
+  if(backBtn){
+    backBtn.textContent = tr("← Kembali ke Troli","← Back to Cart");
+  }
+
+  /* PENGESAHAN */
+  const successTitle = document.querySelector("#previewSuccess h3");
+  if(successTitle){
+    successTitle.textContent = tr("Pratonton Checkout Berjaya!","Checkout Preview Successful!");
+  }
+
+  const successText = document.querySelector("#previewSuccess p");
+  if(successText){
+    successText.textContent = tr(
+      "Maklumat pelanggan dan ringkasan pesanan berjaya dipaparkan. Ini bukan pembelian sebenar.",
+      "Customer details and order summary were displayed successfully. This is not a real purchase."
+    );
+  }
+
+  const previewNotice = document.querySelector("#previewSuccess .notice");
+  if(previewNotice){
+    previewNotice.textContent = tr(
+      "Tiada rekod pesanan disimpan dan tiada wang ditolak. Integrasi pembayaran akan dibuat dalam fasa seterusnya.",
+      "No order was saved and no money was charged. Payment integration will be added in a future phase."
+    );
+  }
+
+  const previewTitles = document.querySelectorAll("#previewSuccess .summary-title");
+  if(previewTitles[0]){
+    previewTitles[0].textContent = tr("Maklumat Pelanggan","Customer Details");
+  }
+  if(previewTitles[1]){
+    previewTitles[1].textContent = tr("Ringkasan Pesanan","Order Summary");
+  }
+
+  const previewButtons = document.querySelectorAll("#previewSuccess button");
+  if(previewButtons[0]){
+    previewButtons[0].textContent = tr("Kembali ke Troli","Back to Cart");
+  }
+  if(previewButtons[1]){
+    previewButtons[1].textContent = tr("Tutup","Close");
+  }
+
+  lucide.createIcons();
+    }
 /* MULAKAN SNNA */
 loadCart();
 loadFavorites();
+setLanguage(snnaLang);
 updateCart();
 lucide.createIcons();
 loadProducts();
