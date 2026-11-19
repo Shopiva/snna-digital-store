@@ -240,7 +240,166 @@ let currentUser = null;
 let isRegister = false;
 
 const $ = id => document.getElementById(id);
+/* SNNA ACCOUNT LANGUAGE SYSTEM */
+const SNNA_LANG_KEY = "snna_language_v1";
 
+let accountLang = localStorage.getItem(SNNA_LANG_KEY) || "ms";
+
+const accountTranslations = {
+  "Akaun Saya":"My Account",
+  "Log Masuk":"Login",
+  "Log masuk untuk melihat akaun dan pesanan anda.":"Log in to view your account and orders.",
+  "Nama penuh":"Full name",
+  "Nama anda":"Your name",
+  "Alamat email":"Email address",
+  "Kata laluan":"Password",
+  "Daftar Akaun":"Create Account",
+  "Cipta akaun SNNA anda.":"Create your SNNA account.",
+  "Daftar Sekarang":"Register Now",
+  "Belum mempunyai akaun?":"Don't have an account?",
+  "Sudah mempunyai akaun?":"Already have an account?",
+  "Daftar sekarang":"Register now",
+  "Log masuk":"Log in",
+  "Lupa kata laluan?":"Forgot password?",
+  "Lupa Kata Laluan":"Forgot Password",
+  "Masukkan email anda untuk menerima pautan reset.":"Enter your email to receive a reset link.",
+  "Hantar Pautan Reset":"Send Reset Link",
+  "Kembali ke Log Masuk":"Back to Login",
+  "Tetapkan Kata Laluan Baharu":"Set New Password",
+  "Masukkan kata laluan baharu untuk akaun anda.":"Enter a new password for your account.",
+  "Kata laluan baharu":"New password",
+  "Minimum 6 aksara":"Minimum 6 characters",
+  "Sahkan kata laluan":"Confirm password",
+  "Ulang kata laluan":"Repeat password",
+  "Simpan Kata Laluan":"Save Password",
+  "Pengguna SNNA":"SNNA User",
+  "Upload / Tukar Foto":"Upload / Change Photo",
+  "Padam Foto":"Delete Photo",
+  "Gambar profil":"Profile picture",
+  "JPG, PNG atau WebP. Maksimum 2MB.":"JPG, PNG or WebP. Maximum 2MB.",
+  "Maklumat Profil":"Profile Information",
+  "Simpan Perubahan Profil":"Save Profile Changes",
+  "Jenis akaun":"Account type",
+  "Pelanggan":"Customer",
+  "Tukar Kata Laluan":"Change Password",
+  "Kemaskini Kata Laluan":"Update Password",
+  "Rekod Pesanan":"Order History",
+  "Muat Semula":"Refresh",
+  "Memuatkan rekod pesanan...":"Loading order history...",
+  "Anda belum mempunyai rekod pesanan.":"You have no order history yet.",
+  "Butiran produk tidak tersedia.":"Product details unavailable.",
+  "Status pesanan":"Order status",
+  "Dalam proses":"Processing",
+  "Status bayaran":"Payment status",
+  "Belum disahkan":"Not confirmed",
+  "Jumlah:":"Total:",
+  "Produk Digital Saya":"My Digital Products",
+  "Produk yang telah dibeli dan bayaran disahkan boleh dimuat turun di sini.":"Purchased products with confirmed payment can be downloaded here.",
+  "Memuatkan produk digital...":"Loading digital products...",
+  "Anda belum mempunyai produk digital yang boleh dimuat turun.":"You have no digital products available for download yet.",
+  "Belum ada produk digital yang mempunyai bayaran disahkan (paid).":"No digital products with confirmed payment yet.",
+  "Bayaran disahkan":"Payment confirmed",
+  "Muat Turun Produk":"Download Product",
+  "Log Keluar":"Log Out",
+  "Kembali ke Homepage":"Back to Homepage",
+  "Profil berjaya dikemaskini.":"Profile updated successfully.",
+  "Gambar profil berjaya dikemaskini!":"Profile picture updated successfully!",
+  "Gambar profil berjaya dipadam.":"Profile picture deleted successfully.",
+  "Sedang memuat naik gambar...":"Uploading image...",
+  "Sedang menyediakan muat turun...":"Preparing download...",
+  "Sila masukkan email dan kata laluan.":"Please enter your email and password.",
+  "Sila masukkan nama penuh.":"Please enter your full name.",
+  "Sila masukkan alamat email.":"Please enter your email address.",
+  "Kata laluan mestilah sekurang-kurangnya 6 aksara.":"Password must be at least 6 characters.",
+  "Kata laluan tidak sepadan.":"Passwords do not match.",
+  "Format tidak disokong. Gunakan JPG, PNG atau WebP.":"Unsupported format. Use JPG, PNG or WebP.",
+  "Saiz gambar melebihi 2MB.":"Image size exceeds 2MB.",
+  "Log masuk semula.":"Please log in again.",
+  "Tidak berjaya. Sila cuba lagi.":"Unsuccessful. Please try again.",
+  "Pendaftaran berjaya!":"Registration successful!",
+  "Pendaftaran berjaya. Sila semak email untuk pengesahan akaun.":"Registration successful. Please check your email to verify your account.",
+  "Pautan reset telah dihantar jika email tersebut berdaftar. Sila semak inbox atau folder spam.":"If the email is registered, a reset link has been sent. Please check your inbox or spam folder.",
+  "Kata laluan berjaya dikemaskini. Sila log masuk semula.":"Password updated successfully. Please log in again.",
+  "Kata laluan berjaya ditukar.":"Password changed successfully.",
+  "Adakah anda pasti mahu memadam gambar profil?":"Are you sure you want to delete your profile picture?",
+  "Muat turun tidak berjaya:":"Download failed:",
+  "Sila cuba lagi.":"Please try again.",
+  "Rekod pesanan tidak dapat dimuatkan:":"Unable to load order history:",
+  "Produk digital tidak dapat dimuatkan buat masa ini.":"Digital products are currently unavailable."
+};
+
+function accountTranslate(text){
+  const trimmed = text.trim();
+  if(!trimmed) return text;
+
+  let translated = trimmed;
+
+  if(accountLang === "en"){
+    translated = accountTranslations[trimmed] || trimmed;
+  }else{
+    const entry = Object.entries(accountTranslations)
+      .find(([ms,en])=>en === trimmed);
+    if(entry) translated = entry[0];
+  }
+
+  if(translated === trimmed) return text;
+
+  const leading = text.match(/^\s*/)?.[0] || "";
+  const trailing = text.match(/\s*$/)?.[0] || "";
+
+  return leading + translated + trailing;
+}
+
+function applyAccountLanguage(){
+  document.documentElement.lang = accountLang === "en" ? "en" : "ms";
+
+  document.getElementById("accountLangBM")
+    ?.classList.toggle("active",accountLang === "ms");
+
+  document.getElementById("accountLangEN")
+    ?.classList.toggle("active",accountLang === "en");
+
+  document.title = accountLang === "en"
+    ? "My Account — SNNA"
+    : "Akaun Saya — SNNA";
+
+  const walker = document.createTreeWalker(
+    document.body,
+    NodeFilter.SHOW_TEXT
+  );
+
+  const textNodes = [];
+  while(walker.nextNode()){
+    textNodes.push(walker.currentNode);
+  }
+
+  textNodes.forEach(node=>{
+    node.textContent = accountTranslate(node.textContent);
+  });
+
+  document.querySelectorAll("input[placeholder]").forEach(input=>{
+    input.placeholder = accountTranslate(input.placeholder);
+  });
+}
+
+function setAccountLanguage(lang){
+  accountLang = lang === "en" ? "en" : "ms";
+  localStorage.setItem(SNNA_LANG_KEY,accountLang);
+  applyAccountLanguage();
+}
+
+applyAccountLanguage();
+
+/* Translate text inserted later by login, orders and other functions */
+const accountLanguageObserver = new MutationObserver(()=>{
+  applyAccountLanguage();
+});
+
+accountLanguageObserver.observe(document.body,{
+  childList:true,
+  subtree:true,
+  characterData:true
+});
 function showMessage(id,text,type="ok"){
   const el=$(id);
   if(!el)return;
