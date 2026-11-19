@@ -363,7 +363,13 @@ function applyAccountLanguage(){
   document.title = accountLang === "en"
     ? "My Account — SNNA"
     : "Akaun Saya — SNNA";
+const backText = $("accountBackText");
 
+if(backText){
+  backText.textContent = accountLang === "en"
+    ? "← Back to Homepage"
+    : "← Kembali ke Homepage";
+}
   const walker = document.createTreeWalker(
     document.body,
     NodeFilter.SHOW_TEXT
