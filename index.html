@@ -1346,14 +1346,16 @@ function setLabel(element,ms,en){
   if(!element) return;
 
   const text = tr(ms,en);
-  const nodes = [...element.childNodes];
-  const textNode = nodes.find(node=>node.nodeType === 3);
 
-  if(textNode){
-    textNode.textContent = " " + text;
-  }else{
-    element.appendChild(document.createTextNode(text));
-  }
+  // Buang semua teks lama supaya tidak berganda
+  [...element.childNodes].forEach(node=>{
+    if(node.nodeType === 3){
+      node.remove();
+    }
+  });
+
+  // Masukkan satu teks sahaja selepas ikon
+  element.appendChild(document.createTextNode(" "+text));
 }
 
 /* TERJEMAHAN HOMEPAGE */
