@@ -374,8 +374,12 @@ function applyAccountLanguage(){
   }
 
   textNodes.forEach(node=>{
-    node.textContent = accountTranslate(node.textContent);
-  });
+  const translated = accountTranslate(node.textContent);
+
+  if(translated !== node.textContent){
+    node.textContent = translated;
+  }
+});
 
   document.querySelectorAll("input[placeholder]").forEach(input=>{
     input.placeholder = accountTranslate(input.placeholder);
