@@ -572,7 +572,7 @@ footer{text-align:center;color:#999;font-size:11px;padding:20px 10px 25px}
 
       <div id="cartItems"></div>
       <div class="cart-total">
-        <span>Jumlah</span>
+        <span id="cartTotalLabel">Jumlah</span>
         <span id="cartTotal">RM 0.00</span>
       </div>
 
@@ -1591,6 +1591,12 @@ function applyLanguage(){
   const menuCaption = document.querySelector(".menu-caption");
   if(menuCaption){
     menuCaption.textContent = tr("AKAUN & PEMBELIAN","ACCOUNT & SHOPPING");
+    /* JUMLAH TROLI */
+const cartTotalLabel = document.getElementById("cartTotalLabel");
+
+if(cartTotalLabel){
+  cartTotalLabel.textContent = tr("Jumlah","Total");
+}
   }
 
   /* NAV BAWAH */
