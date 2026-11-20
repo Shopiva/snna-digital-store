@@ -703,16 +703,17 @@ async function loadOrders(){
       title.textContent=item.title;
 
       const orderInfo=document.createElement("small");
-      orderInfo.textContent="Pesanan #"+item.orderNumber;
+orderInfo.textContent=accountTranslate("Pesanan")+" #"+item.orderNumber;
 
-      const status=document.createElement("div");
-      status.innerHTML='<span class="paid-label">Bayaran disahkan</span>';
+const status=document.createElement("div");
+status.innerHTML='<span class="paid-label">'+
+  accountTranslate("Bayaran disahkan")+
+  '</span>';
 
-      const btn=document.createElement("button");
-      btn.className="download";
-      btn.textContent="Muat Turun Produk";
-      btn.onclick=()=>downloadDigital(item.id,btn);
-
+const btn=document.createElement("button");
+btn.className="download";
+btn.textContent=accountTranslate("Muat Turun Produk");
+btn.onclick=()=>downloadDigital(item.id,btn);
       card.append(title,orderInfo,status,btn);
       digital.appendChild(card);
     }
