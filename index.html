@@ -1082,7 +1082,7 @@ function updateCart(){
   const notice = document.getElementById("emptyCartNotice");
 
   if(!cart.length){
-    area.innerHTML = '<div class="empty">Troli masih kosong.</div>';
+    area.innerHTML = `<div class="empty">${tr("Troli masih kosong.","Your cart is empty.")}</div>`;
     checkoutButton.disabled = true;
     checkoutButton.style.opacity = ".5";
     notice.style.display = "block";
