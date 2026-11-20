@@ -691,8 +691,12 @@ async function loadOrders(){
     }
 
     if(downloadableItems.length===0){
-      digital.innerHTML="<p>Belum ada produk digital yang mempunyai bayaran disahkan (paid).</p>";
-      return;
+  digital.innerHTML="<p>"+accountTranslate(
+    "Belum ada produk digital yang mempunyai bayaran disahkan (paid)."
+  )+"</p>";
+
+  applyAccountLanguage();
+  return;
     }
 
     for(const item of downloadableItems){
