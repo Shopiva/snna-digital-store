@@ -656,7 +656,7 @@ async function loadOrders(){
       const div=document.createElement("div");
       div.className="order";
       div.innerHTML=`
-        <strong>Pesanan #${escapeHTML(order.order_number||order.id)}</strong>
+        <strong>${accountTranslate("Pesanan")} #${escapeHTML(order.order_number||order.id)}</strong>
         <div><small>${formatDate(order.created_at)}</small></div>
         ${itemHTML}
         <div class="info-row">
