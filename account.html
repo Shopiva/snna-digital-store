@@ -659,9 +659,24 @@ async function loadOrders(){
         <strong>Pesanan #${escapeHTML(order.order_number||order.id)}</strong>
         <div><small>${formatDate(order.created_at)}</small></div>
         ${itemHTML}
-        <div class="info-row"><span>Status pesanan</span><strong>${escapeHTML(order.status||"Dalam proses")}</strong></div>
-        <div class="info-row"><span>Status bayaran</span><strong>${paid?"Paid":escapeHTML(order.payment_status||"Belum disahkan")}</strong></div>
-        <div class="order-total">Jumlah: RM ${Number(order.total||0).toFixed(2)}</div>
+        <div class="info-row">
+          <span>${accountTranslate("Status pesanan")}</span>
+          <strong>${accountTranslate(
+            String(order.status||"Dalam proses").toLowerCase()==="pending"
+              ? "Pending"
+              : order.status||"Dalam proses"
+          )}</strong>
+        </div>
+        <div class="info-row">
+          <span>${accountTranslate("Status bayaran")}</span>
+          <strong>${paid
+            ? accountTranslate("Paid")
+            : accountTranslate(order.payment_status||"Belum disahkan")
+          }</strong>
+        </div>
+        <div class="order-total">
+          ${accountTranslate("Jumlah:")} RM ${Number(order.total||0).toFixed(2)}
+        </div>
       `;
       container.appendChild(div);
 
