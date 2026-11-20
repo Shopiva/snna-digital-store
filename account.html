@@ -721,7 +721,7 @@ btn.onclick=()=>downloadDigital(item.id,btn);
       card.append(title,orderInfo,status,btn);
       digital.appendChild(card);
     }
-
+applyAccountLanguage();
   }catch(error){
     container.innerHTML=`<p>Rekod pesanan tidak dapat dimuatkan: ${escapeHTML(error.message)}</p>`;
     digital.innerHTML="<p>Produk digital tidak dapat dimuatkan buat masa ini.</p>";
