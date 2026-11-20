@@ -399,7 +399,12 @@ if(backText){
 function setAccountLanguage(lang){
   accountLang = lang === "en" ? "en" : "ms";
   localStorage.setItem(SNNA_LANG_KEY,accountLang);
+
   applyAccountLanguage();
+
+  if(currentUser){
+    loadOrders();
+  }
 }
 
 applyAccountLanguage();
