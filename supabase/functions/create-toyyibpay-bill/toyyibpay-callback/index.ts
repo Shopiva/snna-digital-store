@@ -1,3 +1,4 @@
+
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { createHash } from "node:crypto";
 
@@ -27,6 +28,28 @@ function md5(value: string): string {
     .digest("hex");
 }
 
+function safeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+
+  let result = 0;
+
+  for (let i = 0; i < a.length; i++) {
+    result |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  }
+
+  return result === 0;
+}
+
+function toCents(value: unknown): number | null {
+  const amount = Number(value);
+
+  if (!Number.isFinite(amount) || amount <= 0) {
+    return null;
+  }
+
+  return Math.round(amount * 100);
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -52,7 +75,6 @@ Deno.serve(async (req) => {
 
     const refno = getField(form, "refno");
     const status = getField(form, "status");
-    const reason = getField(form, "reason");
     const billCode = getField(form, "billcode");
     const orderNumber = getField(form, "order_id");
     const receivedHash = getField(form, "hash");
@@ -70,25 +92,27 @@ Deno.serve(async (req) => {
       }, 400);
     }
 
-    // 1. Verify callback hash
+    // 1. Verify ToyyibPay callback hash
     const expectedHash = md5(
       secretKey + status + orderNumber + refno + "ok"
     );
 
-    if (receivedHash.toLowerCase() !== expectedHash.toLowerCase()) {
+    if (!safeEqual(
+      receivedHash.toLowerCase(),
+      expectedHash.toLowerCase()
+    )) {
       return jsonResponse({
         success: false,
         message: "Invalid callback hash",
       }, 401);
     }
 
-    // 2. Ignore pending or unsuccessful payment
+    // 2. Ignore pending or unsuccessful payments
     if (status !== "1") {
       return jsonResponse({
         success: true,
         message: "Payment is not successful.",
         payment_status: status,
-        reason,
       });
     }
 
@@ -104,7 +128,7 @@ Deno.serve(async (req) => {
       }
     );
 
-    // 4. Find matching order
+    // 4. Find the exact order
     const { data: order, error: orderError } = await supabase
       .from("orders")
       .select(`
@@ -143,8 +167,10 @@ Deno.serve(async (req) => {
       }, 400);
     }
 
-    // 5. Idempotency
-    if (String(order.payment_status).toLowerCase() === "paid") {
+    // 5. Idempotency check
+    const currentStatus = String(order.payment_status).toLowerCase();
+
+    if (currentStatus === "paid") {
       return jsonResponse({
         success: true,
         message: "Order already paid",
@@ -152,14 +178,14 @@ Deno.serve(async (req) => {
       });
     }
 
-    if (String(order.payment_status).toLowerCase() !== "pending") {
+    if (currentStatus !== "pending") {
       return jsonResponse({
         success: false,
         message: "Order is not pending payment",
       }, 409);
     }
 
-    // 6. Independently verify payment with ToyyibPay
+    // 6. Independently verify transaction with ToyyibPay
     const transactionData = new URLSearchParams();
 
     transactionData.set("billCode", billCode);
@@ -174,58 +200,59 @@ Deno.serve(async (req) => {
           "Content-Type": "application/x-www-form-urlencoded",
         },
         body: transactionData.toString(),
+        signal: AbortSignal.timeout(20000),
       }
     );
 
-    const transactionText = await transactionResponse.text();
-
     if (!transactionResponse.ok) {
-      throw new Error(
-        "Unable to verify ToyyibPay transaction."
-      );
+      throw new Error("ToyyibPay verification request failed.");
     }
+
+    const transactionText = await transactionResponse.text();
 
     let transactions: unknown;
 
     try {
       transactions = JSON.parse(transactionText);
     } catch {
-      throw new Error(
-        "Invalid response from ToyyibPay verification API."
-      );
+      throw new Error("Invalid ToyyibPay API response.");
     }
 
     if (!Array.isArray(transactions)) {
-      throw new Error(
-        "ToyyibPay transaction record is unavailable."
-      );
+      throw new Error("ToyyibPay transaction list is unavailable.");
     }
 
-    const verifiedTransaction = transactions.find(
+    // 7. Match successful transaction by external order reference
+    const matchingTransactions = transactions.filter(
       (item: any) =>
         String(item.billpaymentStatus) === "1" &&
         String(item.billExternalReferenceNo) === orderNumber
     );
 
-    if (!verifiedTransaction) {
+    // More than one successful transaction for one order
+    // requires manual review to avoid ambiguous payment confirmation.
+    if (matchingTransactions.length !== 1) {
       return jsonResponse({
         success: false,
-        message: "Successful transaction could not be verified.",
+        message: matchingTransactions.length === 0
+          ? "Successful transaction could not be verified."
+          : "Multiple successful transactions found. Manual review required.",
       }, 409);
     }
 
-    // 7. Verify amount
-    const paidAmount = Number(
+    const verifiedTransaction = matchingTransactions[0];
+
+    // 8. Verify exact payment amount in RM
+    const paidCents = toCents(
       verifiedTransaction.billpaymentAmount
     );
 
-    const orderAmount = Number(order.total);
+    const orderCents = toCents(order.total);
 
     if (
-      !Number.isFinite(paidAmount) ||
-      !Number.isFinite(orderAmount) ||
-      Math.round(paidAmount * 100) !==
-        Math.round(orderAmount * 100)
+      paidCents === null ||
+      orderCents === null ||
+      paidCents !== orderCents
     ) {
       return jsonResponse({
         success: false,
@@ -233,7 +260,7 @@ Deno.serve(async (req) => {
       }, 409);
     }
 
-    // 8. Mark order paid only after verification
+    // 9. Update only a pending order
     const { data: updatedOrder, error: updateError } =
       await supabase
         .from("orders")
@@ -250,22 +277,22 @@ Deno.serve(async (req) => {
       throw updateError;
     }
 
-    // Handle duplicate callback / race condition
+    // 10. Handle duplicate callbacks and concurrent requests
     if (!updatedOrder) {
-      const { data: currentOrder, error: currentError } =
+      const { data: latestOrder, error: latestError } =
         await supabase
           .from("orders")
           .select("payment_status")
           .eq("id", order.id)
           .maybeSingle();
 
-      if (currentError) {
-        throw currentError;
+      if (latestError) {
+        throw latestError;
       }
 
       if (
-        currentOrder &&
-        String(currentOrder.payment_status).toLowerCase() === "paid"
+        latestOrder &&
+        String(latestOrder.payment_status).toLowerCase() === "paid"
       ) {
         return jsonResponse({
           success: true,
