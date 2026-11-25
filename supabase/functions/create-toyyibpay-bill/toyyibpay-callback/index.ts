@@ -51,6 +51,21 @@ function toCents(value: unknown): number | null {
 }
 
 Deno.serve(async (req) => {
+    if (Deno.env.get("SNNA_LIVE_CHECKOUT_ENABLED") !== "true") {
+    return new Response(
+      JSON.stringify({
+        success: false,
+        message: "Live checkout is currently disabled.",
+      }),
+      {
+        status: 403,
+        headers: {
+          ...corsHeaders,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    }
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
