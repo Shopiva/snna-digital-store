@@ -58,7 +58,12 @@ Deno.serve(async (req) => {
       error: "Method not allowed.",
     }, 405);
   }
-
+  if (Deno.env.get("SNNA_LIVE_CHECKOUT_ENABLED") !== "true") {
+    return jsonResponse({
+      success: false,
+      error: "Live checkout is currently disabled.",
+    }, 403);
+  }
   let orderId: string | null = null;
   let billRequestStarted = false;
   let billCreated = false;
