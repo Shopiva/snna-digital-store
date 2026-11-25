@@ -1288,6 +1288,7 @@ function backToCart(){
 }
 
 
+
 function renderCheckoutSummary() {
   const summary = document.getElementById("checkoutSummary");
   const totalElement = document.getElementById("checkoutTotal");
@@ -1312,7 +1313,7 @@ function renderCheckoutSummary() {
 
     return `
       <div class="summary-row">
-        <span>${item.title} × ${qty}</span>
+        <span>${escapeHTML(item.title)} × ${qty}</span>
         <span>${formatMYR(subtotal)}</span>
       </div>
     `;
@@ -1320,6 +1321,7 @@ function renderCheckoutSummary() {
 
   totalElement.textContent = formatMYR(total);
 }
+
 
 
 /* ==========================================
