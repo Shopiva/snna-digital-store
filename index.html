@@ -1161,13 +1161,34 @@ function closeCart(event){
   document.getElementById("cartDrawer").classList.remove("show");
 }
 
+
 /* PAPARAN TROLI */
 function showCartView(){
-  document.getElementById("cartSection").classList.remove("hide");
-  document.getElementById("checkoutSection").classList.remove("show");
-  document.getElementById("checkoutFormArea").style.display = "block";
-  document.getElementById("previewSuccess").classList.remove("show");
+  const cartSection = document.getElementById("cartSection");
+  const checkoutSection = document.getElementById("checkoutSection");
+  const checkoutFormArea = document.getElementById("checkoutFormArea");
+  const successBox = document.getElementById("previewSuccess");
+
+  if (cartSection) {
+    cartSection.classList.remove("hide");
+    cartSection.style.display = "";
+  }
+
+  if (checkoutSection) {
+    checkoutSection.classList.remove("show");
+    checkoutSection.style.display = "none";
+  }
+
+  if (checkoutFormArea) {
+    checkoutFormArea.style.display = "block";
+  }
+
+  if (successBox) {
+    successBox.classList.remove("show");
+  }
 }
+
+
 
 async function showCheckout() {
   if (!cart || cart.length === 0) {
