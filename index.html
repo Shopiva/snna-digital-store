@@ -1169,17 +1169,68 @@ function showCartView(){
   document.getElementById("previewSuccess").classList.remove("show");
 }
 
-/* BUKA CHECKOUT */
-function showCheckout(){
-  if(!cart.length){
-    alert("Troli masih kosong.");
+async function showCheckout() {
+  if (!cart || cart.length === 0) {
+    showCartView();
     return;
   }
 
-  document.getElementById("cartSection").classList.add("hide");
-  document.getElementById("checkoutSection").classList.add("show");
+  document.getElementById("cartSection").style.display = "none";
+  document.getElementById("checkoutSection").style.display = "block";
   document.getElementById("checkoutFormArea").style.display = "block";
-  document.getElementById("previewSuccess").classList.remove("show");
+
+  const successBox = document.getElementById("previewSuccess");
+  if (successBox) {
+    successBox.classList.remove("show");
+  }
+
+  const emailInput = document.getElementById("customerEmail");
+
+  if (emailInput) {
+    emailInput.value = "";
+  }
+
+  // Ambil sesi pengguna Supabase
+  try {
+    const { data, error } = await supabase.auth.getSession();
+
+    if (error) throw error;
+
+    const session = data?.session;
+
+    if (session && session.user) {
+      // E-mel diambil daripada akaun login
+      if (emailInput) {
+        emailInput.value = session.user.email || "";
+      }
+
+      const notice = document.getElementById("checkoutSafetyNotice");
+
+      if (notice) {
+        notice.textContent =
+          "Checkout pembayaran sedang dikunci sementara untuk pemeriksaan keselamatan. Tiada bil atau pembayaran akan dibuat.";
+      }
+
+    } else {
+      const notice = document.getElementById("checkoutSafetyNotice");
+
+      if (notice) {
+        notice.textContent =
+          "Anda belum login. Sila login akaun SNNA sebelum meneruskan checkout.";
+      }
+    }
+
+  } catch (error) {
+    console.error("Semakan sesi checkout:", error);
+
+    const notice = document.getElementById("checkoutSafetyNotice");
+
+    if (notice) {
+      notice.textContent =
+        "Tidak dapat mengesahkan sesi login. Sila cuba semula.";
+    }
+  }
+
   renderCheckoutSummary();
 }
 
