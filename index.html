@@ -1204,43 +1204,209 @@ function renderCheckoutSummary(){
   document.getElementById("checkoutTotal").textContent = money(total);
 }
 
-/* CHECKOUT PRATONTON SAHAJA */
-function previewCheckout(event){
-  event.preventDefault();
 
-  if(!cart.length){
-    alert("Troli kosong. Sila tambah produk dahulu.");
-    backToCart();
+/* ==========================================
+   SNNA TOYYIBPAY CHECKOUT
+   LIVE CHECKOUT LOCKED - SECURITY AUDIT
+========================================== */
+
+const SNNA_LIVE_CHECKOUT_ENABLED = false;
+
+let snnaCheckoutBusy = false;
+
+function getCheckoutRequestId() {
+  const cartFingerprint = JSON.stringify(
+    cart.map(item => ({
+      id: item.id,
+      qty: item.qty
+    })).sort((a, b) => a.id.localeCompare(b.id))
+  );
+
+  const storageKey = "snna_checkout_request_v1";
+
+  let saved = null;
+
+  try {
+    saved = JSON.parse(localStorage.getItem(storageKey) || "null");
+  } catch (e) {
+    saved = null;
+  }
+
+  if (
+    saved &&
+    saved.fingerprint === cartFingerprint &&
+    saved.requestId
+  ) {
+    return saved.requestId;
+  }
+
+  const requestId =
+    "SNNA-" +
+    Date.now() +
+    "-" +
+    Math.random().toString(36).slice(2, 10);
+
+  localStorage.setItem(
+    storageKey,
+    JSON.stringify({
+      fingerprint: cartFingerprint,
+      requestId: requestId
+    })
+  );
+
+  return requestId;
+}
+
+
+function showCheckoutMessage(message, isError = true) {
+  const box = document.getElementById("checkoutMessage");
+
+  if (!box) return;
+
+  box.style.display = "block";
+  box.textContent = message;
+  box.style.color = isError ? "#b42318" : "#166534";
+}
+
+
+async function startToyyCheckout(event) {
+  if (event) event.preventDefault();
+
+  // LOCK: Jangan membuat bil LIVE ketika audit belum selesai.
+  if (!SNNA_LIVE_CHECKOUT_ENABLED) {
+    showCheckoutMessage(
+      "Checkout pembayaran masih dikunci sementara untuk pemeriksaan keselamatan. " +
+      "Tiada bil atau pembayaran dibuat."
+    );
     return;
   }
 
-  const form = document.getElementById("checkoutForm");
-  if(!form.reportValidity()) return;
+  if (snnaCheckoutBusy) return;
 
-  const name = document.getElementById("customerName").value.trim();
-  const email = document.getElementById("customerEmail").value.trim();
-  const phone = document.getElementById("customerPhone").value.trim();
+  snnaCheckoutBusy = true;
 
-  const total = cart.reduce((sum,item)=>sum+(item.price*item.qty),0);
+  const button = document.getElementById("paymentSubmitButton");
 
-  document.getElementById("previewCustomer").innerHTML = `
-    <div><strong>Nama:</strong> ${escapeHTML(name)}</div>
-    <div><strong>E-mel:</strong> ${escapeHTML(email)}</div>
-    <div><strong>Telefon:</strong> ${escapeHTML(phone)}</div>
-  `;
+  if (button) {
+    button.disabled = true;
+    button.textContent = "Memproses...";
+  }
 
-  document.getElementById("previewOrder").innerHTML = cart.map(item=>`
-    <div class="summary-line">
-      <span>${escapeHTML(item.title)} × ${item.qty}</span>
-      <strong>${money(item.price*item.qty)}</strong>
-    </div>
-  `).join("");
+  try {
+    // Pastikan pelanggan mempunyai sesi login.
+    const { data: sessionData, error: sessionError } =
+      await supabase.auth.getSession();
 
-  document.getElementById("previewTotal").textContent = money(total);
-  document.getElementById("checkoutFormArea").style.display = "none";
-  document.getElementById("previewSuccess").classList.add("show");
-  lucide.createIcons();
+    if (sessionError) throw sessionError;
+
+    const session = sessionData?.session;
+
+    if (!session || !session.user) {
+      showCheckoutMessage(
+        "Sila login ke akaun anda terlebih dahulu sebelum membuat pesanan."
+      );
+
+      snnaCheckoutBusy = false;
+
+      if (button) {
+        button.disabled = false;
+        button.textContent = "Teruskan ke Pembayaran";
+      }
+
+      return;
+    }
+
+    const customerEmail = session.user.email || "";
+
+    const name = document.getElementById("customerName").value.trim();
+    const phone = document.getElementById("customerPhone").value.trim();
+
+    if (!name || !phone || !customerEmail) {
+      throw new Error("Sila lengkapkan maklumat pelanggan.");
+    }
+
+    if (!Array.isArray(cart) || cart.length === 0) {
+      throw new Error("Troli anda kosong.");
+    }
+
+    if (cart.length > 20) {
+      throw new Error("Maksimum 20 jenis produk dalam satu pesanan.");
+    }
+
+    for (const item of cart) {
+      if (
+        !item.id ||
+        !Number.isInteger(Number(item.qty)) ||
+        Number(item.qty) < 1 ||
+        Number(item.qty) > 10
+      ) {
+        throw new Error(
+          "Kuantiti produk tidak sah. Maksimum 10 unit bagi setiap produk."
+        );
+      }
+    }
+
+    // Harga dalam browser tidak dipercayai.
+    // Server akan mengira semula harga sebenar dalam MYR.
+    const checkoutRequestId = getCheckoutRequestId();
+
+    const payload = {
+      checkoutRequestId,
+      customerName: name,
+      customerPhone: phone,
+      items: cart.map(item => ({
+        productId: item.id,
+        quantity: Number(item.qty)
+      }))
+    };
+
+    const { data, error } = await supabase.functions.invoke(
+      "create-toyyibpay-bill",
+      {
+        body: payload
+      }
+    );
+
+    if (error) throw error;
+
+    if (!data || !data.payment_url) {
+      throw new Error(
+        "URL pembayaran tidak diterima. Sila semak status pesanan sebelum mencuba semula."
+      );
+    }
+
+    // Benarkan hanya domain ToyyibPay.
+    const paymentUrl = new URL(data.payment_url);
+
+    if (
+      paymentUrl.protocol !== "https:" ||
+      !["toyyibpay.com", "www.toyyibpay.com"].includes(
+        paymentUrl.hostname
+      )
+    ) {
+      throw new Error("URL pembayaran tidak sah.");
+    }
+
+    // Redirect ke halaman pembayaran.
+    window.location.assign(paymentUrl.href);
+
+  } catch (error) {
+    console.error("SNNA checkout error:", error);
+
+    showCheckoutMessage(
+      error.message ||
+      "Checkout gagal. Sila cuba semula atau hubungi pentadbir."
+    );
+
+    snnaCheckoutBusy = false;
+
+    if (button) {
+      button.disabled = false;
+      button.textContent = "Teruskan ke Pembayaran";
+    }
+  }
 }
+
 
 /* MENU HAMBURGER */
 function toggleMenu(){
