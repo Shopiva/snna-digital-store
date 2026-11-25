@@ -1,0 +1,166 @@
+
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Status Pembayaran — SNNA Digital Store</title>
+<style>
+:root {
+  --navy:#172A35;
+  --navy2:#263E4B;
+  --gold:#C6A46A;
+  --ivory:#F7F5F0;
+  --text:#28343B;
+  --muted:#78838A;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:var(--ivory);
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+.card {
+  width:100%;
+  max-width:460px;
+  background:white;
+  border-radius:20px;
+  padding:32px 24px;
+  text-align:center;
+  box-shadow:0 8px 35px rgba(23,42,53,.08);
+}
+.brand {
+  color:var(--navy);
+  font-weight:800;
+  letter-spacing:3px;
+  font-size:23px;
+}
+.brand span { color:var(--gold); }
+.icon {
+  font-size:52px;
+  margin:25px 0 10px;
+}
+h1 {
+  font-size:23px;
+  margin:10px 0;
+  color:var(--navy);
+}
+p {
+  color:var(--muted);
+  line-height:1.65;
+  font-size:14px;
+}
+.order {
+  background:#F5F3EF;
+  border-radius:12px;
+  padding:13px;
+  margin:20px 0;
+  word-break:break-word;
+  font-size:13px;
+}
+.btn {
+  display:block;
+  background:var(--navy);
+  color:white;
+  text-decoration:none;
+  padding:15px;
+  border-radius:12px;
+  font-weight:bold;
+  margin-top:12px;
+}
+.btn.secondary {
+  background:white;
+  color:var(--navy);
+  border:1px solid #E3DED5;
+}
+.note {
+  font-size:12px;
+  margin-top:20px;
+}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="brand">SNNA<span>.</span></div>
+
+  <div class="icon" id="statusIcon">⏳</div>
+
+  <h1 id="statusTitle">Pembayaran sedang disemak</h1>
+
+  <p id="statusMessage">
+    Terima kasih atas pembelian anda. Status pembayaran akan disahkan
+    oleh sistem sebelum produk digital boleh dimuat turun.
+  </p>
+
+  <div class="order" id="orderBox" style="display:none">
+    <strong>Nombor pesanan:</strong>
+    <div id="orderNumber"></div>
+  </div>
+
+  <a class="btn" href="account.html">Semak Pesanan & Muat Turun</a>
+
+  <a class="btn secondary" href="index.html">Kembali ke Kedai</a>
+
+  <p class="note">
+    Jangan risau jika status belum dikemas kini. Pengesahan pembayaran
+    mungkin mengambil sedikit masa. Jangan buat pembayaran kali kedua
+    untuk pesanan yang sama.
+  </p>
+</div>
+
+<script>
+(function () {
+  const params = new URLSearchParams(window.location.search);
+
+  const statusId = params.get("status_id");
+  const billCode = params.get("billcode");
+  const orderId = params.get("order_id");
+
+  const icon = document.getElementById("statusIcon");
+  const title = document.getElementById("statusTitle");
+  const message = document.getElementById("statusMessage");
+
+  // Paparkan nombor pesanan jika parameter tersedia
+  if (orderId) {
+    document.getElementById("orderBox").style.display = "block";
+    document.getElementById("orderNumber").textContent = orderId;
+  }
+
+  // Status URL bukan bukti pembayaran.
+  // Callback backend yang menentukan status paid.
+  if (statusId === "1") {
+    icon.textContent = "⏳";
+    title.textContent = "Pembayaran sedang disahkan";
+    message.textContent =
+      "ToyyibPay melaporkan proses pembayaran selesai. " +
+      "Sistem SNNA sedang menunggu pengesahan rasmi sebelum " +
+      "akses muat turun diberikan.";
+  } else if (statusId === "2") {
+    icon.textContent = "⌛";
+    title.textContent = "Pembayaran belum selesai";
+    message.textContent =
+      "Pembayaran anda masih belum selesai. " +
+      "Sila semak semula status pesanan anda sebentar lagi.";
+  } else if (statusId === "3") {
+    icon.textContent = "↩️";
+    title.textContent = "Pembayaran tidak berjaya";
+    message.textContent =
+      "Pembayaran tidak berjaya atau telah dibatalkan. " +
+      "Sila semak status pesanan sebelum cuba membuat pembayaran semula.";
+  } else {
+    icon.textContent = "🔎";
+    title.textContent = "Semak status pesanan";
+    message.textContent =
+      "Kami menerima anda kembali ke SNNA Digital Store. " +
+      "Sila semak status pesanan melalui akaun anda.";
+  }
+})();
+</script>
+</body>
+</html>
