@@ -837,34 +837,50 @@ function saveCart(){
   }
 }
 
+
 /* AMBIL TROLI */
 function loadCart(){
   try{
     const saved = localStorage.getItem(CART_STORAGE_KEY);
-    if(!saved) return;
+
+    if(!saved) {
+      cart = [];
+      return;
+    }
 
     const parsed = JSON.parse(saved);
-    if(!Array.isArray(parsed)) return;
 
-    cart = parsed.filter(item =>
-      item &&
-      typeof item.id === "string" &&
-      typeof item.title === "string" &&
-      Number.isFinite(Number(item.price)) &&
-      Number(item.price) >= 0 &&
-      Number.isInteger(Number(item.qty)) &&
-      Number(item.qty) > 0
-    ).map(item => ({
-      id:item.id,
-      title:item.title,
-      price:Number(item.price),
-      qty:Number(item.qty)
-    }));
+    if(!Array.isArray(parsed)) {
+      cart = [];
+      return;
+    }
+
+    cart = parsed
+      .filter(item =>
+        item &&
+        typeof item.id === "string" &&
+        typeof item.title === "string" &&
+        Number.isFinite(Number(item.price)) &&
+        Number(item.price) >= 0 &&
+        Number.isInteger(Number(item.qty)) &&
+        Number(item.qty) > 0
+      )
+      .slice(0, 20)
+      .map(item => ({
+        id: item.id,
+        title: item.title,
+        price: Number(item.price),
+        qty: Math.min(Number(item.qty), 10)
+      }));
+
+    saveCart();
+
   }catch(error){
-    console.error("SNNA cart load error:",error);
+    console.error("SNNA cart load error:", error);
     cart = [];
   }
 }
+
 
 /* WISHLIST: SIMPAN */
 function saveFavorites(){
