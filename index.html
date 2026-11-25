@@ -1072,26 +1072,39 @@ function setCategory(category,button){
   renderProducts();
 }
 
+
 /* TAMBAH PRODUK KE TROLI */
 function addToCart(id){
-  const product = products.find(p=>p.id === id);
-  if(!product) return;
+  const product = products.find(p => p.id === id);
+  if (!product) return;
 
-  const existing = cart.find(item=>item.id === id);
+  const existing = cart.find(item => item.id === id);
 
-  if(existing){
-    existing.qty++;
-  }else{
+  if (existing) {
+    if (Number(existing.qty) >= 10) {
+      alert("Maksimum 10 unit bagi setiap produk.");
+      return;
+    }
+
+    existing.qty = Number(existing.qty) + 1;
+
+  } else {
+    if (cart.length >= 20) {
+      alert("Maksimum 20 jenis produk dalam satu pesanan.");
+      return;
+    }
+
     cart.push({
-      id:product.id,
-      title:product.title,
-      price:Number(product.price),
-      qty:1
+      id: product.id,
+      title: product.title,
+      price: Number(product.price),
+      qty: 1
     });
   }
 
   updateCart();
 }
+
 
 /* KEMAS KINI TROLI */
 function updateCart(){
