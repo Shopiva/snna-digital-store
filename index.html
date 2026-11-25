@@ -1149,29 +1149,26 @@ function updateCart(){
   saveCart();
 }
 
+
 /* UBAH KUANTITI */
-function changeQty(id,change){
-  const item = cart.find(p=>p.id===id);
-  if(!item) return;
+function changeQty(id, change){
+  const item = cart.find(p => p.id === id);
+  if (!item) return;
 
-  item.qty += change;
+  const newQty = Number(item.qty) + Number(change);
 
-  if(item.qty <= 0){
-    cart = cart.filter(p=>p.id!==id);
+  if (newQty > 10) {
+    alert("Maksimum 10 unit bagi setiap produk.");
+    return;
+  }
+
+  if (newQty <= 0) {
+    cart = cart.filter(p => p.id !== id);
+  } else {
+    item.qty = newQty;
   }
 
   updateCart();
-}
-
-function openCart(){
-  document.getElementById("cartDrawer").classList.add("show");
-  showCartView();
-  updateCart();
-}
-
-function closeCart(event){
-  if(event && event.target !== document.getElementById("cartDrawer")) return;
-  document.getElementById("cartDrawer").classList.remove("show");
 }
 
 
